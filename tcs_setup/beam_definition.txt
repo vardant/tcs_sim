@@ -1,0 +1,15 @@
+e-        particle
+6.6        energy, GeV
+0 0 -50   position, cm
+2 2       sizes, mm
+
+mu-       particle
+0.3       energy, GeV
+0 0 50   position, cm
+0 0       sizes, mm
+
+geantino        particle
+11        energy, GeV
+3 3 -50   position, cm
+0 0       sizes, mm
+

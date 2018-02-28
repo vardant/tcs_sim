@@ -1,0 +1,25 @@
+In aux/tcsgen_data.mboer:
+
+   make_class.C(root_file="tcs_gen.root",tree_name="tr1",class_name="deepgen");
+
+   edit deepgen::Loop to produce tcs_gen.data in HEP format.
+
+   under root:
+
+   	 .L deepgen.C
+	 deepgen d(RootFileName)
+	 d.Loop() -->  tcs_gen.data in HEP format.
+
+In tcs_setup-build:
+
+   copy/link aux/*data files
+   set number of events in run1.mac == in number of events in tcs_gen.kin_data!
+   tcs run1.mac > out.run1 --> tcs_setup.root
+   
+In aux/acceptance_tag:
+
+   ln -s ../tcsgen_data.mboer/RootFiles .
+   mkdir RootFiles.tracked
+   mv ../../tcs_setup-build/tcs_setup.root RootFiles.tracked/<tracked>.root
+   .x tcs_ana.C+((RootFiles.tracked/<tracked_file>, RootFiles/<primary_file>,
+      tagged_file)

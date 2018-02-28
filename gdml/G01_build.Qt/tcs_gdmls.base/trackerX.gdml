@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation=
+      "/home/vardan/g4-work/GDML_3_1_5/schema/gdml.xsd">
+
+  <!-- TCS X Tracker -->
+  <!-- Adjusted to the SANE OVC -->
+
+ <define>
+   <constant name="NBAR" value="332"/>
+   <constant name="BARX" value="0.1"/>
+   <constant name="BARY" value="15."/>
+   <constant name="BARZ" value="0.1"/>
+
+   <constant name="eps" value="0.000001"/>
+
+   <quantity name="barx" type="length" value="BARX" unit="cm"/>
+   <quantity name="bary" type="length" value="BARY" unit="cm"/>
+   <quantity name="barz" type="length" value="BARZ" unit="cm"/>
+
+   <position name="center" x="0" y="0" z="0"/>
+   <rotation name="identity" x="0" y="0" z="0"/>
+
+   <quantity name="xext" type="length" value="NBAR*BARX+eps" unit="cm"/>
+   <quantity name="yext" type="length" value="BARY+eps" unit="cm"/>
+   <quantity name="zext" type="length" value="BARZ+eps" unit="cm"/>
+ </define>
+
+ <materials>
+
+  <element name="Oxygen" formula="O" Z="8."> <atom value="16.0"/>   </element>
+  <element name="Nitrogen" formula="N" Z="7."> <atom value="14.01"/>  </element>
+  <element name="Carbon" formula="C" Z="6."> <atom value="12.01"/>   </element>
+  <element name="Hydrogen" formula="H" Z="1."> <atom value="1.01"/> </element>
+
+  <material name="Air">
+   <D value="1.290" unit="mg/cm3"/>
+   <fraction n="0.7" ref="Nitrogen"/>
+   <fraction n="0.3" ref="Oxygen"/>
+  </material>
+
+  <material name="Polystyrene">
+   <D value="1.06" unit="g/cm3"/>
+   <composite n="8" ref="Carbon"/>
+   <composite n="8" ref="Hydrogen"/>
+  </material>
+
+ </materials>
+
+ <solids> 
+   <box name="txWorldBox" x="xext" y="yext" z="zext"/>
+   <box name="TrackerXAssemblyBox" x="NBAR*barx" y="bary" z="barz"/>
+   <box name="BarBox" x="barx" y="bary" z="barz"/>
+ </solids>
+
+ <structure>  
+
+   <volume name="TXBar">
+     <materialref ref="Polystyrene"/>
+     <solidref ref="BarBox"/>
+    <!-- auxiliary auxtype="Color" auxvalue="gray" / -->
+   </volume>
+
+   <volume name="TrackerXAssembly">
+     <materialref ref="Air"/>
+     <solidref ref="TrackerXAssemblyBox"/>
+
+     <divisionvol axis="kXAxis" number="NBAR" unit="cm" width="0" offset="0">
+       <volumeref ref="TXBar"/>
+     </divisionvol>
+
+   </volume>
+  
+  <volume name="trackerXWorld">
+   <materialref ref="Air"/>
+   <solidref ref="txWorldBox"/>
+
+   <physvol>
+     <volumeref ref="TrackerXAssembly"/>
+     <positionref ref="center"/>
+     <rotationref ref="identity"/>
+   </physvol> 
+
+  </volume>
+
+ </structure>
+
+ <setup name="Default" version="1.0">
+   <world ref="trackerXWorld"/>
+   <!-- world ref="TrackerXAssembly"/ -->
+ </setup>
+
+</gdml>
