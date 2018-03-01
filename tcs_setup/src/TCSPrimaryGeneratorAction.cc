@@ -54,18 +54,21 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
   getline(file, line);  iss.str(line);
   iss >> fParticleName;
   getline(file, line);  iss.str(line);
-  iss >> fEnergy;
+  iss >> fEmin >> fEmax;
   getline(file, line);  iss.str(line);
   iss >> fX0 >> fY0 >> fZ0;
   getline(file, line);  iss.str(line);
   iss >> fDX >> fDY >> fDZ;
+  getline(file, line);  iss.str(line);
+  iss >> fPX >> fPY >> fPZ;
   getline(file, line);  iss.str(line);
   string mode_flag;
   iss >> mode_flag;
 
   file.close();
 
-  fEnergy *= GeV;
+  fEmin *= GeV;
+  fEmax *= GeV;
   fX0 *= cm;
   fY0 *= cm;
   fZ0 *= cm;
@@ -80,11 +83,14 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
 
   G4cout << "TCSPrimaryGeneratorAction: Initial beam definition:" << G4endl;
   G4cout << "  Particle " << fParticleName << G4endl;
-  G4cout << "  Energy = " << fEnergy/GeV << " GeV" << G4endl;
+  G4cout << "  Energy range: " << fEmin/GeV << " -- " << fEmax/GeV << " GeV"
+	 << G4endl;
   G4cout << "  Position: (" << fX0/cm << ", " << fY0/cm << ", " << fZ0/cm
          << ") cm" << G4endl;
   G4cout << "  Beam sizes: " << fDX/mm << " x " << fDY/mm << " x " << fDZ
 	 << " mm^3" << G4endl;
+  G4cout << "  Beam direction: (" << fPX << ", " << fPY << ", " << fPZ
+	 << ")" << G4endl;
   G4cout << "  Requested mode: " << mode_flag << endl;
   if (fMode == tcs)
     G4cout << "  *** TCS mode: will read TCS events from input file! ***"
@@ -106,7 +112,6 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
 
     fParticleGun->SetParticleDefinition(particle);
     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
-    fParticleGun->SetParticleEnergy(fEnergy);
   }
 
 }
@@ -164,6 +169,8 @@ void TCSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   }
   else {
     fParticleGun->SetParticlePosition(G4ThreeVector(x,y,z));
+    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(fPX,fPY,fPZ));
+    fParticleGun->SetParticleEnergy(fEmin + G4UniformRand()*(fEmax-fEmin));
     fParticleGun->GeneratePrimaryVertex(anEvent);
   }
 
