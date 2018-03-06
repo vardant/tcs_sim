@@ -89,7 +89,9 @@ SimpleField::SimpleField()
   for (int i=0; i<5; i++) {
     string tmps;
     file >> tmps;
+    G4cout << tmps << " ";
   }
+  G4cout << G4endl;
 
   double zval,rval,br,bz,btot;
   for (ir=0; ir<fNr; ir++) {
@@ -205,14 +207,19 @@ void SimpleField::GetFieldValue(const double point[4],double *Bfield) const
   //  bool flag = abs(z)<=500 && abs(y)>=300 && abs(x)<=150;   //mm
   bool flag = 1;
 
-  // Check that the point is within the defined region 
+  // Tabulated z-s are > 0, and Bz is simmetric wrt Z
+  // while Br is asimmetric wrt Z!
 
-  z = TMath::Abs(z);   // Tabulated z-s are > 0, and field is simmetric wrt Z
+  bool r_flip = z<0.;  // Flip Br if z<0
+
+  z = TMath::Abs(z);
 
   double r = TMath::Sqrt(x*x + y*y);
 
   if(fDebugFlag && flag) cout << " Radius R = " << r/cm << " cm" << endl;
   
+  // Check that the point is within the defined region 
+
   if   (r>=fMinir && r<=fMaxir &&
 	z>=fMiniz && z<=fMaxiz  ) {
 
@@ -276,7 +283,9 @@ void SimpleField::GetFieldValue(const double point[4],double *Bfield) const
       fRField[rindex+1][zindex  ] *    rlocal  * (1-zlocal) +
       fRField[rindex+1][zindex+1] *    rlocal  *    zlocal  ;
     Br *= fStrength;
-      
+
+    if (r_flip) Br = -Br;    // flip if Z<0
+
     double Bz =
       fZField[rindex  ][zindex  ] * (1-rlocal) * (1-zlocal) +
       fZField[rindex  ][zindex+1] * (1-rlocal) *    zlocal  +
