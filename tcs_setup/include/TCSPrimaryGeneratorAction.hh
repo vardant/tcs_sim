@@ -58,9 +58,11 @@ public:
 
   const G4VPrimaryGenerator* GetPrimaryGenerator() const { return fHEPEvt; }
 
-  enum mode {beam, tcs};
+  enum mode {beam, brem, tcs};
   mode GetMode() {return fMode;}
-  
+
+  double GetBremEnergy(double Ee);
+
 private:
 
   G4ParticleGun*  fParticleGun;    // pointer a to G4 gun class
