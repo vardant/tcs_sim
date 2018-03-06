@@ -58,18 +58,21 @@ public:
 
   const G4VPrimaryGenerator* GetPrimaryGenerator() const { return fHEPEvt; }
 
-  enum mode {beam, tcs};
+  enum mode {beam, brem, tcs};
   mode GetMode() {return fMode;}
-  
+
+  double GetBremEnergy(double Ee);
+
 private:
 
   G4ParticleGun*  fParticleGun;    // pointer a to G4 gun class
 
   // Beam default parameter.
   string fParticleName;
-  G4double fEnergy;
+  G4double fEmin, fEmax;           // energy range
   G4double fX0, fY0, fZ0;          // beam position
   G4double fDX, fDY, fDZ;          // beam dimensions
+  G4double fPX, fPY, fPZ;          // beam direction
   mode fMode;                      // beam/tcs mode  
 
   //  TCSGen fTCSGen;

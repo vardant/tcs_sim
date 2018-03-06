@@ -54,18 +54,21 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
   getline(file, line);  iss.str(line);
   iss >> fParticleName;
   getline(file, line);  iss.str(line);
-  iss >> fEnergy;
+  iss >> fEmin >> fEmax;
   getline(file, line);  iss.str(line);
   iss >> fX0 >> fY0 >> fZ0;
   getline(file, line);  iss.str(line);
   iss >> fDX >> fDY >> fDZ;
+  getline(file, line);  iss.str(line);
+  iss >> fPX >> fPY >> fPZ;
   getline(file, line);  iss.str(line);
   string mode_flag;
   iss >> mode_flag;
 
   file.close();
 
-  fEnergy *= GeV;
+  fEmin *= GeV;
+  fEmax *= GeV;
   fX0 *= cm;
   fY0 *= cm;
   fZ0 *= cm;
@@ -75,29 +78,54 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
 
   if (mode_flag == "tcs")
     fMode = tcs;
+  else if (mode_flag == "beam")
+    fMode = beam;
+  else if (mode_flag == "brem")
+    fMode = brem;
   else
     fMode = beam;
 
   G4cout << "TCSPrimaryGeneratorAction: Initial beam definition:" << G4endl;
-  G4cout << "  Particle " << fParticleName << G4endl;
-  G4cout << "  Energy = " << fEnergy/GeV << " GeV" << G4endl;
-  G4cout << "  Position: (" << fX0/cm << ", " << fY0/cm << ", " << fZ0/cm
-         << ") cm" << G4endl;
-  G4cout << "  Beam sizes: " << fDX/mm << " x " << fDY/mm << " x " << fDZ
-	 << " mm^3" << G4endl;
   G4cout << "  Requested mode: " << mode_flag << endl;
-  if (fMode == tcs)
+  switch (fMode) {
+  case beam :
+    G4cout << "  Beam mode." << G4endl;
+    G4cout << "  Particle " << fParticleName << G4endl;
+    G4cout << "  Energy range: " << fEmin/GeV << " -- " << fEmax/GeV << " GeV"
+	   << G4endl;
+    G4cout << "  Position: (" << fX0/cm << ", " << fY0/cm << ", " << fZ0/cm
+	   << ") cm" << G4endl;
+    G4cout << "  Beam sizes: " << fDX/mm << " x " << fDY/mm << " x " << fDZ
+	   << " mm^3" << G4endl;
+    G4cout << "  Beam direction: (" << fPX << ", " << fPY << ", " << fPZ
+	   << ")" << G4endl;
+    break;
+  case brem :
+    G4cout << "  Bremsstrahlung mode." << G4endl;
+    G4cout << "  Bremsstrahlung photons from electron beam." << G4endl;
+    G4cout << "  e- energy range: " << fEmin/GeV << " -- " << fEmax/GeV <<" GeV"
+	   << G4endl;
+    G4cout << "  Position: (" << fX0/cm << ", " << fY0/cm << ", " << fZ0/cm
+	   << ") cm" << G4endl;
+    G4cout << "  Beam sizes: " << fDX/mm << " x " << fDY/mm << " x " << fDZ
+	   << " mm^3" << G4endl;
+    G4cout << "  Beam direction: (" << fPX << ", " << fPY << ", " << fPZ
+	   << ")" << G4endl;
+    break;
+  case tcs :
     G4cout << "  *** TCS mode: will read TCS events from input file! ***"
 	   << G4endl;
-  else
-    G4cout << "  Will use Beam source." << G4endl;
-
+    break;
+  default:
+    G4cout << "  Mode not defined, assume beam mode." << G4endl;
+  }
+  
   if (fMode == tcs) {
     //    fTCSEntryNum = 0;
     //    fTCSPartNum = 0;
     fHEPEvt = new G4HEPEvtInterface("tcs_gen.data");
   }
-  else {
+  else if (fMode == beam) {
     G4int n_particle = 1;
     fParticleGun  = new G4ParticleGun(n_particle);
 
@@ -106,9 +134,18 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
 
     fParticleGun->SetParticleDefinition(particle);
     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
-    fParticleGun->SetParticleEnergy(fEnergy);
   }
+  else if (fMode == brem) {
+    G4int n_particle = 1;
+    fParticleGun  = new G4ParticleGun(n_particle);
 
+    G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+    G4ParticleDefinition* particle=particleTable->FindParticle("gamma");
+
+    fParticleGun->SetParticleDefinition(particle);
+    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
+  }
+  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -162,11 +199,33 @@ void TCSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     fHEPEvt->SetParticlePosition(G4ThreeVector(x,y,z));
     fHEPEvt->GeneratePrimaryVertex(anEvent);
   }
-  else {
+  else if (fMode == beam) {
     fParticleGun->SetParticlePosition(G4ThreeVector(x,y,z));
+    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(fPX,fPY,fPZ));
+    fParticleGun->SetParticleEnergy(fEmin + G4UniformRand()*(fEmax-fEmin));
+    fParticleGun->GeneratePrimaryVertex(anEvent);
+  }
+  else if (fMode == brem) {
+    fParticleGun->SetParticlePosition(G4ThreeVector(x,y,z));
+    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(fPX,fPY,fPZ));
+    double Ee = fEmin + G4UniformRand()*(fEmax-fEmin);
+    fParticleGun->SetParticleEnergy(GetBremEnergy(Ee));
     fParticleGun->GeneratePrimaryVertex(anEvent);
   }
 
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+double TCSPrimaryGeneratorAction::GetBremEnergy(double Ee) {
+  const double fmax = 4./3.;
+  double y, f;
+  do {
+    y = G4UniformRand();
+    f = 4./3.-4./3.*y+y*y;
+    if (G4UniformRand()*fmax < f) break;
+  } while (true);
+  //  cout << "Brem. Energy = " << Ee*y << endl;
+  //  getchar();
+  return Ee*y;
+}
