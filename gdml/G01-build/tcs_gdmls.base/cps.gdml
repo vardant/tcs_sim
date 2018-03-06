@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation=
+      "/work/hallc/nps/vardan/G4.nps/g4.10.03/GDML_3_1_6/schema/gdml.xsd">
+
+ <define>
+   <constant name="TWOPI" value="2.*pi"/>
+
+   <!-- quantity name="cpsx" type="length" value="2.50" unit="m"/ -->
+   <!-- quantity name="cpsy" type="length" value="2.50" unit="m"/ -->
+   <!-- quantity name="cpsz" type="length" value="2.60" unit="m"/ -->
+
+   <quantity name="cpsx" type="length" value="2.00" unit="m"/>
+   <quantity name="cpsy" type="length" value="2.00" unit="m"/>
+   <quantity name="cpsz" type="length" value="2.00" unit="m"/>
+
+   <quantity name="cps_pipe_d" type="length" value="2." unit="mm"/>
+
+   <position name="center" x="0" y="0" z="0"/>
+   <rotation name="identity" x="0" y="0" z="0"/>
+
+   <quantity name="xext" type="length" value="2.51" unit="m"/>
+   <quantity name="yext" type="length" value="2.76" unit="m"/>
+   <quantity name="zext" type="length" value="3.01" unit="m"/>
+ </define>
+
+ <materials>
+
+  <element name="Oxygen" formula="O" Z="8."> <atom value="16.0"/>   </element>
+  <element name="Nitrogen" formula="N" Z="7."> <atom value="14.01"/>  </element>
+  <element name="Tungsten" formula="W" Z="74."> <atom value="183.84"/>
+  </element>
+
+  <material name="Air">
+   <D value="1.290" unit="mg/cm3"/>
+   <fraction n="0.7" ref="Nitrogen"/>
+   <fraction n="0.3" ref="Oxygen"/>
+  </material>
+
+  <material name="TungstenPouder">
+   <D value="16" unit="g/cm3"/>
+   <fraction n="1." ref="Tungsten"/>
+  </material>
+  
+ </materials>
+
+ <solids> 
+
+   <box name="cpsWorldBox" x="xext" y="yext" z="zext"/>
+   <box name="cpsBox" x="cpsx" y="cpsy" z="cpsz"/>
+   <tube name="cpsPipe" rmax="cps_pipe_d/2" z="zext" deltaphi="TWOPI" />
+
+   <subtraction name="cpsAssemblyBox" >
+    <first ref="cpsBox" />
+    <second ref="cpsPipe"/>
+    <positionref ref="center" />
+    <rotationref ref="identity" />
+  </subtraction>
+
+ </solids>
+
+ <structure>  
+
+   <volume name="cpsAssembly">
+     <materialref ref="TungstenPouder"/>
+     <solidref ref="cpsAssemblyBox"/>
+     <auxiliary auxtype="Color" auxvalue="yellow"/>
+   </volume>
+  
+   <volume name="cpsWorld">
+     <materialref ref="Air"/>
+     <solidref ref="cpsWorldBox"/>
+
+     <physvol>
+       <volumeref ref="cpsAssembly"/>
+       <positionref ref="center"/>
+       <rotationref ref="identity"/>
+     </physvol> 
+
+   </volume>
+
+ </structure>
+
+ <setup name="Default" version="1.0">
+   <!-- world ref="cpsWorld"/ -->
+   <world ref="cpsAssembly"/>
+ </setup>
+
+</gdml>
