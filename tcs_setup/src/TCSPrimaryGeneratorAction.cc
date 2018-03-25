@@ -35,6 +35,7 @@
 #include "G4ParticleDefinition.hh"
 #include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
+#include <TMath.h>
 
 //#include "TCSGen.hh"
 #include "G4HEPEvtInterface.hh"
@@ -209,7 +210,7 @@ void TCSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     fParticleGun->SetParticlePosition(G4ThreeVector(x,y,z));
     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(fPX,fPY,fPZ));
     double Ee = fEmin + G4UniformRand()*(fEmax-fEmin);
-    fParticleGun->SetParticleEnergy(GetBremEnergy(Ee));
+    fParticleGun->SetParticleEnergy(GetBremEnergy(Ee, 10.*MeV, Ee));
     fParticleGun->GeneratePrimaryVertex(anEvent);
   }
 
@@ -217,15 +218,32 @@ void TCSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-double TCSPrimaryGeneratorAction::GetBremEnergy(double Ee) {
-  const double fmax = 4./3.;
-  double y, f;
+double TCSPrimaryGeneratorAction::GetBremEnergy(double Ee, double Eg_min,
+						double Eg_max) {
+
+  // Sample energy of bremsstrahlung photon from primary electron of energy Ee,
+  // within the range from Eg_min -- Eg_max.
+
+  // Acceptance-rejection (von Neumann) method.
+  // Sample y from f(y)=1/y*(y/3-4/3*y+y^2).
+  // Take g(y)=4/3*1/y, such that g(y)>=f(y);
+  // a) sample y from normalized 1/y.
+  // b) accept y if u <f(y)/(4/3*1/y), u from uniform random distribution.
+  // Return y*Ee.
+
+  double y_min = Eg_min/Ee;
+  double y_max = Eg_max/Ee;
+  double y;
+
   do {
-    y = G4UniformRand();
-    f = 4./3.-4./3.*y+y*y;
-    if (G4UniformRand()*fmax < f) break;
+    double u1 = G4UniformRand();
+    y = y_min*TMath::Power(y_max/y_min, u1);   //y from 1/y distrib.
+    double prob = 1-y+3/4*y*y;                        //f(y)/(4/3*1/y)
+    if (G4UniformRand() < prob) break;
   } while (true);
-  //  cout << "Brem. Energy = " << Ee*y << endl;
+
+  //  cout << "Brem. Energy = " << Ee*y/MeV << endl;
   //  getchar();
+
   return Ee*y;
 }

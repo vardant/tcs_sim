@@ -61,7 +61,7 @@ public:
   enum mode {beam, brem, tcs};
   mode GetMode() {return fMode;}
 
-  double GetBremEnergy(double Ee);
+  double GetBremEnergy(double Ee, double Eg_min, double Eg_max);
 
 private:
 
