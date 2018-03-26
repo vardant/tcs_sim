@@ -77,6 +77,7 @@ public:
   void FillHisto(G4int id, G4double bin, G4double weight = 1.0);
   void Normalize(G4int id, G4double fac);    
 
+  void SetBeam(double e, G4ThreeVector p, G4ThreeVector orig, int pid);
   void AddHit(double edep, int pid);
   void AddHit(int det, uint col, uint row, double edep, int pid);
   void AddHit(int det, uint chan, double edep, int pid,
@@ -109,6 +110,17 @@ public:
             ? false : true);
   }
 
+  void ResetBeam() {
+    fBeam.E =0;
+    fBeam.Px = 0.;
+    fBeam.Py = 0.;
+    fBeam.Pz = 0.;
+    fBeam.X = 0.;
+    fBeam.Y = 0.;
+    fBeam.Z = 0.;
+    fBeam.PID = 0;
+  };
+
   void ResetTarget() {
     fTargetHitCont.Edep.clear();
     fTargetHitCont.PID.clear();
@@ -137,6 +149,7 @@ public:
   };
 
   void Reset() {
+    ResetBeam();
     ResetTarget();
     ResetCalo();
     ResetHodo(fHodoXHitCont);
@@ -159,6 +172,7 @@ private:
   ifstream fKinFile;
   TFile*   fRootFile;
 
+  TTree*   fBeamTree;
   TTree*   fTargetTree;
   TTree*   fCaloTree;
   TTree*   fHodoXTree;
@@ -168,6 +182,13 @@ private:
   TTree*   fKinTree;
 
   TH1D*    fHisto[MaxHisto];            
+
+  struct {
+    double E;
+    double Px, Py, Pz;
+    double X, Y, Z;
+    int PID;
+  } fBeam;
 
   TargetHitContainer fTargetHitCont;
 

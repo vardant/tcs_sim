@@ -262,6 +262,14 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
 
   }
 
+  G4PrimaryVertex* vertex = event->GetPrimaryVertex();
+  G4ThreeVector origin = vertex->GetPosition();
+  G4PrimaryParticle* particle = vertex->GetPrimary();
+  double E = particle->GetTotalEnergy();
+  G4ThreeVector P = particle->GetMomentum();
+  int PID = particle->GetPDGcode();
+  fHistoManager->SetBeam(E, P, origin, PID);
+
   if (CC || HXC || HYC || TXC || TYC) {
     fHistoManager->FillTrees();
     //    getchar();

@@ -38,7 +38,8 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-TCSHistoManager::TCSHistoManager() : fKinFile(0), fRootFile(0), fTargetTree(0),
+TCSHistoManager::TCSHistoManager() : fKinFile(0), fRootFile(0),
+				     fBeamTree(0), fTargetTree(0),
 				     fCaloTree(0),
 				     fHodoXTree(0), fHodoYTree(0),
 				     fTrackerXTree(0), fTrackerYTree(0)
@@ -60,7 +61,7 @@ TCSHistoManager::TCSHistoManager() : fKinFile(0), fRootFile(0), fTargetTree(0),
 
 ////TCSHistoManager::TCSHistoManager(char *kname, char *rname) :
 TCSHistoManager::TCSHistoManager(string kname, string rname) :
-  fKinFile(0), fRootFile(0), fTargetTree(0), fCaloTree(0),
+  fKinFile(0), fRootFile(0), fBeamTree(0), fTargetTree(0), fCaloTree(0),
   fHodoXTree(0), fHodoYTree(0),
   fTrackerXTree(0), fTrackerYTree(0)
 {
@@ -125,6 +126,16 @@ void TCSHistoManager::book()
    
  fHisto[1] = new TH1D("h1", "Total Edep(MeV)", 100, 0., 5000.);
  if (!fHisto[1]) G4cout << "\n can't create histo 1" << G4endl;
+
+ fBeamTree = new TTree("beam", "TCS beam");
+ fBeamTree->Branch("e", &(fBeam.E));
+ fBeamTree->Branch("px", &(fBeam.Px));
+ fBeamTree->Branch("py", &(fBeam.Py));
+ fBeamTree->Branch("pz", &(fBeam.Pz));
+ fBeamTree->Branch("x", &(fBeam.X));
+ fBeamTree->Branch("y", &(fBeam.Y));
+ fBeamTree->Branch("z", &(fBeam.Z));
+ fBeamTree->Branch("pid", &(fBeam.PID));
 
  fTargetTree = new TTree("target", "TCS Target per event hit collections");
  fTargetTree->Branch("edepcont", &(fTargetHitCont.Edep));
@@ -198,6 +209,7 @@ void TCSHistoManager::save()
 void TCSHistoManager::autosave() {
   TDirectory* savedir = gDirectory;
   fRootFile->cd();
+  fBeamTree->AutoSave();
   fTargetTree->AutoSave();
   fCaloTree->AutoSave(); // save tree to file
   fHodoXTree->AutoSave();
@@ -239,6 +251,12 @@ void TCSHistoManager::Normalize(G4int ih, G4double fac)
 
 void TCSHistoManager::FillTrees()
 {
+  if (fBeamTree) {
+    //G4cout <<"Filling Tree right now! fHitList size = " << fHitList.size()
+    //<< "\n";
+    fBeamTree->Fill();
+  }
+
   if (fTargetTree) {
     //G4cout <<"Filling Tree right now! fHitList size = " << fHitList.size()
     //<< "\n";
@@ -284,6 +302,20 @@ void TCSHistoManager::FillTrees()
     fKinTree->Fill();
   }
 
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void TCSHistoManager::SetBeam(double e, G4ThreeVector p, G4ThreeVector orig,
+			      int pid) {
+  fBeam.E = e;
+  fBeam.Px = p.getX();
+  fBeam.Py = p.getY();
+  fBeam.Pz = p.getZ();
+  fBeam.X = orig.getX();
+  fBeam.Y = orig.getY();
+  fBeam.Z = orig.getZ();
+  fBeam.PID = pid;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
