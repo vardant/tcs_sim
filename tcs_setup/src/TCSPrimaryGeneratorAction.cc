@@ -238,7 +238,7 @@ double TCSPrimaryGeneratorAction::GetBremEnergy(double Ee, double Eg_min,
   do {
     double u1 = G4UniformRand();
     y = y_min*TMath::Power(y_max/y_min, u1);   //y from 1/y distrib.
-    double prob = 1-y+3/4*y*y;                        //f(y)/(4/3*1/y)
+    double prob = 1.-y+3./4.*y*y;                        //f(y)/(4/3*1/y)
     if (G4UniformRand() < prob) break;
   } while (true);
 
