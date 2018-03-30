@@ -33,8 +33,11 @@
 #include "TCSHistoManager.hh"
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4ParticleTable.hh"
 
 #include "TCSPrimaryGeneratorAction.hh"
+
+using namespace std;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -187,6 +190,10 @@ void TCSHistoManager::book()
  fKinTree->Branch("flux_factor",&fKinVar.flux_factor);
  fKinTree->Branch("crs_BH",&fKinVar.crs_BH);
  fKinTree->Branch("Eg",&fKinVar.Eg);
+ fKinTree->Branch("pminus",fKinVar.P_minus_lab,"pminus[4]/D");
+ fKinTree->Branch("pplus",fKinVar.P_plus_lab,"pplus[4]/D");
+ fKinTree->Branch("precoil",fKinVar.P_recoil_lab,"precoil[4]/D");
+ fKinTree->Branch("vertex",fKinVar.vertexXYZ,"vertex[3]/D");
 
  G4cout << "\n----> Root file is opened in " << fRootFileName << G4endl;
 
@@ -316,6 +323,46 @@ void TCSHistoManager::SetBeam(double e, G4ThreeVector p, G4ThreeVector orig,
   fBeam.Y = orig.getY();
   fBeam.Z = orig.getZ();
   fBeam.PID = pid;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void TCSHistoManager::SetTCSVertex(double e, G4ThreeVector p,
+				   G4ThreeVector orig, int pid) {
+
+  //  cout << "TCSHistoManager::SetTCSVertex:" << endl;
+
+  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+  G4ParticleDefinition* electron=particleTable->FindParticle("e-");
+  G4ParticleDefinition* positron=particleTable->FindParticle("e+");
+  G4ParticleDefinition* proton=particleTable->FindParticle("proton");
+
+  //  cout << "   Got particle definitions..." << endl;
+
+  int electron_pid = electron->GetPDGEncoding();
+  int positron_pid = positron->GetPDGEncoding();
+  int proton_pid = proton->GetPDGEncoding();
+
+  //  cout << "  electron_pid = " << electron_pid << endl;
+  //  cout << "  positron_pid = " << positron_pid << endl;
+  //  cout << "  proton_pid   = " << proton_pid << endl;
+  //  getchar();
+
+  double P[4] = {e, p[0], p[1], p[2]};
+  //  cout << "   P: " << P[0] << " " << P[1] << " " << P[2] << " " << P[3]
+  //  << endl;
+  //  getchar();
+
+  if (pid == electron_pid)
+    copy(P, P+4, fKinVar.P_minus_lab);
+  else if (pid == positron_pid)
+    copy(P, P+4, fKinVar.P_plus_lab);
+  else if (pid == proton_pid)
+    copy(P, P+4, fKinVar.P_recoil_lab);
+
+  for (int i=0; i<3; i++)
+    fKinVar.vertexXYZ[i] = orig[i];
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

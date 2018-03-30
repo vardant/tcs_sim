@@ -78,6 +78,7 @@ public:
   void Normalize(G4int id, G4double fac);    
 
   void SetBeam(double e, G4ThreeVector p, G4ThreeVector orig, int pid);
+  void SetTCSVertex(double e, G4ThreeVector p, G4ThreeVector orig, int pid);
   void AddHit(double edep, int pid);
   void AddHit(int det, uint col, uint row, double edep, int pid);
   void AddHit(int det, uint chan, double edep, int pid,
@@ -148,6 +149,28 @@ public:
     TrackerHitCont.PID.clear();
   };
 
+  void ResetKinVar() {
+    fKinVar.Q2 = 0.;
+    fKinVar.t = 0.;
+    fKinVar.s = 0.;
+    fKinVar.xi = 0.;
+    fKinVar.tau = 0.;
+    fKinVar.eta = 0.;
+    fKinVar.phi_cm = 0.;
+    fKinVar.the_cm = 0.;
+    fKinVar.psf = 0.;
+    fKinVar.flux_factor = 0.;
+    fKinVar.crs_BH = 0.;
+    fKinVar.Eg = 0.;
+    for (int i=0; i<4; i++) {
+      fKinVar.P_minus_lab[i] = 0.;
+      fKinVar.P_plus_lab[i] = 0.;
+      fKinVar.P_recoil_lab[i] = 0.;
+    };
+    for (int i=0; i<3; i++)
+      fKinVar.vertexXYZ[i] = 0.;
+  }
+
   void Reset() {
     ResetBeam();
     ResetTarget();
@@ -156,6 +179,7 @@ public:
     ResetHodo(fHodoYHitCont);
     ResetTracker(fTrackerXHitCont);
     ResetTracker(fTrackerYHitCont);
+    ResetKinVar();
   };
 
   void FillTrees();
@@ -219,6 +243,10 @@ private:
     double flux_factor;
     double crs_BH;
     double Eg;
+    double P_minus_lab[4];   //momenta at the TCS vertex
+    double P_plus_lab[4];
+    double P_recoil_lab[4];
+    double vertexXYZ[3];
   } fKinVar;
 
   friend class TCSEventAction;

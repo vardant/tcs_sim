@@ -262,13 +262,40 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
 
   }
 
-  G4PrimaryVertex* vertex = event->GetPrimaryVertex();
-  G4ThreeVector origin = vertex->GetPosition();
-  G4PrimaryParticle* particle = vertex->GetPrimary();
-  double E = particle->GetTotalEnergy();
-  G4ThreeVector P = particle->GetMomentum();
-  int PID = particle->GetPDGcode();
-  fHistoManager->SetBeam(E, P, origin, PID);
+  int nvertex =  event->GetNumberOfPrimaryVertex();
+
+  //  cout << "TCSEventAction::EndOfEventAction: nvertex = " << nvertex << endl;
+
+  for (int iv=0; iv<nvertex; iv++) {
+
+    G4PrimaryVertex* vertex = event->GetPrimaryVertex(iv);
+    //    vertex->Print();
+    //    getchar();
+
+    G4ThreeVector origin = vertex->GetPosition();
+
+    int nparticles = vertex->GetNumberOfParticle();
+    //    cout << "   number of paticles = " << nparticles << endl;
+
+    if (nparticles != 1 && nparticles != 3)
+      cout << "TCSEventAction::EndOfEventAction: wrong nparticles = "
+	   << nparticles << " ! *****" << endl;
+
+    for (int ip=0; ip<nparticles; ip++) {
+
+      G4PrimaryParticle* particle = vertex->GetPrimary(ip);
+      double E = particle->GetTotalEnergy();
+      G4ThreeVector P = particle->GetMomentum();
+      int PID = particle->GetPDGcode();
+
+      fHistoManager->SetTCSVertex(E, P, origin, PID);
+
+      if (iv==0 && ip==0)
+	fHistoManager->SetBeam(E, P, origin, PID);
+
+    }
+
+  }
 
   if (CC || HXC || HYC || TXC || TYC) {
     fHistoManager->FillTrees();
