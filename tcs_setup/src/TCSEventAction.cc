@@ -243,7 +243,8 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
 
     if(TXC) {
       //      G4cout << "    Add TrackerX hits:" << G4endl;
-      AddTrackerHit(TXC, fHistoManager->fTrackerXHitCont);
+      AddTrackerHit(TXC, fHistoManager->fTrackerXHitCont,
+		         fHistoManager->fTrackerXfluxCont);
     }
 
   }
@@ -359,6 +360,37 @@ void TCSEventAction::AddTrackerHit(TCSTrackerHitsCollection* HC,
           G4double energy=(*HC)[i]->GetEnergy();
           fHistoManager->AddHit(detpos, chan, energy/MeV, pid, TrackerHitCont);
         }
+      }
+
+      //Check hit container's consistency first.
+      if (!fHistoManager->CheckTrackerHitCont(TrackerHitCont))
+        cout <<"*** TCSEventAction::EndOfEventAction: "
+             << "hodoscope hit container inconsistent! ***" << endl;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void TCSEventAction::AddTrackerHit(TCSTrackerHitsCollection* HC,
+				   TrackerHitContainer& TrackerHitCont,
+				   TrackerHitContainer& TrackerFluxCont)
+{
+      int n_hit = HC->entries();
+      //      G4cout << "      HC n_hit = " << n_hit << G4endl;
+
+      for(int i=0;i<n_hit;i++) {
+        G4int boundary_flag=(*HC)[i]->GetBoundaryFlag();
+	//	G4cout << "        boundary_flag = " << boundary_flag << G4endl;
+	G4ThreeVector pos=(*HC)[i]->GetPos();
+	G4int detpos = pos.getY() > 0. ? 1 : -1;
+	G4int chan =(*HC)[i]->GetChannel();
+	G4int pid =(*HC)[i]->GetPID();
+	G4double energy=(*HC)[i]->GetEnergy();
+
+        if (boundary_flag == 0)
+          fHistoManager->AddHit(detpos, chan, energy/MeV, pid, TrackerHitCont);
+	else
+          fHistoManager->AddFlux(detpos,chan, energy/MeV, pid, TrackerFluxCont);
+
       }
 
       //Check hit container's consistency first.

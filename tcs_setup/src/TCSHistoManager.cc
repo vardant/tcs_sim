@@ -45,7 +45,8 @@ TCSHistoManager::TCSHistoManager() : fKinFile(0), fRootFile(0),
 				     fBeamTree(0), fTargetTree(0),
 				     fCaloTree(0),
 				     fHodoXTree(0), fHodoYTree(0),
-				     fTrackerXTree(0), fTrackerYTree(0)
+				     fTrackerXTree(0), fTrackerYTree(0),
+				     fTrackerXfluxTree(0)
 {
   fKinFileName ="tcs_gen.kin_data";
   fRootFileName="tcs_setup.root";
@@ -66,7 +67,7 @@ TCSHistoManager::TCSHistoManager() : fKinFile(0), fRootFile(0),
 TCSHistoManager::TCSHistoManager(string kname, string rname) :
   fKinFile(0), fRootFile(0), fBeamTree(0), fTargetTree(0), fCaloTree(0),
   fHodoXTree(0), fHodoYTree(0),
-  fTrackerXTree(0), fTrackerYTree(0)
+  fTrackerXTree(0), fTrackerYTree(0), fTrackerXfluxTree(0)
 {
   fKinFileName = kname;  
   fRootFileName= rname;  
@@ -195,6 +196,13 @@ void TCSHistoManager::book()
  fKinTree->Branch("precoil",fKinVar.P_recoil_lab,"precoil[4]/D");
  fKinTree->Branch("vertex",fKinVar.vertexXYZ,"vertex[3]/D");
 
+ fTrackerXfluxTree = new TTree("txflux",
+			   "TCS X trackers' per event flux collections");
+ fTrackerXfluxTree->Branch("detcont", &(fTrackerXfluxCont.Det));
+ fTrackerXfluxTree->Branch("chancont", &(fTrackerXfluxCont.Chan));
+ fTrackerXfluxTree->Branch("econt", &(fTrackerXfluxCont.Edep));
+ fTrackerXfluxTree->Branch("pidcont", &(fTrackerXfluxCont.PID));
+
  G4cout << "\n----> Root file is opened in " << fRootFileName << G4endl;
 
 }
@@ -224,6 +232,7 @@ void TCSHistoManager::autosave() {
   fTrackerXTree->AutoSave();
   fTrackerYTree->AutoSave();
   fKinTree->AutoSave();
+  fTrackerXfluxTree->AutoSave();
   fRootFile->SaveSelf();  // save file directory containing this tree
   savedir->cd();
   cout << "TCSHistoManager::autosave: saved data in root file" << endl;
@@ -298,6 +307,12 @@ void TCSHistoManager::FillTrees()
     //G4cout <<"Filling Tree right now! fHitList size = " << fHitList.size()
     //<< "\n";
     fTrackerYTree->Fill();
+  }
+
+  if (fTrackerXfluxTree) {
+    //G4cout <<"Filling Tree right now! fHitList size = " << fHitList.size()
+    //<< "\n";
+    fTrackerXfluxTree->Fill();
   }
 
   fKinFile >> fKinVar.Q2 >> fKinVar.t >> fKinVar.s >> fKinVar.xi >> fKinVar.tau
@@ -493,6 +508,21 @@ void TCSHistoManager::AddHit(int det, uint chan, double edep, int pid,
     TrackerHitCont.PID.push_back(pid);
     //G4cout << "          TCSHistoManager::AddHit: hit pushed back" << G4endl;
   }
+
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void TCSHistoManager::AddFlux(int det, uint chan, double edep, int pid,
+                             TrackerHitContainer& TrackerFluxCont) {
+
+  // Add flux particle to a tracker flux container.
+
+  TrackerFluxCont.Det.push_back(det);
+  TrackerFluxCont.Chan.push_back(chan);
+  TrackerFluxCont.Edep.push_back(edep);    //energy of particle in this case
+  TrackerFluxCont.PID.push_back(pid);
+  //G4cout << "          TCSHistoManager::AddFlux: hit pushed back" << G4endl;
 
 }
 

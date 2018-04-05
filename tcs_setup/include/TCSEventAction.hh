@@ -70,6 +70,9 @@ private:
   void AddHodoHit(TCSHodoHitsCollection* HC, HodoHitContainer& HodoHitCont);
   void AddTrackerHit(TCSTrackerHitsCollection* HC,
 		     TrackerHitContainer& TrackerHitCont);
+  void AddTrackerHit(TCSTrackerHitsCollection* HC,
+		     TrackerHitContainer& TrackerHitCont,
+		     TrackerHitContainer& TrackerFluxCont);
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -85,6 +85,8 @@ public:
 	      HodoHitContainer &HodoHitCont);
   void AddHit(int det, uint chan, double edep, int pid,
 	      TrackerHitContainer &TrackerHitCont);
+  void AddFlux(int det, uint chan, double edep, int pid,
+	       TrackerHitContainer &TrackerFluxCont);
 
   bool CheckTargetHitCont() {
     return (fTargetHitCont.Edep.size() == fTargetHitCont.PID.size());
@@ -180,6 +182,7 @@ public:
     ResetTracker(fTrackerXHitCont);
     ResetTracker(fTrackerYHitCont);
     ResetKinVar();
+    ResetTracker(fTrackerXfluxCont);
   };
 
   void FillTrees();
@@ -205,6 +208,8 @@ private:
   TTree*   fTrackerYTree;
   TTree*   fKinTree;
 
+  TTree*   fTrackerXfluxTree;
+
   TH1D*    fHisto[MaxHisto];            
 
   struct {
@@ -229,6 +234,8 @@ private:
 
   TrackerHitContainer fTrackerXHitCont;
   TrackerHitContainer fTrackerYHitCont;
+
+  TrackerHitContainer fTrackerXfluxCont;
 
   struct KinVar {
     double Q2;

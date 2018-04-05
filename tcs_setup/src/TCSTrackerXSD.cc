@@ -79,10 +79,8 @@ void TCSTrackerXSD::Initialize(G4HCofThisEvent* hce)
 
 G4bool TCSTrackerXSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 {
-//  G4int pid = step->GetTrack()->GetDefinition()->GetPDGEncoding();
   TCSTrackInformation* info =
     (TCSTrackInformation*)(step->GetTrack()->GetUserInformation());
-  G4int pid = info->GetOriginalParticle()->GetPDGEncoding();
 
   G4ThreeVector pos = step->GetTrack()->GetPosition();
 
@@ -93,6 +91,7 @@ G4bool TCSTrackerXSD::ProcessHits(G4Step* step, G4TouchableHistory*)
       "TXBar_PV" &&
       step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary) {
     G4int chan =step->GetPostStepPoint()->GetTouchableHandle()->GetCopyNumber();
+    G4int pid = step->GetTrack()->GetDefinition()->GetPDGEncoding();
     G4double ekin = step->GetTrack()->GetKineticEnergy();
     TCSTrackerHit* hit = new TCSTrackerHit(chan, pid, ekin, pos, 1);
     fHitsCollection->insert( hit );
@@ -106,6 +105,7 @@ G4bool TCSTrackerXSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   if (touch->GetVolume(1)->GetName() == "TrackerXAssembly_PV" &&
       touch->GetVolume()->GetName() == "TXBar_PV") {
     G4int chan = touch->GetCopyNumber();
+    G4int pid = info->GetOriginalParticle()->GetPDGEncoding();
     G4double edep = step->GetTotalEnergyDeposit();
     TCSTrackerHit* hit = new TCSTrackerHit(chan, pid, edep, pos, 0);
     fHitsCollection->insert( hit );
