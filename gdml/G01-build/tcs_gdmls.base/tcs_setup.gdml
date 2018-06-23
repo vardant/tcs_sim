@@ -162,11 +162,11 @@
      <rotationref ref="calo_neg_rot"/>
    </physvol>
 
-   <!-- physvol -->
-     <!-- file name="tcs_gdmls/cps.gdml"/ -->
-     <!-- positionref ref="cps_shift"/ -->
-     <!-- rotationref ref="identity"/ -->
-   <!-- /physvol -->
+   <physvol>
+     <file name="tcs_gdmls/cps.gdml"/>
+     <positionref ref="cps_shift"/>
+     <rotationref ref="identity"/>
+   </physvol>
 
   </volume>
 
