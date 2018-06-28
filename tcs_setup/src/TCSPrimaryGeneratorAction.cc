@@ -104,8 +104,8 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
   case brem :
     G4cout << "  Bremsstrahlung mode." << G4endl;
     G4cout << "  Bremsstrahlung photons from electron beam." << G4endl;
-    G4cout << "  e- energy range: " << fEmin/GeV << " -- " << fEmax/GeV <<" GeV"
-	   << G4endl;
+    G4cout << "  Bremsstrahlung photon energy range: " << fEmin/GeV << " -- "
+	   << fEmax/GeV <<" GeV" << G4endl;
     G4cout << "  Position: (" << fX0/cm << ", " << fY0/cm << ", " << fZ0/cm
 	   << ") cm" << G4endl;
     G4cout << "  Beam sizes: " << fDX/mm << " x " << fDY/mm << " x " << fDZ
@@ -209,8 +209,9 @@ void TCSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   else if (fMode == brem) {
     fParticleGun->SetParticlePosition(G4ThreeVector(x,y,z));
     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(fPX,fPY,fPZ));
-    double Ee = fEmin + G4UniformRand()*(fEmax-fEmin);
-    fParticleGun->SetParticleEnergy(GetBremEnergy(Ee, 10.*MeV, Ee));
+    ////    double Ee = fEmin + G4UniformRand()*(fEmax-fEmin);
+    ////    fParticleGun->SetParticleEnergy(GetBremEnergy(Ee, 10.*MeV, Ee));
+    fParticleGun->SetParticleEnergy(GetBremEnergy(fEmax, fEmin, fEmax));
     fParticleGun->GeneratePrimaryVertex(anEvent);
   }
 
