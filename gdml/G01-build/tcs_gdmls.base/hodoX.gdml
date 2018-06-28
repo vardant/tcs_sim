@@ -5,12 +5,18 @@
 
   <!-- TCS X hodoscope -->
   <!-- Adjusted to the SANE OVC -->
+  <!-- Remove "sheet of flame" at the middle of acceptance -->
 
  <define>
-   <constant name="NBAR" value="27"/>
-   <constant name="BARX" value="4."/>
-   <constant name="BARY" value="48."/>
+   <!-- Make bars 2 cm wide to reduce background rates -->
+   <!-- constant name="NBAR" value="27"/ -->
+   <!-- constant name="BARX" value="4."/ -->
+   <!-- constant name="NBAR" value="54"/ -->
+   <constant name="NBAR" value="23"/>
+   <constant name="BARX" value="2.05"/>
+   <constant name="BARY" value="47.15"/>
    <constant name="BARZ" value="1."/>
+   <!-- constant name="BARZ" value="0.5"/ Dave's suggestion -->
 
    <constant name="eps" value="0.000001"/>
 

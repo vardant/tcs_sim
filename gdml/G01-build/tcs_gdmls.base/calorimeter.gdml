@@ -4,12 +4,12 @@
       "/work/hallc/nps/vardan/G4.nps/g4.10.03/GDML_3_1_6/schema/gdml.xsd">
 
   <!-- Adjusted to the SANE OVC -->
+  <!-- Remove "sheet of flame" at the middle of acceptance -->
 
  <define>
-   <constant name="NCOL" value="50"/>
+   <!-- constant name="NCOL" value="50"/ -->
+   <constant name="NCOL" value="23"/>
    <constant name="NROW" value="23"/>
-   <!-- constant name="NCOL" value="3"/ -->
-   <!-- constant name="NROW" value="6"/ -->
    <constant name="BLKX" value="2.05"/>
    <constant name="BLKZ" value="20."/>
 
