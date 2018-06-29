@@ -44,9 +44,10 @@ using namespace std;
 TCSHistoManager::TCSHistoManager() : fKinFile(0), fRootFile(0),
 				     fBeamTree(0), fTargetTree(0),
 				     fCaloTree(0),
-				     fHodoXTree(0), fHodoYTree(0),
-				     fTrackerXTree(0), fTrackerYTree(0),
-				     fTrackerXfluxTree(0)
+				     fHodoXTree(0), fHodoYTree(0)
+				     ////,
+				     ////    fTrackerXTree(0), fTrackerYTree(0),
+				     ////    fTrackerXfluxTree(0)
 {
   fKinFileName ="tcs_gen.kin_data";
   fRootFileName="tcs_setup.root";
@@ -66,8 +67,9 @@ TCSHistoManager::TCSHistoManager() : fKinFile(0), fRootFile(0),
 ////TCSHistoManager::TCSHistoManager(char *kname, char *rname) :
 TCSHistoManager::TCSHistoManager(string kname, string rname) :
   fKinFile(0), fRootFile(0), fBeamTree(0), fTargetTree(0), fCaloTree(0),
-  fHodoXTree(0), fHodoYTree(0),
-  fTrackerXTree(0), fTrackerYTree(0), fTrackerXfluxTree(0)
+  fHodoXTree(0), fHodoYTree(0)
+  ////,
+  ////  fTrackerXTree(0), fTrackerYTree(0), fTrackerXfluxTree(0)
 {
   fKinFileName = kname;  
   fRootFileName= rname;  
@@ -164,19 +166,19 @@ void TCSHistoManager::book()
  fHodoYTree->Branch("edepcont", &(fHodoYHitCont.Edep));
  fHodoYTree->Branch("pidcont", &(fHodoYHitCont.PID));
 
- fTrackerXTree = new TTree("trackerx",
-			   "TCS X trackers' per event hit collections");
- fTrackerXTree->Branch("detcont", &(fTrackerXHitCont.Det));
- fTrackerXTree->Branch("chancont", &(fTrackerXHitCont.Chan));
- fTrackerXTree->Branch("edepcont", &(fTrackerXHitCont.Edep));
- fTrackerXTree->Branch("pidcont", &(fTrackerXHitCont.PID));
+ //// fTrackerXTree = new TTree("trackerx",
+ ////			   "TCS X trackers' per event hit collections");
+ //// fTrackerXTree->Branch("detcont", &(fTrackerXHitCont.Det));
+ //// fTrackerXTree->Branch("chancont", &(fTrackerXHitCont.Chan));
+ //// fTrackerXTree->Branch("edepcont", &(fTrackerXHitCont.Edep));
+ //// fTrackerXTree->Branch("pidcont", &(fTrackerXHitCont.PID));
 
- fTrackerYTree = new TTree("trackery",
-			   "TCS Y trackers' per event hit collections");
- fTrackerYTree->Branch("detcont", &(fTrackerYHitCont.Det));
- fTrackerYTree->Branch("chancont", &(fTrackerYHitCont.Chan));
- fTrackerYTree->Branch("edepcont", &(fTrackerYHitCont.Edep));
- fTrackerYTree->Branch("pidcont", &(fTrackerYHitCont.PID));
+ //// fTrackerYTree = new TTree("trackery",
+ ////			   "TCS Y trackers' per event hit collections");
+ //// fTrackerYTree->Branch("detcont", &(fTrackerYHitCont.Det));
+ //// fTrackerYTree->Branch("chancont", &(fTrackerYHitCont.Chan));
+ //// fTrackerYTree->Branch("edepcont", &(fTrackerYHitCont.Edep));
+ //// fTrackerYTree->Branch("pidcont", &(fTrackerYHitCont.PID));
 
  fKinTree = new TTree("kin","TCS kinematics");
  fKinTree->Branch("Q2",&fKinVar.Q2);
@@ -196,12 +198,12 @@ void TCSHistoManager::book()
  fKinTree->Branch("precoil",fKinVar.P_recoil_lab,"precoil[4]/D");
  fKinTree->Branch("vertex",fKinVar.vertexXYZ,"vertex[3]/D");
 
- fTrackerXfluxTree = new TTree("txflux",
-			   "TCS X trackers' per event flux collections");
- fTrackerXfluxTree->Branch("detcont", &(fTrackerXfluxCont.Det));
- fTrackerXfluxTree->Branch("chancont", &(fTrackerXfluxCont.Chan));
- fTrackerXfluxTree->Branch("econt", &(fTrackerXfluxCont.Edep));
- fTrackerXfluxTree->Branch("pidcont", &(fTrackerXfluxCont.PID));
+ //// fTrackerXfluxTree = new TTree("txflux",
+ ////			   "TCS X trackers' per event flux collections");
+ //// fTrackerXfluxTree->Branch("detcont", &(fTrackerXfluxCont.Det));
+ //// fTrackerXfluxTree->Branch("chancont", &(fTrackerXfluxCont.Chan));
+ //// fTrackerXfluxTree->Branch("econt", &(fTrackerXfluxCont.Edep));
+ //// fTrackerXfluxTree->Branch("pidcont", &(fTrackerXfluxCont.PID));
 
  G4cout << "\n----> Root file is opened in " << fRootFileName << G4endl;
 
@@ -229,10 +231,10 @@ void TCSHistoManager::autosave() {
   fCaloTree->AutoSave(); // save tree to file
   fHodoXTree->AutoSave();
   fHodoYTree->AutoSave();
-  fTrackerXTree->AutoSave();
-  fTrackerYTree->AutoSave();
+  ////  fTrackerXTree->AutoSave();
+  ////  fTrackerYTree->AutoSave();
   fKinTree->AutoSave();
-  fTrackerXfluxTree->AutoSave();
+  ////  fTrackerXfluxTree->AutoSave();
   fRootFile->SaveSelf();  // save file directory containing this tree
   savedir->cd();
   cout << "TCSHistoManager::autosave: saved data in root file" << endl;
@@ -297,23 +299,23 @@ void TCSHistoManager::FillTrees()
     fHodoYTree->Fill();
   }
 
-  if (fTrackerXTree) {
-    //G4cout <<"Filling Tree right now! fHitList size = " << fHitList.size()
-    //<< "\n";
-    fTrackerXTree->Fill();
-  }
+  ////  if (fTrackerXTree) {
+  ////  //G4cout <<"Filling Tree right now! fHitList size = " << fHitList.size()
+  ////    //<< "\n";
+  ////    fTrackerXTree->Fill();
+  ////  }
 
-  if (fTrackerYTree) {
-    //G4cout <<"Filling Tree right now! fHitList size = " << fHitList.size()
-    //<< "\n";
-    fTrackerYTree->Fill();
-  }
+  ////  if (fTrackerYTree) {
+  ////  //G4cout <<"Filling Tree right now! fHitList size = " << fHitList.size()
+  ////    //<< "\n";
+  ////    fTrackerYTree->Fill();
+  ////  }
 
-  if (fTrackerXfluxTree) {
-    //G4cout <<"Filling Tree right now! fHitList size = " << fHitList.size()
-    //<< "\n";
-    fTrackerXfluxTree->Fill();
-  }
+  ////  if (fTrackerXfluxTree) {
+  ////  //G4cout <<"Filling Tree right now! fHitList size = " << fHitList.size()
+  ////    //<< "\n";
+  ////    fTrackerXfluxTree->Fill();
+  ////  }
 
   fKinFile >> fKinVar.Q2 >> fKinVar.t >> fKinVar.s >> fKinVar.xi >> fKinVar.tau
 	   >> fKinVar.eta >> fKinVar.phi_cm >> fKinVar.the_cm
@@ -438,7 +440,7 @@ void TCSHistoManager::AddHit(int det, uint col,uint row, double edep, int pid) {
 void TCSHistoManager::AddHit(int det, uint chan, double edep, int pid,
                              HodoHitContainer& HodoHitCont) {
 
-  // Add hit to a hodoscope/tracker hit container.
+  // Add hit to a hodoscope hit container.
 
   bool found = false;
 
@@ -473,11 +475,12 @@ void TCSHistoManager::AddHit(int det, uint chan, double edep, int pid,
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
+////
+/*
 void TCSHistoManager::AddHit(int det, uint chan, double edep, int pid,
                              TrackerHitContainer& TrackerHitCont) {
 
-  // Add hit to a hodoscope/tracker hit conatainer.
+  // Add hit to a tracker hit conatainer.
 
   bool found = false;
 
@@ -510,9 +513,10 @@ void TCSHistoManager::AddHit(int det, uint chan, double edep, int pid,
   }
 
 }
-
+*/
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
+////
+/*
 void TCSHistoManager::AddFlux(int det, uint chan, double edep, int pid,
                              TrackerHitContainer& TrackerFluxCont) {
 
@@ -525,7 +529,7 @@ void TCSHistoManager::AddFlux(int det, uint chan, double edep, int pid,
   //G4cout << "          TCSHistoManager::AddFlux: hit pushed back" << G4endl;
 
 }
-
+*/
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void TCSHistoManager::PrintStatistic()

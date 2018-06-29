@@ -30,7 +30,7 @@
 #include "TCSHistoManager.hh"
 #include "TCSCalorimeterHit.hh"
 #include "TCSHodoHit.hh"
-#include "TCSTrackerHit.hh"
+////#include "TCSTrackerHit.hh"
 #include "TCSTargetHit.hh"
 
 #include "G4Event.hh"
@@ -52,7 +52,7 @@ TCSEventAction::TCSEventAction(TCSHistoManager *histo)
     fHistoManager(histo), fPrintModulo(0),
     fTargetCollID(-1), fCalorimeterCollID(-1),
     fHodoXCollID(-1), fHodoYCollID(-1),
-    fTrackerXCollID(-1), fTrackerYCollID(-1),
+    ////    fTrackerXCollID(-1), fTrackerYCollID(-1),
     fEvtNo(-1)
 {
   //  fPrintModulo = 100000;
@@ -91,15 +91,15 @@ void TCSEventAction::BeginOfEventAction(const G4Event* evt)
     fHodoYCollID = SDman->GetCollectionID("HodoYHitsCollection");
   }
 
-  if(fTrackerXCollID<0)
-  {
-    fTrackerXCollID = SDman->GetCollectionID("TrackerXHitsCollection");
-  }
+  ////  if(fTrackerXCollID<0)
+  ////  {
+  ////    fTrackerXCollID = SDman->GetCollectionID("TrackerXHitsCollection");
+  ////  }
 
-  if(fTrackerYCollID<0)
-  {
-    fTrackerYCollID = SDman->GetCollectionID("TrackerYHitsCollection");
-  }
+  ////  if(fTrackerYCollID<0)
+  ////  {
+  ////    fTrackerYCollID = SDman->GetCollectionID("TrackerYHitsCollection");
+  ////  }
 
   if(fTargetCollID<0)
   {
@@ -235,7 +235,8 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
   }
 
   // TrackerX hits.
-
+  ////
+  /*
   TCSTrackerHitsCollection* TXC = 0;
   if(HCE) {
     TXC = (TCSTrackerHitsCollection*)(HCE->GetHC(fTrackerXCollID));
@@ -248,9 +249,10 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
     }
 
   }
-
+  */
   // TrackerY hits.
-
+  ////
+  /*
   TCSTrackerHitsCollection* TYC = 0;
   if(HCE) {
     TYC = (TCSTrackerHitsCollection*)(HCE->GetHC(fTrackerYCollID));
@@ -262,6 +264,7 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
     }
 
   }
+  */
 
   int nvertex =  event->GetNumberOfPrimaryVertex();
 
@@ -298,7 +301,8 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
 
   }
 
-  if (CC || HXC || HYC || TXC || TYC) {
+  ////  if (CC || HXC || HYC || TXC || TYC) {
+  if (CC || HXC || HYC) {
     fHistoManager->FillTrees();
     //    getchar();
   }
@@ -341,7 +345,8 @@ void TCSEventAction::AddHodoHit(TCSHodoHitsCollection* HC,
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
+////
+/*
 void TCSEventAction::AddTrackerHit(TCSTrackerHitsCollection* HC,
 				   TrackerHitContainer& TrackerHitCont)
 {
@@ -367,9 +372,10 @@ void TCSEventAction::AddTrackerHit(TCSTrackerHitsCollection* HC,
         cout <<"*** TCSEventAction::EndOfEventAction: "
              << "hodoscope hit container inconsistent! ***" << endl;
 }
-
+*/
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
+////
+/*
 void TCSEventAction::AddTrackerHit(TCSTrackerHitsCollection* HC,
 				   TrackerHitContainer& TrackerHitCont,
 				   TrackerHitContainer& TrackerFluxCont)
@@ -398,5 +404,5 @@ void TCSEventAction::AddTrackerHit(TCSTrackerHitsCollection* HC,
         cout <<"*** TCSEventAction::EndOfEventAction: "
              << "hodoscope hit container inconsistent! ***" << endl;
 }
-
+*/
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
