@@ -23,7 +23,7 @@
 
    <quantity name="xext" type="length" value="1.001" unit="m"/>
    <quantity name="yext" type="length" value="2.001" unit="m"/>
-   <quantity name="zext" type="length" value="2.0015" unit="m"/>
+   <quantity name="zext" type="length" value="2.0030" unit="m"/>
  </define>
 
  <materials>
