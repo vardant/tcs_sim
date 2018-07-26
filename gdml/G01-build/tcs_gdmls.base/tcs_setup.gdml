@@ -24,8 +24,9 @@
   <constant name="CALO_DIST" value="150.+9."/>
   <constant name="HODOY_DIST" value="150.-2.-0.5"/>
   <constant name="HODOX_DIST" value="150.-2.-0.5-0.51-0.5"/>
-  <!-- constant name="TRACKERY_DIST" value="54.+0.2"/ -->
-  <!-- constant name="TRACKERX_DIST" value="54."/ -->
+  <constant name="TRACKER3_DIST" value="140."/>
+  <constant name="TRACKER2_DIST" value="130."/>
+  <constant name="TRACKER1_DIST" value="120."/>
   <constant name="CPS_DIST" value="200."/>
 
   <rotation name="roty90" x="0" y="90" z="0" unit="deg"/>
@@ -89,17 +90,53 @@
 	                          y="-HODOX_DIST*SIN_POS"
 				  z="HODOX_DIST*COS_POS*COS_ROT" unit="cm"/>
 
-  <!-- position name="trackery_pos_shift" x="0" y="TRACKERY_DIST*SIN_POS"
-   z="TRACKERY_DIST*COS_POS" unit="cm"/ -->
+  <position name="tracker1_lt_shift" x="TRACKER1_DIST*COS_POS*SIN_ROT"
+	                          y="TRACKER1_DIST*SIN_POS"
+	                          z="TRACKER1_DIST*COS_POS*COS_ROT" unit="cm"/>
 
-  <!-- position name="trackery_neg_shift" x="0" y="-TRACKERY_DIST*SIN_POS"
-   z="TRACKERY_DIST*COS_POS" unit="cm"/ -->
+  <position name="tracker1_rt_shift" x="-TRACKER1_DIST*COS_POS*SIN_ROT"
+	                          y="TRACKER1_DIST*SIN_POS"
+	                          z="TRACKER1_DIST*COS_POS*COS_ROT" unit="cm"/>
 
-  <!-- position name="trackerx_pos_shift" x="0" y="TRACKERX_DIST*SIN_POS"
-   z="TRACKERX_DIST*COS_POS" unit="cm"/ -->
+  <position name="tracker1_rb_shift" x="-TRACKER1_DIST*COS_POS*SIN_ROT"
+	                          y="-TRACKER1_DIST*SIN_POS"
+	                          z="TRACKER1_DIST*COS_POS*COS_ROT" unit="cm"/>
 
-  <!-- position name="trackerx_neg_shift" x="0" y="-TRACKERX_DIST*SIN_POS"
-   z="TRACKERX_DIST*COS_POS" unit="cm"/ -->
+  <position name="tracker1_lb_shift" x="TRACKER1_DIST*COS_POS*SIN_ROT"
+	                          y="-TRACKER1_DIST*SIN_POS"
+				  z="TRACKER1_DIST*COS_POS*COS_ROT" unit="cm"/>
+
+  <position name="tracker2_lt_shift" x="TRACKER2_DIST*COS_POS*SIN_ROT"
+	                          y="TRACKER2_DIST*SIN_POS"
+	                          z="TRACKER2_DIST*COS_POS*COS_ROT" unit="cm"/>
+
+  <position name="tracker2_rt_shift" x="-TRACKER2_DIST*COS_POS*SIN_ROT"
+	                          y="TRACKER2_DIST*SIN_POS"
+	                          z="TRACKER2_DIST*COS_POS*COS_ROT" unit="cm"/>
+
+  <position name="tracker2_rb_shift" x="-TRACKER2_DIST*COS_POS*SIN_ROT"
+	                          y="-TRACKER2_DIST*SIN_POS"
+	                          z="TRACKER2_DIST*COS_POS*COS_ROT" unit="cm"/>
+
+  <position name="tracker2_lb_shift" x="TRACKER2_DIST*COS_POS*SIN_ROT"
+	                          y="-TRACKER2_DIST*SIN_POS"
+				  z="TRACKER2_DIST*COS_POS*COS_ROT" unit="cm"/>
+
+  <position name="tracker3_lt_shift" x="TRACKER3_DIST*COS_POS*SIN_ROT"
+	                          y="TRACKER3_DIST*SIN_POS"
+	                          z="TRACKER3_DIST*COS_POS*COS_ROT" unit="cm"/>
+
+  <position name="tracker3_rt_shift" x="-TRACKER3_DIST*COS_POS*SIN_ROT"
+	                          y="TRACKER3_DIST*SIN_POS"
+	                          z="TRACKER3_DIST*COS_POS*COS_ROT" unit="cm"/>
+
+  <position name="tracker3_rb_shift" x="-TRACKER3_DIST*COS_POS*SIN_ROT"
+	                          y="-TRACKER3_DIST*SIN_POS"
+	                          z="TRACKER3_DIST*COS_POS*COS_ROT" unit="cm"/>
+
+  <position name="tracker3_lb_shift" x="TRACKER3_DIST*COS_POS*SIN_ROT"
+	                          y="-TRACKER3_DIST*SIN_POS"
+				  z="TRACKER3_DIST*COS_POS*COS_ROT" unit="cm"/>
 
   <position name="cps_shift" x="0" y="0" z="-CPS_DIST" unit="cm"/>
   
@@ -216,29 +253,77 @@
      <rotationref ref="calo_lb_rot"/>
    </physvol>
 
-   <!-- physvol -->
-     <!-- file name="tcs_gdmls/trackerY.gdml"/ -->
-     <!-- positionref ref="trackery_pos_shift"/ -->
-     <!-- rotationref ref="calo_lt_rot"/ -->
-   <!-- /physvol -->
+   <physvol>
+     <file name="tcs_gdmls/tracker1.gdml"/>
+     <positionref ref="tracker1_lt_shift"/>
+     <rotationref ref="calo_lt_rot"/>
+   </physvol>
 
-   <!-- physvol -->
-     <!-- file name="tcs_gdmls/trackerY.gdml"/ -->
-     <!-- positionref ref="trackery_neg_shift"/ -->
-     <!-- rotationref ref="calo_lb_rot"/ -->
-   <!-- /physvol -->
+   <physvol>
+     <file name="tcs_gdmls/tracker1.gdml"/>
+     <positionref ref="tracker1_rt_shift"/>
+     <rotationref ref="calo_rt_rot"/>
+   </physvol>
 
-   <!-- physvol -->
-     <!-- file name="tcs_gdmls/trackerX.gdml"/ -->
-     <!-- positionref ref="trackerx_pos_shift"/ -->
-     <!-- rotationref ref="calo_lt_rot"/ -->
-   <!-- /physvol -->
+   <physvol>
+     <file name="tcs_gdmls/tracker1.gdml"/>
+     <positionref ref="tracker1_rb_shift"/>
+     <rotationref ref="calo_rb_rot"/>
+   </physvol>
 
-   <!-- physvol -->
-     <!-- file name="tcs_gdmls/trackerX.gdml"/ -->
-     <!-- positionref ref="trackerx_neg_shift"/ -->
-     <!-- rotationref ref="calo_lb_rot"/ -->
-   <!-- /physvol -->
+   <physvol>
+     <file name="tcs_gdmls/tracker1.gdml"/>
+     <positionref ref="tracker1_lb_shift"/>
+     <rotationref ref="calo_lb_rot"/>
+   </physvol>
+
+   <physvol>
+     <file name="tcs_gdmls/tracker2.gdml"/>
+     <positionref ref="tracker2_lt_shift"/>
+     <rotationref ref="calo_lt_rot"/>
+   </physvol>
+
+   <physvol>
+     <file name="tcs_gdmls/tracker2.gdml"/>
+     <positionref ref="tracker2_rt_shift"/>
+     <rotationref ref="calo_rt_rot"/>
+   </physvol>
+
+   <physvol>
+     <file name="tcs_gdmls/tracker2.gdml"/>
+     <positionref ref="tracker2_rb_shift"/>
+     <rotationref ref="calo_rb_rot"/>
+   </physvol>
+
+   <physvol>
+     <file name="tcs_gdmls/tracker2.gdml"/>
+     <positionref ref="tracker2_lb_shift"/>
+     <rotationref ref="calo_lb_rot"/>
+   </physvol>
+
+   <physvol>
+     <file name="tcs_gdmls/tracker3.gdml"/>
+     <positionref ref="tracker3_lt_shift"/>
+     <rotationref ref="calo_lt_rot"/>
+   </physvol>
+
+   <physvol>
+     <file name="tcs_gdmls/tracker3.gdml"/>
+     <positionref ref="tracker3_rt_shift"/>
+     <rotationref ref="calo_rt_rot"/>
+   </physvol>
+
+   <physvol>
+     <file name="tcs_gdmls/tracker3.gdml"/>
+     <positionref ref="tracker3_rb_shift"/>
+     <rotationref ref="calo_rb_rot"/>
+   </physvol>
+
+   <physvol>
+     <file name="tcs_gdmls/tracker3.gdml"/>
+     <positionref ref="tracker3_lb_shift"/>
+     <rotationref ref="calo_lb_rot"/>
+   </physvol>
 
    <physvol>
      <file name="tcs_gdmls/cps.gdml"/>
@@ -250,7 +335,8 @@
 
  </structure>
 
- <setup name="Default" version="1.0">
+ <setup name="Default" version="1
+.0">
   <world ref="World"/>
  </setup>
 
