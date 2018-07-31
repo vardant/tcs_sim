@@ -47,12 +47,15 @@ struct HodoHitContainer {
   vector<int> PID;
 };
 
-////struct TrackerHitContainer {
-////  vector<int> Det;
-////  vector<uint> Chan;
-////  vector<double> Edep;
-////  vector<int> PID;
-////};
+struct TrackerHitContainer {
+  vector<int> Det;
+  vector<double> P;
+  vector<int> PID;
+  //  vector<G4ThreeVector> Pos;
+  vector<double> X;
+  vector<double> Y;
+  vector<double> Z;
+};
 
 struct TargetHitContainer {
   vector<double> Edep;
@@ -83,10 +86,8 @@ public:
   void AddHit(int det, uint col, uint row, double edep, int pid);
   void AddHit(int det, uint chan, double edep, int pid,
 	      HodoHitContainer &HodoHitCont);
-  ////  void AddHit(int det, uint chan, double edep, int pid,
-  ////	      TrackerHitContainer &TrackerHitCont);
-  ////  void AddFlux(int det, uint chan, double edep, int pid,
-  ////	       TrackerHitContainer &TrackerFluxCont);
+  void AddHit(int det, int pid, G4ThreeVector pos, double P,
+	      TrackerHitContainer &TrackerHitCont);
 
   bool CheckTargetHitCont() {
     return (fTargetHitCont.Edep.size() == fTargetHitCont.PID.size());
@@ -106,15 +107,15 @@ public:
             ? false : true);
   }
 
-  ////
-  /*
   bool CheckTrackerHitCont(TrackerHitContainer &TrackerHitCont) {
     uint sz = TrackerHitCont.Det.size();
-    return (TrackerHitCont.Chan.size() != sz || TrackerHitCont.Edep.size() != sz
-	    || TrackerHitCont.PID.size() != sz
-            ? false : true);
+    return (TrackerHitCont.P.size() != sz ||
+	    TrackerHitCont.PID.size() != sz ||
+	    TrackerHitCont.X.size() != sz ||
+	    TrackerHitCont.Y.size() != sz ||
+	    TrackerHitCont.Z.size() != sz
+	    ? false : true);
   }
-  */
 
   void ResetBeam() {
     fBeam.E =0;
@@ -147,12 +148,14 @@ public:
     HodoHitCont.PID.clear();
   };
 
-  ////  void ResetTracker(TrackerHitContainer &TrackerHitCont) {
-  ////    TrackerHitCont.Det.clear();
-  ////    TrackerHitCont.Chan.clear();
-  ////    TrackerHitCont.Edep.clear();
-  ////    TrackerHitCont.PID.clear();
-  ////  };
+  void ResetTracker(TrackerHitContainer &TrackerHitCont) {
+    TrackerHitCont.Det.clear();
+    TrackerHitCont.P.clear();
+    TrackerHitCont.PID.clear();
+    TrackerHitCont.X.clear();
+    TrackerHitCont.Y.clear();
+    TrackerHitCont.Z.clear();
+  };
 
   void ResetKinVar() {
     fKinVar.Q2 = 0.;
@@ -182,10 +185,8 @@ public:
     ResetCalo();
     ResetHodo(fHodoXHitCont);
     ResetHodo(fHodoYHitCont);
-    ////    ResetTracker(fTrackerXHitCont);
-    ////    ResetTracker(fTrackerYHitCont);
+    ResetTracker(fTrackerHitCont);
     ResetKinVar();
-    ////    ResetTracker(fTrackerXfluxCont);
   };
 
   void FillTrees();
@@ -207,11 +208,8 @@ private:
   TTree*   fCaloTree;
   TTree*   fHodoXTree;
   TTree*   fHodoYTree;
-  ////  TTree*   fTrackerXTree;
-  ////  TTree*   fTrackerYTree;
+  TTree*   fTrackerTree;
   TTree*   fKinTree;
-
-  ////  TTree*   fTrackerXfluxTree;
 
   TH1D*    fHisto[MaxHisto];            
 
@@ -235,10 +233,7 @@ private:
   HodoHitContainer fHodoXHitCont;
   HodoHitContainer fHodoYHitCont;
 
-  ////  TrackerHitContainer fTrackerXHitCont;
-  ////  TrackerHitContainer fTrackerYHitCont;
-
-  ////  TrackerHitContainer fTrackerXfluxCont;
+  TrackerHitContainer fTrackerHitCont;
 
   struct KinVar {
     double Q2;

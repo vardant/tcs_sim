@@ -30,7 +30,7 @@
 #include "TCSHistoManager.hh"
 #include "TCSCalorimeterHit.hh"
 #include "TCSHodoHit.hh"
-////#include "TCSTrackerHit.hh"
+#include "TCSTrackerHit.hh"
 #include "TCSTargetHit.hh"
 
 #include "G4Event.hh"
@@ -52,7 +52,7 @@ TCSEventAction::TCSEventAction(TCSHistoManager *histo)
     fHistoManager(histo), fPrintModulo(0),
     fTargetCollID(-1), fCalorimeterCollID(-1),
     fHodoXCollID(-1), fHodoYCollID(-1),
-    ////    fTrackerXCollID(-1), fTrackerYCollID(-1),
+    fTrackerCollID(-1),
     fEvtNo(-1)
 {
   //  fPrintModulo = 100000;
@@ -91,15 +91,10 @@ void TCSEventAction::BeginOfEventAction(const G4Event* evt)
     fHodoYCollID = SDman->GetCollectionID("HodoYHitsCollection");
   }
 
-  ////  if(fTrackerXCollID<0)
-  ////  {
-  ////    fTrackerXCollID = SDman->GetCollectionID("TrackerXHitsCollection");
-  ////  }
-
-  ////  if(fTrackerYCollID<0)
-  ////  {
-  ////    fTrackerYCollID = SDman->GetCollectionID("TrackerYHitsCollection");
-  ////  }
+  if(fTrackerCollID<0)
+    {
+      fTrackerCollID = SDman->GetCollectionID("TrackerHitsCollection");
+    }
 
   if(fTargetCollID<0)
   {
@@ -189,7 +184,8 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
       //Fill Tree if track is within the calorimeter.
       if (boundary_flag == 0) {
 	G4ThreeVector pos=(*CC)[i]->GetPos();
-	G4int detpos = pos.getY() > 0. ? 1 : -1;
+	//	G4int detpos = pos.getY() > 0. ? 1 : -1;
+	G4int detpos = GetQuarter(pos.getX(), pos.getY());
 	G4int col =(*CC)[i]->GetCol();
 	G4int row =(*CC)[i]->GetRow();
 	G4int pid =(*CC)[i]->GetPID();
@@ -234,37 +230,19 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
 
   }
 
-  // TrackerX hits.
-  ////
-  /*
-  TCSTrackerHitsCollection* TXC = 0;
-  if(HCE) {
-    TXC = (TCSTrackerHitsCollection*)(HCE->GetHC(fTrackerXCollID));
-    //    G4cout << "  Found tracker X hit collection." << G4endl;
+  // Tracker hits.
 
-    if(TXC) {
-      //      G4cout << "    Add TrackerX hits:" << G4endl;
-      AddTrackerHit(TXC, fHistoManager->fTrackerXHitCont,
-		         fHistoManager->fTrackerXfluxCont);
+  TCSTrackerHitsCollection* TrC = 0;
+  if(HCE) {
+    TrC = (TCSTrackerHitsCollection*)(HCE->GetHC(fTrackerCollID));
+    //    G4cout << "  Found tracker hit collection." << G4endl;
+
+    if(TrC) {
+      //      G4cout << "    Add Tracker hits:" << G4endl;
+      AddTrackerHit(TrC, fHistoManager->fTrackerHitCont);
     }
 
   }
-  */
-  // TrackerY hits.
-  ////
-  /*
-  TCSTrackerHitsCollection* TYC = 0;
-  if(HCE) {
-    TYC = (TCSTrackerHitsCollection*)(HCE->GetHC(fTrackerYCollID));
-    //    G4cout << "  Found tracker Y hit collection." << G4endl;
-
-    if(TYC) {
-      //    G4cout << "    Add TrackerY hits:" << G4endl;
-      AddTrackerHit(TYC, fHistoManager->fTrackerYHitCont);
-    }
-
-  }
-  */
 
   int nvertex =  event->GetNumberOfPrimaryVertex();
 
@@ -301,8 +279,7 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
 
   }
 
-  ////  if (CC || HXC || HYC || TXC || TYC) {
-  if (CC || HXC || HYC) {
+  if (CC || HXC || HYC || TrC) {
     fHistoManager->FillTrees();
     //    getchar();
   }
@@ -330,7 +307,8 @@ void TCSEventAction::AddHodoHit(TCSHodoHitsCollection* HC,
         //Fill Tree if track is within the hodoscope.
         if (boundary_flag == 0) {
           G4ThreeVector pos=(*HC)[i]->GetPos();
-          G4int detpos = pos.getY() > 0. ? 1 : -1;
+	  //          G4int detpos = pos.getY() > 0. ? 1 : -1;
+	  G4int detpos = GetQuarter(pos.getX(), pos.getY());
           G4int chan =(*HC)[i]->GetChannel();
 	  G4int pid =(*HC)[i]->GetPID();
           G4double energy=(*HC)[i]->GetEnergy();
@@ -345,8 +323,7 @@ void TCSEventAction::AddHodoHit(TCSHodoHitsCollection* HC,
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-////
-/*
+
 void TCSEventAction::AddTrackerHit(TCSTrackerHitsCollection* HC,
 				   TrackerHitContainer& TrackerHitCont)
 {
@@ -354,25 +331,19 @@ void TCSEventAction::AddTrackerHit(TCSTrackerHitsCollection* HC,
       //      G4cout << "      HC n_hit = " << n_hit << G4endl;
 
       for(int i=0;i<n_hit;i++) {
-        G4int boundary_flag=(*HC)[i]->GetBoundaryFlag();
-	//	G4cout << "        boundary_flag = " << boundary_flag << G4endl;
-        //Fill Tree if track is within the tracker.
-        if (boundary_flag == 0) {
-          G4ThreeVector pos=(*HC)[i]->GetPos();
-          G4int detpos = pos.getY() > 0. ? 1 : -1;
-          G4int chan =(*HC)[i]->GetChannel();
-	  G4int pid =(*HC)[i]->GetPID();
-          G4double energy=(*HC)[i]->GetEnergy();
-          fHistoManager->AddHit(detpos, chan, energy/MeV, pid, TrackerHitCont);
-        }
+	G4ThreeVector pos=(*HC)[i]->GetPos();
+	G4int det = pos.getY() > 0. ? 1 : -1;
+	G4int pid =(*HC)[i]->GetPID();
+	G4double P = (*HC)[i]->GetP();
+	fHistoManager->AddHit(det, pid, pos, P/MeV, TrackerHitCont);
       }
 
       //Check hit container's consistency first.
       if (!fHistoManager->CheckTrackerHitCont(TrackerHitCont))
         cout <<"*** TCSEventAction::EndOfEventAction: "
-             << "hodoscope hit container inconsistent! ***" << endl;
+             << "tracker hit container inconsistent! ***" << endl;
 }
-*/
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 ////
 /*
@@ -406,3 +377,25 @@ void TCSEventAction::AddTrackerHit(TCSTrackerHitsCollection* HC,
 }
 */
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+int TCSEventAction::GetQuarter(double x, double y) {
+  // Quarter in X-Y plane: left top, right top, right bottom, left bottom.
+  // x>0, y>0 : 0
+  // x<0, y>0 : 1
+  // x<0> y<0 : 2
+  // x>0, y<0 : 3
+
+  int q = -1;
+  if (x>0.)
+    if (y>0.)
+      q=0;
+    else
+      q=3;
+  else
+    if (y>0.)
+      q=1;
+    else
+      q=2;
+
+  return q;
+}

@@ -38,8 +38,7 @@ G4ThreadLocal G4Allocator<TCSTrackerHit>* TCSTrackerHitAllocator=0;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 TCSTrackerHit::TCSTrackerHit() : G4VHit(),
-	 fChannel(-1), fPID(0), fEnergy(999999.), fPos(G4ThreeVector()),
-	 fBoundaryFlag(0)
+             fPID(0), fP(999999.), fPos(G4ThreeVector(999999.,999999.,999999.))
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -50,33 +49,26 @@ TCSTrackerHit::~TCSTrackerHit() {}
 
 TCSTrackerHit::TCSTrackerHit(const TCSTrackerHit& right) : G4VHit()
 {
-  fChannel = right.fChannel;
-  fPID    = right.fPID;
-  fEnergy   = right.fEnergy;
-  fPos    = right.fPos;
-  fBoundaryFlag = right.fBoundaryFlag;
+  fPID = right.fPID;
+  fP   = right.fP;
+  fPos = right.fPos;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-TCSTrackerHit::TCSTrackerHit(G4int channel, G4int pid,
-	     G4double energy, G4ThreeVector pos, G4int boundary_flag) {
-  fChannel = channel;
-  fPID    = pid;
-  fEnergy   = energy;
-  fPos    = pos;
-  fBoundaryFlag = boundary_flag;
+TCSTrackerHit::TCSTrackerHit(G4int pid, G4double P, G4ThreeVector pos) {
+  fPID = pid;
+  fP   = P;
+  fPos = pos;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 const TCSTrackerHit& TCSTrackerHit::operator=(const TCSTrackerHit& right)
 {
-  fChannel = right.fChannel;
-  fPID    = right.fPID;
-  fEnergy = right.fEnergy;
-  fPos    = right.fPos;
-  fBoundaryFlag = right.fBoundaryFlag;
+  fPID = right.fPID;
+  fP   = right.fP;
+  fPos = right.fPos;
   return *this;
 }
 
@@ -108,9 +100,7 @@ void TCSTrackerHit::Draw()
 
 void TCSTrackerHit::Print()
 {
-  G4cout << "TCSTrackerHit: channel = " << fChannel
-	 << "  particle id = " << fPID << "  energy = " << fEnergy
-	 << "  boundary flag = " << fBoundaryFlag << G4endl;
+  G4cout << "TCSTrackerHit: particle id = " << fPID << "  P = " << fP << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

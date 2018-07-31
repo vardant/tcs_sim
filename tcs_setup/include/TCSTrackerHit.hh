@@ -39,8 +39,7 @@ public:
 
   TCSTrackerHit();
   TCSTrackerHit(const TCSTrackerHit&);
-  TCSTrackerHit(G4int channel, G4int pid, G4double energy, G4ThreeVector pos,
-	      G4int boundary_flag);
+  TCSTrackerHit(G4int pid, G4double P, G4ThreeVector pos);
   virtual ~TCSTrackerHit();
   
   // operators
@@ -55,24 +54,15 @@ public:
   virtual void Print();
   
   // Get methods
-  G4int GetChannel() const { return fChannel; };
   G4int GetPID() const { return fPID; };
-  G4double GetEnergy() const { return fEnergy; };
+  G4double GetP() const { return fP; };
   G4ThreeVector GetPos() const { return fPos; };
-  G4int GetBoundaryFlag() const { return fBoundaryFlag; };
   
 private:
 
-  // fEnergy is kin.energy for particles entering hodoscope,
-  // otherwise deposited energy.
-  // fBoundaryFlag is true for particles entering hodoscope,
-  // otherwise false.
-  
-  G4int         fChannel;
   G4int         fPID;
-  G4double      fEnergy;
+  G4double      fP;
   G4ThreeVector fPos;
-  G4int         fBoundaryFlag;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

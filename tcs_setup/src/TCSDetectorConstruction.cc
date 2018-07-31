@@ -29,8 +29,7 @@
 #include "TCSCalorimeterSD.hh"
 #include "TCSHodoXSD.hh"
 #include "TCSHodoYSD.hh"
-////#include "TCSTrackerXSD.hh"
-////#include "TCSTrackerYSD.hh"
+#include "TCSTrackerSD.hh"
 #include "G4SDManager.hh"
 
 // **** Magnetic field ******
@@ -202,11 +201,11 @@ void TCSDetectorConstruction::ConstructSDandField()
     ////    SetSensitiveDetector("TXBar", trackerxSD, true);
     ////    SetSensitiveDetector("trackerXWorld", trackerxSD, true);
 
-    ////    TCSTrackerYSD* trackerySD = new TCSTrackerYSD("TrackerYSD",
-    ////					  "TrackerYHitsCollection");
-    ////    G4SDManager::GetSDMpointer()->AddNewDetector(trackerySD);
-    ////    SetSensitiveDetector("TYBar", trackerySD, true);
-    ////    SetSensitiveDetector("trackerYWorld", trackerySD, true);
+    TCSTrackerSD* trackerSD = new TCSTrackerSD("TrackerSD",
+					       "TrackerHitsCollection");
+    G4SDManager::GetSDMpointer()->AddNewDetector(trackerSD);
+    SetSensitiveDetector("Insulator", trackerSD, true);
+    SetSensitiveDetector("TrackerAssembly", trackerSD, true);
 
     TCSTargetSD* targetSD = new TCSTargetSD("TargetSD",
 					    "TargetHitsCollection");
