@@ -11,7 +11,7 @@
 #
 /geometry/test/run
 /control/verbose 2
-/run/verbose 2
+/run/verbose 0
 /event/verbose 0
 /tracking/verbose 0
 /material/g4/printMaterial
@@ -22,4 +22,4 @@
 #/gun/particle geantino
 #/gun/energy 11 GeV
 #
-/run/beamOn 10000000
+/run/beamOn 20000
