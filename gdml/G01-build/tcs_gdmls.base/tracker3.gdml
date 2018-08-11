@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation=
-      "/work/hallc/nps/vardan/G4.nps/g4.10.03/GDML_3_1_6/schema/gdml.xsd">
+      "/home/vardan/g4-work/GDML_3_1_5/schema/gdml.xsd">
 
   <!-- TCS GEM Tracker -->
 
  <define>
 
+   <constant name="dX" value="44.01"/>
+   <constant name="dY" value="44.01"/>
+   <constant name="dZ" value="0.050"/>
    <constant name="eps" value="0.000001"/>
 
-   <quantity name="xsize" type="length" value="44.01" unit="cm"/>
-   <quantity name="ysize" type="length" value="44.01" unit="cm"/>
-   <quantity name="zsize" type="length" value="0.000050" unit="mm"/>
+   <quantity name="xsize" type="length" value="dX" unit="cm"/>
+   <quantity name="ysize" type="length" value="dY" unit="cm"/>
+   <quantity name="zsize" type="length" value="dZ" unit="mm"/>
 
    <position name="center" x="0" y="0" z="0"/>
    <rotation name="identity" x="0" y="0" z="0"/>
 
-   <quantity name="xext" type="length" value="xsize+eps" unit="cm"/>
-   <quantity name="yext" type="length" value="ysize+eps" unit="cm"/>
-   <quantity name="zext" type="length" value="zsize+eps" unit="cm"/>
+   <quantity name="xext" type="length" value="dX+eps" unit="cm"/>
+   <quantity name="yext" type="length" value="dY+eps" unit="cm"/>
+   <quantity name="zext" type="length" value="dZ+eps" unit="cm"/>
  </define>
 
  <materials>
@@ -85,8 +88,8 @@
  </structure>
 
  <setup name="Default" version="1.0">
-   <!-- world ref="trackerWorld"/ -->
-   <world ref="TrackerAssembly"/>
+   <world ref="trackerWorld"/>
+   <!-- world ref="TrackerAssembly"/ -->
  </setup>
 
 </gdml>
