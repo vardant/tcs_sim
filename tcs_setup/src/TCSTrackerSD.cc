@@ -84,7 +84,7 @@ G4bool TCSTrackerSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 
   // Particle entering tracker.
   if (step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
-      "TrackerAssembly_PV" &&
+      "trackerWorld_PV" &&
       step->GetPostStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
       "Insulator_PV" &&
       step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary) {
