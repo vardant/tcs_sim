@@ -1,0 +1,8 @@
+/run/initialize
+
+# electron 8.8 GeV
+/gun/particle electron
+/gun/energy 8.8 FeV
+#
+/run/printProgress 100
+/run/beamOn 100
