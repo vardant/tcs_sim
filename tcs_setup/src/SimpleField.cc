@@ -7,7 +7,8 @@
 
 #include "SimpleField.hh"
 #include "G4SystemOfUnits.hh"
-#include <TMath.h>
+//#include <TMath.h>
+#include <cmath>
 
 //-----------------------------------------------------------------------------
 
@@ -212,9 +213,11 @@ void SimpleField::GetFieldValue(const double point[4],double *Bfield) const
 
   bool r_flip = z<0.;  // Flip Br if z<0
 
-  z = TMath::Abs(z);
+  //  z = TMath::Abs(z);
+  z = abs(z);
 
-  double r = TMath::Sqrt(x*x + y*y);
+  //  double r = TMath::Sqrt(x*x + y*y);
+  double r = sqrt(x*x + y*y);
 
   if(fDebugFlag && flag) cout << " Radius R = " << r/cm << " cm" << endl;
   
@@ -324,7 +327,8 @@ void SimpleField::GetFieldValue(const double point[4],double *Bfield) const
   //	 << "  (x,z) = (" << x/cm << ", " << z/cm << ") cm" << endl;
 
   //  G4double B =
-  //TMath::Sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1]+Bfield[2]*Bfield[2]);
+  ////TMath::Sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1]+Bfield[2]*Bfield[2]);
+  //sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1]+Bfield[2]*Bfield[2]);
   //  if (B!=0)
   //G4cout << "Field: " << B/gauss << "  " << point[0]/cm << " " << point[1]/cm
   //	   << " " << point[2]/cm << endl;
@@ -347,7 +351,8 @@ void SimpleField::TestFieldMap(double xlo, double xhi, double zlo, double zhi,
       double p[] = {x, 0., z, 0.};
       double B[6] = {};
       GetFieldValue(p, B);
-      //      G4double modB = TMath::Sqrt(B[0]*B[0]+B[1]*B[1]+B[2]*B[2]);
+      ////      G4double modB = TMath::Sqrt(B[0]*B[0]+B[1]*B[1]+B[2]*B[2]);
+      //      G4double modB = sqrt(B[0]*B[0]+B[1]*B[1]+B[2]*B[2]);
       //      G4cout << "Field: " << modB/gauss << "  " << p[0]/cm << " "
       //      	     << p[1]/cm << " " << p[2]/cm << endl;
       G4cout << "Test Field [T]: " << B[0]/tesla << "  " << B[1]/tesla << "  "
