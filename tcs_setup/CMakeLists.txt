@@ -1,9 +1,8 @@
-# $Id: CMakeLists.txt 86065 2014-11-07 08:51:15Z gcosmo $
-
 #----------------------------------------------------------------------------
 # Setup the project
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
-project(TCS)
+##project(AnaEx02)
+project(tcs)
 
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
@@ -19,47 +18,48 @@ endif()
 
 #----------------------------------------------------------------------------
 # Setup Geant4 include directories and compile definitions
-# Setup include directory for this project
 #
 include(${Geant4_USE_FILE})
+
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
 #
 find_package(ROOT REQUIRED)
 
-
-include_directories(${PROJECT_SOURCE_DIR}/include
-                    ${ROOT_INCLUDE_DIR})
-
-
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
-# NB: headers are included so they will show up in IDEs
 #
-file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
-file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
+include_directories(${PROJECT_SOURCE_DIR}/include
+                    ${PROJECT_SOURCE_DIR}/shared/include
+                    ${Geant4_INCLUDE_DIR}
+                    ${ROOT_INCLUDE_DIRS})
+file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc
+                  ${PROJECT_SOURCE_DIR}/shared/src/*.cc)
+file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh
+                  ${PROJECT_SOURCE_DIR}/shared/include/*.hh)
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
+##add_executable(AnaEx02 AnaEx02.cc ${sources} ${headers})
+##target_link_libraries(AnaEx02 ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} )
 add_executable(tcs tcs.cc ${sources} ${headers})
 target_link_libraries(tcs ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} )
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
-# build B1. This is so that we can run the executable directly because it
+# build AnaEx02. This is so that we can run the executable directly because it
 # relies on these scripts being in the current working directory.
 #
-set(TCS_SCRIPTS
-  tcs.in
-#  tcs.out
-#  init_vis.mac
-  run1.mac
-#  run2.mac
-  vis.mac
+##set(AnaEx02_SCRIPTS
+##    AnaEx02.in run.mac init_vis.mac vis.mac
+##  )
+set(tcs_SCRIPTS
+    tcs.in run1.mac vis.mac beam_definition.txt
   )
 
-foreach(_script ${TCS_SCRIPTS})
+##foreach(_script ${AnaEx02_SCRIPTS})
+foreach(_script ${tcs_SCRIPTS})
   configure_file(
     ${PROJECT_SOURCE_DIR}/${_script}
     ${PROJECT_BINARY_DIR}/${_script}
@@ -68,14 +68,8 @@ foreach(_script ${TCS_SCRIPTS})
 endforeach()
 
 #----------------------------------------------------------------------------
-# For internal Geant4 use - but has no effect if you build this
-# example standalone
-#
-##add_custom_target(tcs DEPENDS tcs)
-
-#----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
+##install(TARGETS AnaEx02 DESTINATION bin)
 install(TARGETS tcs DESTINATION bin)
-
 
