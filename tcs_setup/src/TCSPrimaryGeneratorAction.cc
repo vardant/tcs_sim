@@ -35,7 +35,8 @@
 #include "G4ParticleDefinition.hh"
 #include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
-#include <TMath.h>
+//#include <TMath.h>
+#include <cmath>
 
 //#include "TCSGen.hh"
 #include "G4HEPEvtInterface.hh"
@@ -238,7 +239,8 @@ double TCSPrimaryGeneratorAction::GetBremEnergy(double Ee, double Eg_min,
 
   do {
     double u1 = G4UniformRand();
-    y = y_min*TMath::Power(y_max/y_min, u1);   //y from 1/y distrib.
+    //    y = y_min*TMath::Power(y_max/y_min, u1);
+    y = y_min*pow(y_max/y_min, u1);                      //y from 1/y distrib.
     double prob = 1.-y+3./4.*y*y;                        //f(y)/(4/3*1/y)
     if (G4UniformRand() < prob) break;
   } while (true);
