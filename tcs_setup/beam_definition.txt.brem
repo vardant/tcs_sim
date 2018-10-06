@@ -1,12 +1,12 @@
-e-		particle
-0.1 2.5		energy, GeV
-0. 0. 0.	position, cm
-2. 2. 28.27    	sizes, mm; UVA target length
+gamma		bremsstarhlung photons
+11. 11.		energy range of the primary electron [GeV]
+0. 0. -100.	position, cm
+2. 2. 0.       	sizes, mm
 0. 0. 1.	direction
-tcs
+brem
 
-e-		particle
-0.1 2.5		energy, GeV
+e-		electron beam
+0.1 2.5		energy range, GeV
 0. 0. 0.	position, cm
 2. 2. 0.       	sizes, mm
 0. 0. 1.	direction
