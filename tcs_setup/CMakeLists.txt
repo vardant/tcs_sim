@@ -55,7 +55,7 @@ target_link_libraries(tcs ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} )
 ##    AnaEx02.in run.mac init_vis.mac vis.mac
 ##  )
 set(tcs_SCRIPTS
-    tcs.in run1.mac test.mac vis.mac beam_definition.txt field_param.txt stacking_control.txt field/dummy.dat field/g2p_hallbfield.dat tcs_gen.dat tcs_gen.kin_data
+    tcs.in run1.mac test.mac vis.mac beam_definition.txt field_param.txt stacking_control.txt field/dummy.dat field/g2p_hallbfield.dat tcs_gen.data tcs_gen.kin_data
   )
 
 ##foreach(_script ${AnaEx02_SCRIPTS})
