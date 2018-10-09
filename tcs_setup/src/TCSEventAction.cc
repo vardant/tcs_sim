@@ -332,10 +332,11 @@ void TCSEventAction::AddTrackerHit(TCSTrackerHitsCollection* HC,
 
       for(int i=0;i<n_hit;i++) {
 	G4ThreeVector pos=(*HC)[i]->GetPos();
-	G4int det = pos.getY() > 0. ? 1 : -1;
+	////	G4int det = pos.getY() > 0. ? 1 : -1;
+	G4int detpos = GetQuarter(pos.getX(), pos.getY());
 	G4int pid =(*HC)[i]->GetPID();
 	G4double P = (*HC)[i]->GetP();
-	fHistoManager->AddHit(det, pid, pos, P/MeV, TrackerHitCont);
+	fHistoManager->AddHit(detpos, pid, pos, P/MeV, TrackerHitCont);
       }
 
       //Check hit container's consistency first.
