@@ -38,7 +38,9 @@ G4ThreadLocal G4Allocator<TCSTrackerHit>* TCSTrackerHitAllocator=0;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 TCSTrackerHit::TCSTrackerHit() : G4VHit(),
-             fPID(0), fP(999999.), fPos(G4ThreeVector(999999.,999999.,999999.))
+				 fPID(0), fP(999999.),
+				 fPos(G4ThreeVector(999999.,999999.,999999.)),
+				 fLayer(999999)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -52,14 +54,17 @@ TCSTrackerHit::TCSTrackerHit(const TCSTrackerHit& right) : G4VHit()
   fPID = right.fPID;
   fP   = right.fP;
   fPos = right.fPos;
+  fLayer = right.fLayer;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-TCSTrackerHit::TCSTrackerHit(G4int pid, G4double P, G4ThreeVector pos) {
+TCSTrackerHit::TCSTrackerHit(G4int pid, G4double P, G4ThreeVector pos,
+			     G4int layer) {
   fPID = pid;
   fP   = P;
   fPos = pos;
+  fLayer = layer;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -69,6 +74,7 @@ const TCSTrackerHit& TCSTrackerHit::operator=(const TCSTrackerHit& right)
   fPID = right.fPID;
   fP   = right.fP;
   fPos = right.fPos;
+  fLayer = right.fLayer;
   return *this;
 }
 

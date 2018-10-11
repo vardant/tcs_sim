@@ -89,12 +89,16 @@ G4bool TCSTrackerSD::ProcessHits(G4Step* step, G4TouchableHistory*)
       "Insulator_PV" &&
       step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary) {
 
-    //G4int chan =step->GetPostStepPoint()->GetTouchableHandle()->GetCopyNumber();
+    //G4int layer =step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber();
+    //G4cout << "TCSTrackerSD::ProcessHits: copy number = " << layer << G4endl;
+    //getchar();
+    G4int layer = 1;
+
     G4int pid = step->GetTrack()->GetDefinition()->GetPDGEncoding();
     G4ThreeVector mom = step->GetTrack()->GetMomentum();
     G4double P = sqrt(mom[0]*mom[0]+mom[1]*mom[1]+mom[2]*mom[2]);
     G4ThreeVector pos = step->GetTrack()->GetPosition();
-    TCSTrackerHit* hit = new TCSTrackerHit(pid, P, pos);
+    TCSTrackerHit* hit = new TCSTrackerHit(pid, P, pos, layer);
     fHitsCollection->insert( hit );
     ////    return true;
   }

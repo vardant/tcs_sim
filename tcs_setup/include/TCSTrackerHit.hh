@@ -39,7 +39,7 @@ public:
 
   TCSTrackerHit();
   TCSTrackerHit(const TCSTrackerHit&);
-  TCSTrackerHit(G4int pid, G4double P, G4ThreeVector pos);
+  TCSTrackerHit(G4int pid, G4double P, G4ThreeVector pos, G4int layer);
   virtual ~TCSTrackerHit();
   
   // operators
@@ -57,12 +57,14 @@ public:
   G4int GetPID() const { return fPID; };
   G4double GetP() const { return fP; };
   G4ThreeVector GetPos() const { return fPos; };
+  G4int GetLayer() const { return fLayer; };
   
 private:
 
   G4int         fPID;
   G4double      fP;
   G4ThreeVector fPos;
+  G4int         fLayer;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -165,6 +165,7 @@ void TCSHistoManager::book()
 
  fTrackerTree = new TTree("tracker", "TCS trackers' per event hit collections");
  fTrackerTree->Branch("detcont", &(fTrackerHitCont.Det));
+ fTrackerTree->Branch("layercont", &(fTrackerHitCont.Layer));
  fTrackerTree->Branch("pidcont", &(fTrackerHitCont.PID));
  // fTrackerTree->Branch("pcont", &(fTrackerHitCont.Pos));
  fTrackerTree->Branch("xcont", &(fTrackerHitCont.X));
@@ -447,13 +448,14 @@ void TCSHistoManager::AddHit(int det, uint chan, double edep, int pid,
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void TCSHistoManager::AddHit(int det, int pid, G4ThreeVector pos,
+void TCSHistoManager::AddHit(int det, int layer, int pid, G4ThreeVector pos,
 			     double P,
                              TrackerHitContainer& TrackerHitCont) {
 
   // Add hit to a tracker hit container.
 
   TrackerHitCont.Det.push_back(det);
+  TrackerHitCont.Layer.push_back(layer);
   TrackerHitCont.PID.push_back(pid);
 
   //  TrackerHitCont.Pos.push_back(pos);
