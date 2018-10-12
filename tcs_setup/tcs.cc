@@ -46,11 +46,11 @@
 #include <vector>
 #include "G4GDMLParser.hh"
 
-#ifdef G4MULTITHREADED
-#include "G4MTRunManager.hh"
-#else
+////#ifdef G4MULTITHREADED
+////#include "G4MTRunManager.hh"
+////#else
 #include "G4RunManager.hh"
-#endif
+////#endif
 
 #include "G4LogicalVolumeStore.hh"
 #include "G4UImanager.hh"
@@ -121,11 +121,11 @@ int main(int argc,char** argv)
  
   // Construct the default run manager
 
-#ifdef G4MULTITHREADED
-  G4MTRunManager* runManager = new G4MTRunManager;
-#else
+  ////#ifdef G4MULTITHREADED
+  ////  G4MTRunManager* runManager = new G4MTRunManager;
+  ////#else
   G4RunManager* runManager = new G4RunManager;
-#endif
+  ////#endif
 
   // Setup scoring stuff
   //  G4ScoringManager* scoringManager = G4ScoringManager::GetScoringManager();
