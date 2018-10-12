@@ -30,8 +30,11 @@
 #include "G4ThreeVector.hh"
 #include "G4SDManager.hh"
 #include "G4ios.hh"
+#include <string>
 
 #include "TCSTrackInformation.hh"
+
+using namespace std;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -82,17 +85,22 @@ G4bool TCSTrackerSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   TCSTrackInformation* info =
     (TCSTrackInformation*)(step->GetTrack()->GetUserInformation());
 
+  string vname =
+    step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName();
+
   // Particle entering tracker.
-  if (step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
-      "trackerWorld_PV" &&
+  //if (step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
+  //      "trackerWorld_PV" &&
+  if (vname.substr(0,7) == "tracker" && vname.substr(8,5) == "World" &&
       step->GetPostStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
       "Insulator_PV" &&
       step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary) {
 
-    //G4int layer =step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber();
-    //G4cout << "TCSTrackerSD::ProcessHits: copy number = " << layer << G4endl;
-    //getchar();
-    G4int layer = 1;
+    G4int layer = atoi(vname.substr(7,1).c_str()) - 1;
+
+    //   G4cout << "TCSTrackerSD::ProcessHits: vol. name = " << vname << G4endl;
+    //   G4cout << "                               layer = " << layer << G4endl;
+    //   getchar();
 
     G4int pid = step->GetTrack()->GetDefinition()->GetPDGEncoding();
     G4ThreeVector mom = step->GetTrack()->GetMomentum();
