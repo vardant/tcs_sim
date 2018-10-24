@@ -3,25 +3,79 @@
       xsi:noNamespaceSchemaLocation=
       "/data/home/vardan.tadevosyan/geant4/GDML_3_1_6/schema/gdml.xsd">
 
-  <!-- TCS GEM Tracker -->
+  <!-- TCS GEM Tracker. Similar to COMPAS triple GEM detector -->
+  <!-- See C.Altunbas et al, NIMA 490 (2002) 177-203, Table 2. -->
 
  <define>
 
+   <constant name="FBGlassThick" value="0.120"/>
+   <constant name="CopperThick" value="0.005"/>
+   <constant name="KaptonThick" value="0.050"/>
+   <constant name="EpoxyThick" value="0.060"/>
+   <constant name="RBCopperThick" value="0.005"/>
+
+   <constant name="DriftThick" value="3."/>
+   <constant name="TransferThick" value="2."/>
+   <constant name="InductionThick" value="2."/>
+
    <constant name="dX" value="44.01"/>
    <constant name="dY" value="44.01"/>
-   <constant name="dZ" value="0.050"/>
+   <constant name="dZ" value="9.660"/>
    <constant name="eps" value="0.000001"/>
 
-   <quantity name="xsize" type="length" value="dX" unit="cm"/>
-   <quantity name="ysize" type="length" value="dY" unit="cm"/>
-   <quantity name="zsize" type="length" value="dZ" unit="mm"/>
+   <quantity name="copperZ" type="length" value="CopperThick" unit="mm"/>
+   <quantity name="kaptonZ" type="length" value="KaptonThick" unit="mm"/>
+   <quantity name="epoxyZ" type="length" value="EpoxyThick" unit="mm"/>
+   <quantity name="RBcopperZ" type="length" value="RBCopperThick" unit="mm"/>
+   <quantity name="FBGlassZ" type="length" value="FBGlassThick" unit="mm"/>
+
+   <quantity name="honeycombZ" type="length" value="FBGlassThick" unit="mm"/>
+   <quantity name="driftelectrodeZ" type="length"
+	     value="KaptonThick+CopperThick" unit="mm"/>
+   <quantity name="gemZ" type="length" value="KaptonThick+2*CopperThick"
+	     unit="mm"/>
+   <quantity name="RBZ" type="length"
+	     value="RBCopperThick+KaptonThick+FBGlassThick+EpoxyThick"
+	     unit="mm"/>
+
+   <quantity name="driftZ" type="length" value="DriftThick" unit="mm"/>
+   <quantity name="transferZ" type="length" value="TransferThick" unit="mm"/>
+   <quantity name="inductionZ" type="length" value="InductionThick" unit="mm"/>
+
+   <quantity name="trackerX" type="length" value="dX" unit="cm"/>
+   <quantity name="trackerY" type="length" value="dY" unit="cm"/>
+   <quantity name="trackerZ" type="length" value="dZ" unit="mm"/>
+
+   <position name="posTopHoneyComb" x="0" y="0" z="(trackerZ-honeycombZ)/2"/>
+   <position name="posDriftElectrode" x="0" y="0"
+	     z="trackerZ/2-honeycombZ-driftelectrodeZ/2"/>
+   <position name="posDriftElectrodeCopper" x="0" y="0"
+	     z="(-driftelectrodeZ+copperZ)/2"/>
+   <position name="posDrift" x="0" y="0"
+	     z="trackerZ/2-honeycombZ-driftelectrodeZ-driftZ/2"/>
+   <position name="posGEM1" x="0" y="0"
+	     z="trackerZ/2-honeycombZ-driftelectrodeZ-driftZ-gemZ/2"/>
+   <position name="posGEMTopCopper" x="0" y="0" z="(gemZ-copperZ)/2"/>
+   <position name="posGEMBotCopper" x="0" y="0" z="(-gemZ+copperZ)/2"/>
+   <position name="posGEM2" x="0" y="0"
+     z="trackerZ/2-honeycombZ-driftelectrodeZ-driftZ-gemZ-transferZ-gemZ/2"/>
+   <position name="posGEM3" x="0" y="0"
+    z="trackerZ/2-honeycombZ-driftelectrodeZ-driftZ-2*gemZ-2*transferZ-gemZ/2"/>
+
+   <position name="posRBEpoxy" x="0" y="0" z="(-RBZ+epoxyZ)/2"/>
+   <!-- position name="posRBFBGlass" x="0"y="0"z="-RBZ/2+epoxyZ+FBGlassZ/2"/ -->
+   <position name="posRBKapton" x="0" y="0"
+	     z="-RBZ/2+epoxyZ+FBGlassZ+kaptonZ/2"/>
+   <position name="posRBCopper" x="0" y="0"
+	     z="-RBZ/2+epoxyZ+FBGlassZ+kaptonZ+RBcopperZ/2"/>
+   <position name="posRB" x="0" y="0" z="(-trackerZ+RBZ)/2"/>
 
    <position name="center" x="0" y="0" z="0"/>
    <rotation name="identity" x="0" y="0" z="0"/>
 
    <quantity name="xext" type="length" value="dX+eps" unit="cm"/>
    <quantity name="yext" type="length" value="dY+eps" unit="cm"/>
-   <quantity name="zext" type="length" value="dZ+eps" unit="cm"/>
+   <quantity name="zext" type="length" value="dZ+eps" unit="mm"/>
  </define>
 
  <materials>
@@ -30,11 +84,47 @@
   <element name="Nitrogen" formula="N" Z="7."> <atom value="14.01"/>  </element>
   <element name="Carbon" formula="C" Z="6."> <atom value="12.01"/>   </element>
   <element name="Hydrogen" formula="H" Z="1."> <atom value="1.01"/> </element>
+  <element name="Argon" formula="Ar" Z="18."> <atom value="39.948"/>  </element>
+  <element name="Aluminum" formula="Al" Z="13."> <atom value="26.982"/>
+  </element>
+  <element name="Barium" formula="Ba" Z="56."> <atom value="137.327"/>
+  </element>
+  <element name="Calcium" formula="Ca" Z="20."> <atom value="40.078"/>
+  </element>
+  <element name="Magnesium" formula="Mg" Z="12."> <atom value="24.305"/>
+  </element>
+  <element name="Sodium" formula="Na" Z="11."> <atom value="22.990"/> </element>
+  <element name="Silicon" formula="Si" Z="14."> <atom value="28.086"/>
+  </element>
+  <element name="Copper" formula="Cu" Z="29."> <atom value="63.646"/>
+  </element>
 
   <material name="Air">
    <D value="1.290" unit="mg/cm3"/>
    <fraction n="0.7" ref="Nitrogen"/>
    <fraction n="0.3" ref="Oxygen"/>
+  </material>
+
+  <material name="ArgonGas">
+   <D value="1.662" unit="mg/cm3"/>
+   <composite n="1" ref="Argon"/>
+  </material>
+
+  <material name="CuConductor">
+   <D value="8.96" unit="g/cm3"/>
+   <composite n="1" ref="Copper"/>
+  </material>
+
+  <material name="CarbonDioxide">
+   <D value="1.842" unit="mg/cm3"/>
+   <composite n="1" ref="Carbon"/>
+   <composite n="2" ref="Oxygen"/>
+  </material>
+
+  <material name="WorkingGas">
+   <D value="1.716" unit="mg/cm3"/>
+   <fraction n="0.7" ref="ArgonGas"/>
+   <fraction n="0.3" ref="CarbonDioxide"/>
   </material>
 
   <material name="Kapton">
@@ -45,35 +135,215 @@
    <composite n="5"  ref="Oxygen"/>
   </material>
 
+  <material name="AluminumOxide">
+   <D value="3.97" unit="g/cm3"/>
+   <composite n="2" ref="Aluminum"/>
+   <composite n="3" ref="Oxygen"/>
+  </material>
+
+  <material name="BariumOxide">
+   <D value="5.72" unit="g/cm3"/>
+   <composite n="1" ref="Barium"/>
+   <composite n="1" ref="Oxygen"/>
+  </material>
+
+  <material name="CalciumOxide">
+   <D value="3.3" unit="g/cm3"/>
+   <composite n="1" ref="Calcium"/>
+   <composite n="1" ref="Oxygen"/>
+  </material>
+
+  <material name="MagnesiumOxide">
+   <D value="3.58" unit="g/cm3"/>
+   <composite n="1" ref="Magnesium"/>
+   <composite n="1" ref="Oxygen"/>
+  </material>
+
+  <material name="SodiumSuperoxide">
+   <D value="2.2" unit="g/cm3"/>
+   <composite n="1" ref="Sodium"/>
+   <composite n="2" ref="Oxygen"/>
+  </material>
+
+  <material name="SiliconDioxide">
+   <D value="2.2" unit="g/cm3"/>
+   <composite n="1" ref="Silicon"/>
+   <composite n="2" ref="Oxygen"/>
+  </material>
+
+<!-- Approximated by E-glass fiber from matweb.com, but with density of -->
+<!--  E-glass epoxy composite of 1.95 g/cm^3 -->
+  <material name="FiberGlass">
+   <D value="1.95" unit="g/cm3"/>
+   <fraction n="0.152" ref="AluminumOxide"/>
+   <fraction n="0.080" ref="BariumOxide"/>
+   <fraction n="0.172" ref="CalciumOxide"/>
+   <fraction n="0.047" ref="MagnesiumOxide"/>
+   <fraction n="0.006" ref="SodiumSuperoxide"/>
+   <fraction n="0.543" ref="SiliconDioxide"/>
+  </material>
+
+<!-- Very-very approximate epoxy composition. -->
+  <material name="Epoxy">
+   <D value="1." unit="g/cm3"/>
+   <composite n="1" ref="Oxygen"/>
+   <composite n="1" ref="Carbon"/>
+   <composite n="1" ref="Nitrogen"/>
+   <composite n="4" ref="Hydrogen"/>
+  </material>
+
  </materials>
 
  <solids> 
    <box name="trWorldBox" x="xext" y="yext" z="zext"/>
-   <box name="TrackerAssemblyBox" x="xsize" y="ysize" z="zsize"/>
-   <box name="InsulatorBox" x="xsize" y="ysize" z="zsize"/>
+   <box name="TrackerAssemblyBox" x="trackerX" y="trackerY" z="trackerZ"/>
+   <box name="HoneyCombBox" x="trackerX" y="trackerY" z="honeycombZ"/>
+   <box name="DriftElectrodeBox" x="trackerX" y="trackerY" z="driftelectrodeZ"/>
+   <box name="copperBox" x="trackerX" y="trackerY" z="copperZ"/>
+   <box name="kaptonBox" x="trackerX" y="trackerY" z="kaptonZ"/>
+   <box name="driftBox" x="trackerX" y="trackerY" z="driftZ"/>
+   <box name="gemBox" x="trackerX" y="trackerY" z="gemZ"/>
+   <box name="RBBox" x="trackerX" y="trackerY" z="RBZ"/>
+   <box name="epoxyBox" x="trackerX" y="trackerY" z="epoxyZ"/>
  </solids>
 
  <structure>  
 
-   <volume name="Insulator">
+   <volume name="TopHoneyComb">
+     <materialref ref="FiberGlass"/>
+     <solidref ref="HoneyCombBox"/>
+     <auxiliary auxtype="Color" auxvalue="yellow"/>
+   </volume>
+
+   <volume name="CopperLayer">
+     <materialref ref="CuConductor"/>
+     <solidref ref="copperBox"/>
+     <auxiliary auxtype="Color" auxvalue="red"/>
+   </volume>
+
+   <volume name="DriftElectrode">
      <materialref ref="Kapton"/>
-     <solidref ref="InsulatorBox"/>
+     <solidref ref="DriftElectrodeBox"/>
+
+     <physvol>
+       <volumeref ref="CopperLayer"/>
+       <positionref ref="posDriftElectrodeCopper"/>
+       <rotationref ref="identity"/>
+     </physvol> 
+
+     <auxiliary auxtype="Color" auxvalue="green"/>
+   </volume>
+
+   <volume name="Drift">
+     <materialref ref="WorkingGas"/>
+     <solidref ref="driftBox"/>
      <auxiliary auxtype="Color" auxvalue="blue"/>
    </volume>
 
-   <volume name="TrackerAssembly">
-     <materialref ref="Air"/>
-     <solidref ref="TrackerAssemblyBox"/>
+   <volume name="GEM">
+     <materialref ref="Kapton"/>
+     <solidref ref="gemBox"/>
 
      <physvol>
-       <volumeref ref="Insulator"/>
-       <positionref ref="center"/>
+       <volumeref ref="CopperLayer"/>
+       <positionref ref="posGEMTopCopper"/>
+       <rotationref ref="identity"/>
+     </physvol> 
+
+     <physvol>
+       <volumeref ref="CopperLayer"/>
+       <positionref ref="posGEMBotCopper"/>
+       <rotationref ref="identity"/>
+     </physvol> 
+
+     <auxiliary auxtype="Color" auxvalue="green"/>
+   </volume>
+
+   <volume name="EpoxyLayer">
+     <materialref ref="Epoxy"/>
+     <solidref ref="epoxyBox"/>
+     <auxiliary auxtype="Color" auxvalue="blue"/>
+   </volume>
+
+   <volume name="KaptonLayer">
+     <materialref ref="Kapton"/>
+     <solidref ref="kaptonBox"/>
+     <auxiliary auxtype="Color" auxvalue="green"/>
+   </volume>
+
+   <volume name="ReadoutBoard">
+     <materialref ref="FiberGlass"/>
+     <solidref ref="RBBox"/>
+
+     <physvol>
+       <volumeref ref="EpoxyLayer"/>
+       <positionref ref="posRBEpoxy"/>
+       <rotationref ref="identity"/>
+     </physvol> 
+
+     <physvol>
+       <volumeref ref="KaptonLayer"/>
+       <positionref ref="posRBKapton"/>
+       <rotationref ref="identity"/>
+     </physvol> 
+
+     <physvol>
+       <volumeref ref="CopperLayer"/>
+       <positionref ref="posRBCopper"/>
        <rotationref ref="identity"/>
      </physvol> 
 
    </volume>
 
-  <volume name="tracker3World">
+   <volume name="TrackerAssembly">
+     <materialref ref="WorkingGas"/>
+     <solidref ref="TrackerAssemblyBox"/>
+
+     <physvol>
+       <volumeref ref="TopHoneyComb"/>
+       <positionref ref="posTopHoneyComb"/>
+       <rotationref ref="identity"/>
+     </physvol> 
+
+     <physvol>
+       <volumeref ref="DriftElectrode"/>
+       <positionref ref="posDriftElectrode"/>
+       <rotationref ref="identity"/>
+     </physvol> 
+
+     <physvol>
+       <volumeref ref="Drift"/>
+       <positionref ref="posDrift"/>
+       <rotationref ref="identity"/>
+     </physvol> 
+
+     <physvol>
+       <volumeref ref="GEM"/>
+       <positionref ref="posGEM1"/>
+       <rotationref ref="identity"/>
+     </physvol> 
+
+     <physvol>
+       <volumeref ref="GEM"/>
+       <positionref ref="posGEM2"/>
+       <rotationref ref="identity"/>
+     </physvol> 
+
+     <physvol>
+       <volumeref ref="GEM"/>
+       <positionref ref="posGEM3"/>
+       <rotationref ref="identity"/>
+     </physvol> 
+
+     <physvol>
+       <volumeref ref="ReadoutBoard"/>
+       <positionref ref="posRB"/>
+       <rotationref ref="identity"/>
+     </physvol> 
+
+   </volume>
+
+  <volume name="tracker1World">
    <materialref ref="Air"/>
    <solidref ref="trWorldBox"/>
 
@@ -88,7 +358,7 @@
  </structure>
 
  <setup name="Default" version="1.0">
-   <world ref="tracker3World"/>
+   <world ref="tracker1World"/>
    <!-- world ref="TrackerAssembly"/ -->
  </setup>
 
