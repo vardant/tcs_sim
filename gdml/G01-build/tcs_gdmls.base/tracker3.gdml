@@ -343,7 +343,7 @@
 
    </volume>
 
-  <volume name="tracker1World">
+  <volume name="tracker3World">
    <materialref ref="Air"/>
    <solidref ref="trWorldBox"/>
 
@@ -358,7 +358,7 @@
  </structure>
 
  <setup name="Default" version="1.0">
-   <world ref="tracker1World"/>
+   <world ref="tracker3World"/>
    <!-- world ref="TrackerAssembly"/ -->
  </setup>
 
