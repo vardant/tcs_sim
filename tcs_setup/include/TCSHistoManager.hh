@@ -48,14 +48,12 @@ struct HodoHitContainer {
 };
 
 struct TrackerHitContainer {
-  vector<int> Det;
-  vector<int> Layer;
-  vector<double> P;
-  vector<int> PID;
-  //  vector<G4ThreeVector> Pos;
   vector<double> X;
   vector<double> Y;
-  vector<double> Z;
+  vector<double> Edep;
+  vector<int> Det;
+  vector<int> Layer;
+  vector<int> PID;
 };
 
 struct TargetHitContainer {
@@ -70,8 +68,7 @@ class TCSHistoManager {
 public:
   
   TCSHistoManager();
-  //  TCSHistoManager(char*,char*);
-    TCSHistoManager(string,string);
+  TCSHistoManager(string,string);
   ~TCSHistoManager();
    
   void book();
@@ -87,7 +84,7 @@ public:
   void AddHit(int det, uint col, uint row, double edep, int pid);
   void AddHit(int det, uint chan, double edep, int pid,
 	      HodoHitContainer &HodoHitCont);
-  void AddHit(int det, int layer, int pid, G4ThreeVector pos, double P,
+  void AddHit(double x, double y, double edep, int det, int layer, int pid,
 	      TrackerHitContainer &TrackerHitCont);
 
   bool CheckTargetHitCont() {
@@ -111,11 +108,10 @@ public:
   bool CheckTrackerHitCont(TrackerHitContainer &TrackerHitCont) {
     uint sz = TrackerHitCont.Det.size();
     return (TrackerHitCont.Layer.size() != sz ||
-	    TrackerHitCont.P.size() != sz ||
 	    TrackerHitCont.PID.size() != sz ||
 	    TrackerHitCont.X.size() != sz ||
 	    TrackerHitCont.Y.size() != sz ||
-	    TrackerHitCont.Z.size() != sz
+	    TrackerHitCont.Edep.size() != sz
 	    ? false : true);
   }
 
@@ -151,13 +147,12 @@ public:
   };
 
   void ResetTracker(TrackerHitContainer &TrackerHitCont) {
-    TrackerHitCont.Det.clear();
-    TrackerHitCont.Layer.clear();
-    TrackerHitCont.P.clear();
-    TrackerHitCont.PID.clear();
     TrackerHitCont.X.clear();
     TrackerHitCont.Y.clear();
-    TrackerHitCont.Z.clear();
+    TrackerHitCont.Edep.clear();
+    TrackerHitCont.Det.clear();
+    TrackerHitCont.Layer.clear();
+    TrackerHitCont.PID.clear();
   };
 
   void ResetKinVar() {

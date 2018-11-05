@@ -70,7 +70,9 @@ private:
   void AddTrackerHit(TCSTrackerHitsCollection* HC,
   		     TrackerHitContainer& TrackerHitCont);
 
-  int GetQuarter(double x, double y);
+  static int GetQuarter(double x, double y);
+
+  friend class TCSTrackerSD;   //to use GetQuarter
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

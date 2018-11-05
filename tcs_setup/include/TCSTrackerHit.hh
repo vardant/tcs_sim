@@ -39,7 +39,8 @@ public:
 
   TCSTrackerHit();
   TCSTrackerHit(const TCSTrackerHit&);
-  TCSTrackerHit(G4int pid, G4double P, G4ThreeVector pos, G4int layer);
+  TCSTrackerHit(G4double x, G4double y, G4double edep, G4int quarter,
+		G4int layer, G4int pid, G4int trackid, G4int stepid);
   virtual ~TCSTrackerHit();
   
   // operators
@@ -54,17 +55,25 @@ public:
   virtual void Print();
   
   // Get methods
-  G4int GetPID() const { return fPID; };
-  G4double GetP() const { return fP; };
-  G4ThreeVector GetPos() const { return fPos; };
+  G4double GetX() const { return fX; };
+  G4double GetY() const { return fY; };
+  G4double GetEdep() const { return fEdep; };
+  G4int GetQuarter() const { return fQuarter; };
   G4int GetLayer() const { return fLayer; };
+  G4int GetPID() const { return fPID; };
+  G4int GetTrackID() const { return fTrackID; };
+  G4int GetStepID() const { return fStepID; };
   
 private:
 
-  G4int         fPID;
-  G4double      fP;
-  G4ThreeVector fPos;
+  G4double      fX;
+  G4double      fY;
+  G4double      fEdep;
+  G4int         fQuarter;
   G4int         fLayer;
+  G4int         fPID;
+  G4int         fTrackID;
+  G4int         fStepID;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

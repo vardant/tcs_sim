@@ -38,9 +38,9 @@ G4ThreadLocal G4Allocator<TCSTrackerHit>* TCSTrackerHitAllocator=0;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 TCSTrackerHit::TCSTrackerHit() : G4VHit(),
-				 fPID(0), fP(999999.),
-				 fPos(G4ThreeVector(999999.,999999.,999999.)),
-				 fLayer(999999)
+				 fX(99999.), fY(99999.), fEdep(99999.),
+				 fQuarter(9), fLayer(9), fPID(0),
+				 fTrackID(999999), fStepID(99999)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -51,30 +51,43 @@ TCSTrackerHit::~TCSTrackerHit() {}
 
 TCSTrackerHit::TCSTrackerHit(const TCSTrackerHit& right) : G4VHit()
 {
-  fPID = right.fPID;
-  fP   = right.fP;
-  fPos = right.fPos;
+  fX = right.fX;
+  fY = right.fY;
+  fEdep = right.fEdep;
+  fQuarter = right.fQuarter;
   fLayer = right.fLayer;
+  fPID = right.fPID;
+  fTrackID = right.fTrackID;
+  fStepID = right.fStepID;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-TCSTrackerHit::TCSTrackerHit(G4int pid, G4double P, G4ThreeVector pos,
-			     G4int layer) {
-  fPID = pid;
-  fP   = P;
-  fPos = pos;
+TCSTrackerHit::TCSTrackerHit(G4double x, G4double y, G4double edep,
+			     G4int quarter, G4int layer, G4int pid,
+			     G4int trackid, G4int stepid) {
+  fX = x;
+  fY = y;
+  fEdep = edep;
+  fQuarter = quarter;
   fLayer = layer;
+  fPID = pid;
+  fTrackID = trackid;
+  fStepID   = stepid;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 const TCSTrackerHit& TCSTrackerHit::operator=(const TCSTrackerHit& right)
 {
-  fPID = right.fPID;
-  fP   = right.fP;
-  fPos = right.fPos;
-  fLayer = right.fLayer;
+  fX       = right.fX;
+  fY       = right.fY;
+  fEdep    = right.fEdep;
+  fQuarter = right.fQuarter;
+  fLayer   = right.fLayer;
+  fPID     = right.fPID;
+  fTrackID = right.fTrackID;
+  fStepID  = right.fStepID;
   return *this;
 }
 
@@ -92,13 +105,13 @@ void TCSTrackerHit::Draw()
   G4VVisManager* pVVisManager = G4VVisManager::GetConcreteInstance();
   if(pVVisManager)
   {
-    G4Circle circle(fPos);
-    circle.SetScreenSize(4.);
-    circle.SetFillStyle(G4Circle::filled);
-    G4Colour colour(1.,0.,0.);
-    G4VisAttributes attribs(colour);
-    circle.SetVisAttributes(attribs);
-    pVVisManager->Draw(circle);
+    //    G4Circle circle(fPos);
+    //    circle.SetScreenSize(4.);
+    //    circle.SetFillStyle(G4Circle::filled);
+    //    G4Colour colour(1.,0.,0.);
+    //    G4VisAttributes attribs(colour);
+    //    circle.SetVisAttributes(attribs);
+    //    pVVisManager->Draw(circle);
   }
 }
 
@@ -106,7 +119,15 @@ void TCSTrackerHit::Draw()
 
 void TCSTrackerHit::Print()
 {
-  G4cout << "TCSTrackerHit: particle id = " << fPID << "  P = " << fP << G4endl;
+  G4cout << "TCSTrackerHit:" << G4endl;
+  G4cout << "  X       = " << fX << G4endl;
+  G4cout << "  Y       = " << fY << G4endl;
+  G4cout << "  Edep    = " << fEdep << G4endl;
+  G4cout << "  Quarter = " << fQuarter << G4endl;
+  G4cout << "  Layer   = " << fLayer << G4endl;
+  G4cout << "  PID     = " << fPID << G4endl;
+  G4cout << "  TrackID = " << fTrackID << G4endl;
+  G4cout << "  StepID  = " << fStepID << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

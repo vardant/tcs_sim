@@ -331,13 +331,13 @@ void TCSEventAction::AddTrackerHit(TCSTrackerHitsCollection* HC,
       //      G4cout << "      HC n_hit = " << n_hit << G4endl;
 
       for(int i=0;i<n_hit;i++) {
-	G4ThreeVector pos=(*HC)[i]->GetPos();
-	////	G4int det = pos.getY() > 0. ? 1 : -1;
-	G4int detpos = GetQuarter(pos.getX(), pos.getY());
-	G4int layer =(*HC)[i]->GetLayer();
-	G4int pid =(*HC)[i]->GetPID();
-	G4double P = (*HC)[i]->GetP();
-	fHistoManager->AddHit(detpos, layer, pid, pos, P/MeV, TrackerHitCont);
+	G4double x     = (*HC)[i]->GetX();
+	G4double y     = (*HC)[i]->GetY();
+	G4double edep  = (*HC)[i]->GetEdep();
+	G4int    det   = (*HC)[i]->GetQuarter();
+	G4int    layer = (*HC)[i]->GetLayer();
+	G4int    pid   = (*HC)[i]->GetPID();
+	fHistoManager->AddHit(x, y, edep/keV, det, layer, pid, TrackerHitCont);
       }
 
       //Check hit container's consistency first.

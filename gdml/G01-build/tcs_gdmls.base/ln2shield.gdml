@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation=
-      "/work/hallc/nps/vardan/G4.nps/g4.10.03/GDML_3_1_6/schema/gdml.xsd">
+      "/data/home/vardan.tadevosyan/geant4/GDML_3_1_6/schema/gdml.xsd">
 
   <!-- According to SANE OVC drawings, and from Jixie's -->
   <!-- G2PDetectorConstruction.cc -->

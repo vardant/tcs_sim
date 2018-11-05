@@ -25,6 +25,7 @@
 //
 
 #include "TCSTrackerSD.hh"
+#include "TCSEventAction.hh"
 #include "G4HCofThisEvent.hh"
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
@@ -88,26 +89,86 @@ G4bool TCSTrackerSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   string vname =
     step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName();
 
-  // Particle entering tracker.
-  //if (step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
-  //      "trackerWorld_PV" &&
-  if (vname.substr(0,7) == "tracker" && vname.substr(8,5) == "World" &&
-      step->GetPostStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
-      "Insulator_PV" &&
-      step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary) {
+  // Particle in the tracker's drift gas volume.
+  if (vname == "Drift_PV") {
 
-    G4int layer = atoi(vname.substr(7,1).c_str()) - 1;
+    G4int layer = -1;
+    string WorldName =
+      step->GetPreStepPoint()->GetTouchableHandle()->GetVolume(2)->GetName();
+    if (WorldName.substr(0,7) == "tracker" && WorldName.substr(8,5) == "World")
+      layer = atoi(WorldName.substr(7,1).c_str()) - 1;
+    else
+      G4cout << "*** TCSTrackerSD::ProcessHits: wrong WorldName ***" << G4endl;
 
-    //   G4cout << "TCSTrackerSD::ProcessHits: vol. name = " << vname << G4endl;
-    //   G4cout << "                               layer = " << layer << G4endl;
-    //   getchar();
+    //    G4ThreeVector trackPos = step->GetTrack()->GetPosition();
+    G4ThreeVector prestepPos = step->GetPreStepPoint()->GetPosition();
+    G4ThreeVector poststepPos = step->GetPostStepPoint()->GetPosition();
 
-    G4int pid = step->GetTrack()->GetDefinition()->GetPDGEncoding();
-    G4ThreeVector mom = step->GetTrack()->GetMomentum();
-    G4double P = sqrt(mom[0]*mom[0]+mom[1]*mom[1]+mom[2]*mom[2]);
-    G4ThreeVector pos = step->GetTrack()->GetPosition();
-    TCSTrackerHit* hit = new TCSTrackerHit(pid, P, pos, layer);
+    //G4ThreeVector loctrackPos =step->GetPreStepPoint()->GetTouchableHandle()->
+    //      GetHistory()->GetTopTransform().TransformPoint(trackPos);
+    G4ThreeVector locprePos = step->GetPreStepPoint()->GetTouchableHandle()->
+      GetHistory()->GetTopTransform().TransformPoint(prestepPos);
+    G4ThreeVector locpostPos = step->GetPreStepPoint()->GetTouchableHandle()->
+      GetHistory()->GetTopTransform().TransformPoint(poststepPos);
+
+    G4double totedep = step->GetTotalEnergyDeposit();
+    G4double nonionedep = step->GetNonIonizingEnergyDeposit();
+
+    G4int trackID = step->GetTrack()->GetTrackID();
+    G4int stepNumber = step->GetTrack()->GetCurrentStepNumber();
+
+    G4int origPID = info->GetOriginalParticle()->GetPDGEncoding();
+
+    //    G4int pid = step->GetTrack()->GetDefinition()->GetPDGEncoding();
+    //    G4ThreeVector mom = step->GetTrack()->GetMomentum();
+    //    G4double P = sqrt(mom[0]*mom[0]+mom[1]*mom[1]+mom[2]*mom[2]);
+    //    TCSTrackerHit* hit = new TCSTrackerHit(pid, P, localPos, layer);
+    //    fHitsCollection->insert( hit );
+
+    G4int quarter = TCSEventAction::GetQuarter(prestepPos.getX(),
+					       prestepPos.getY());
+
+    TCSTrackerHit* hit = new TCSTrackerHit(
+				   (locprePos.getX()+locpostPos.getX())/2,
+				   (locprePos.getY()+locpostPos.getY())/2,
+				   totedep - nonionedep,
+				   quarter, layer,
+				   origPID, trackID, stepNumber);
+
     fHitsCollection->insert( hit );
+
+    /*
+    G4cout << "TCSTrackerSD::ProcessHits: vol. name = " << vname << G4endl;
+    G4cout << "  pid = " << pid << "  P = " << P << G4endl;
+    G4cout << "  prestepPos   = " << prestepPos.getX() << " " 
+	                          << prestepPos.getY() << " "
+	                          << prestepPos.getZ() << " " << G4endl;
+    G4cout << "  locprePos   = " << locprePos.getX() << " " 
+	                         << locprePos.getY() << " "
+	                         << locprePos.getZ() << " " << G4endl;
+    G4cout << "  locpostPos  = " << locpostPos.getX() << " " 
+	                         << locpostPos.getY() << " "
+	                         << locpostPos.getZ() << " " << G4endl;
+    G4cout << "  loctrackPos = " << loctrackPos.getX() << " " 
+	                         << loctrackPos.getY() << " "
+	                         << loctrackPos.getZ() << " " << G4endl;
+    G4cout << "  Edep total  = " << totedep << G4endl;
+    G4cout << "  Edep nonion = " << nonionedep << G4endl;
+    G4cout << "  track ID    = " << trackID << G4endl;
+    G4cout << "  step number = " << stepNumber << G4endl;
+    G4cout << "  origPID     = " << origPID << G4endl;
+    G4cout << "  volume 1    = " <<
+      step->GetPreStepPoint()->GetTouchableHandle()->GetVolume(1)->GetName()
+	   << G4endl;
+    G4cout << "  volume 2    = " <<
+      step->GetPreStepPoint()->GetTouchableHandle()->GetVolume(2)->GetName()
+	   << G4endl;
+    G4cout << "  WorldName   = " << WorldName << G4endl;
+    G4cout << "  layer       = " << layer << G4endl;
+    G4cout << "  quarter     = " << quarter << G4endl;
+    getchar();
+    */
+
     ////    return true;
   }
 

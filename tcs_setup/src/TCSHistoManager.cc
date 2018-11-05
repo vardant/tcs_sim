@@ -164,14 +164,12 @@ void TCSHistoManager::book()
  fHodoYTree->Branch("pidcont", &(fHodoYHitCont.PID));
 
  fTrackerTree = new TTree("tracker", "TCS trackers' per event hit collections");
+ fTrackerTree->Branch("xcont", &(fTrackerHitCont.X));
+ fTrackerTree->Branch("ycont", &(fTrackerHitCont.Y));
+ fTrackerTree->Branch("edepcont", &(fTrackerHitCont.Edep));
  fTrackerTree->Branch("detcont", &(fTrackerHitCont.Det));
  fTrackerTree->Branch("layercont", &(fTrackerHitCont.Layer));
  fTrackerTree->Branch("pidcont", &(fTrackerHitCont.PID));
- // fTrackerTree->Branch("pcont", &(fTrackerHitCont.Pos));
- fTrackerTree->Branch("xcont", &(fTrackerHitCont.X));
- fTrackerTree->Branch("ycont", &(fTrackerHitCont.Y));
- fTrackerTree->Branch("zcont", &(fTrackerHitCont.Z));
- fTrackerTree->Branch("pcont", &(fTrackerHitCont.P));
 
  fKinTree = new TTree("kin","TCS kinematics");
  fKinTree->Branch("Q2",&fKinVar.Q2);
@@ -448,24 +446,20 @@ void TCSHistoManager::AddHit(int det, uint chan, double edep, int pid,
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void TCSHistoManager::AddHit(int det, int layer, int pid, G4ThreeVector pos,
-			     double P,
+void TCSHistoManager::AddHit(double x, double y, double edep,
+			     int det, int layer, int pid,
                              TrackerHitContainer& TrackerHitCont) {
 
   // Add hit to a tracker hit container.
 
+  TrackerHitCont.X.push_back(x);
+  TrackerHitCont.Y.push_back(y);
+  TrackerHitCont.Edep.push_back(edep);
   TrackerHitCont.Det.push_back(det);
   TrackerHitCont.Layer.push_back(layer);
   TrackerHitCont.PID.push_back(pid);
 
-  //  TrackerHitCont.Pos.push_back(pos);
-  TrackerHitCont.X.push_back(pos.getX());
-  TrackerHitCont.Y.push_back(pos.getY());
-  TrackerHitCont.Z.push_back(pos.getZ());
-
-  TrackerHitCont.P.push_back(P);
   //G4cout << "          TCSHistoManager::AddHit: hit pushed back" << G4endl;
-
 }
 
 void TCSHistoManager::PrintStatistic()
