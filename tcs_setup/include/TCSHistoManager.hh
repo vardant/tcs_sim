@@ -53,7 +53,7 @@ struct TrackerHitContainer {
   vector<double> Edep;
   vector<int> Det;
   vector<int> Layer;
-  vector<int> PID;
+  vector<int> PIDOrig;
 };
 
 struct TargetHitContainer {
@@ -84,7 +84,7 @@ public:
   void AddHit(int det, uint col, uint row, double edep, int pid);
   void AddHit(int det, uint chan, double edep, int pid,
 	      HodoHitContainer &HodoHitCont);
-  void AddHit(double x, double y, double edep, int det, int layer, int pid,
+  void AddHit(double x, double y, double edep, int det, int layer, int pidorig,
 	      TrackerHitContainer &TrackerHitCont);
 
   bool CheckTargetHitCont() {
@@ -108,7 +108,7 @@ public:
   bool CheckTrackerHitCont(TrackerHitContainer &TrackerHitCont) {
     uint sz = TrackerHitCont.Det.size();
     return (TrackerHitCont.Layer.size() != sz ||
-	    TrackerHitCont.PID.size() != sz ||
+	    TrackerHitCont.PIDOrig.size() != sz ||
 	    TrackerHitCont.X.size() != sz ||
 	    TrackerHitCont.Y.size() != sz ||
 	    TrackerHitCont.Edep.size() != sz
@@ -152,7 +152,7 @@ public:
     TrackerHitCont.Edep.clear();
     TrackerHitCont.Det.clear();
     TrackerHitCont.Layer.clear();
-    TrackerHitCont.PID.clear();
+    TrackerHitCont.PIDOrig.clear();
   };
 
   void ResetKinVar() {
