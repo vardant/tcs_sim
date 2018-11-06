@@ -56,6 +56,7 @@ struct TrackerHitContainer {
   vector<int> PID;
   vector<int> PIDOrig;
   vector<int> trackID;
+  vector<int> Nstep;
 };
 
 struct TargetHitContainer {
@@ -110,7 +111,8 @@ public:
 
   bool CheckTrackerHitCont(TrackerHitContainer &TrackerHitCont) {
     uint sz = TrackerHitCont.Det.size();
-    return (TrackerHitCont.Layer.size() != sz ||
+    return (TrackerHitCont.Nstep.size() != sz ||
+	    TrackerHitCont.Layer.size() != sz ||
 	    TrackerHitCont.PID.size() != sz ||
 	    TrackerHitCont.PIDOrig.size() != sz ||
 	    TrackerHitCont.trackID.size() != sz ||
@@ -160,6 +162,7 @@ public:
     TrackerHitCont.PID.clear();
     TrackerHitCont.PIDOrig.clear();
     TrackerHitCont.trackID.clear();
+    TrackerHitCont.Nstep.clear();
   };
 
   void ResetKinVar() {

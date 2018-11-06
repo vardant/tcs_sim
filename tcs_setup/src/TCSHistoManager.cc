@@ -172,6 +172,7 @@ void TCSHistoManager::book()
  fTrackerTree->Branch("pidcont", &(fTrackerHitCont.PID));
  fTrackerTree->Branch("pidorigcont", &(fTrackerHitCont.PIDOrig));
  fTrackerTree->Branch("trackidcont", &(fTrackerHitCont.trackID));
+ fTrackerTree->Branch("nstepcont", &(fTrackerHitCont.Nstep));
 
  fKinTree = new TTree("kin","TCS kinematics");
  fKinTree->Branch("Q2",&fKinVar.Q2);
@@ -476,6 +477,7 @@ void TCSHistoManager::AddHit(double x, double y, double edep,
       TrackerHitCont.X.at(i) = x_new;
       TrackerHitCont.Y.at(i) = y_new;
       TrackerHitCont.Edep.at(i) = edep_new;
+      TrackerHitCont.Nstep.at(i)++;
 
       if (pid != TrackerHitCont.PID.at(i))
 	G4cout << "*** TCSHistoManager::AddHit: pid != TrackerHitCont.PID ***"
@@ -494,6 +496,7 @@ void TCSHistoManager::AddHit(double x, double y, double edep,
       TrackerHitCont.PID.push_back(pid);
       TrackerHitCont.PIDOrig.push_back(pidorig);
       TrackerHitCont.trackID.push_back(trackid);
+      TrackerHitCont.Nstep.push_back(1);
   }
 
   //G4cout << "          TCSHistoManager::AddHit: hit pushed back" << G4endl;
