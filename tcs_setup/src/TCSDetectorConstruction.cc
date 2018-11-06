@@ -204,7 +204,7 @@ void TCSDetectorConstruction::ConstructSDandField()
     TCSTrackerSD* trackerSD = new TCSTrackerSD("TrackerSD",
 					       "TrackerHitsCollection");
     G4SDManager::GetSDMpointer()->AddNewDetector(trackerSD);
-    SetSensitiveDetector("Insulator", trackerSD, true);
+    SetSensitiveDetector("Drift", trackerSD, true);
     SetSensitiveDetector("tracker1World", trackerSD, true);
     SetSensitiveDetector("tracker2World", trackerSD, true);
     SetSensitiveDetector("tracker3World", trackerSD, true);

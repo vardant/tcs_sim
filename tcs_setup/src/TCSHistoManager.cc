@@ -455,14 +455,46 @@ void TCSHistoManager::AddHit(double x, double y, double edep,
 
   // Add hit to a tracker hit container.
 
-  TrackerHitCont.X.push_back(x);
-  TrackerHitCont.Y.push_back(y);
-  TrackerHitCont.Edep.push_back(edep);
-  TrackerHitCont.Det.push_back(det);
-  TrackerHitCont.Layer.push_back(layer);
-  TrackerHitCont.PID.push_back(pid);
-  TrackerHitCont.PIDOrig.push_back(pidorig);
-  TrackerHitCont.trackID.push_back(trackid);
+  bool new_track = true;
+
+  for (uint i=0; i<TrackerHitCont.trackID.size(); i++) {
+
+    if (pidorig == TrackerHitCont.PIDOrig.at(i) &&
+	trackid == TrackerHitCont.trackID.at(i) &&
+	det     == TrackerHitCont.Det.at(i) &&
+	layer   == TrackerHitCont.Layer.at(i)) {
+  
+      new_track = false;
+
+      double edep_old = TrackerHitCont.Edep.at(i);
+      double x_old = TrackerHitCont.X.at(i);
+      double y_old = TrackerHitCont.Y.at(i);
+      double edep_new = edep_old + edep;
+      double x_new = (x_old*edep_old + x*edep)/edep_new;
+      double y_new = (y_old*edep_old + y*edep)/edep_new;
+
+      TrackerHitCont.X.at(i) = x_new;
+      TrackerHitCont.Y.at(i) = y_new;
+      TrackerHitCont.Edep.at(i) = edep_new;
+
+      if (pid != TrackerHitCont.PID.at(i))
+	G4cout << "*** TCSHistoManager::AddHit: pid != TrackerHitCont.PID ***"
+	       << G4endl;
+      break;
+    }
+
+  }
+
+  if (new_track) {
+      TrackerHitCont.X.push_back(x);
+      TrackerHitCont.Y.push_back(y);
+      TrackerHitCont.Edep.push_back(edep);
+      TrackerHitCont.Det.push_back(det);
+      TrackerHitCont.Layer.push_back(layer);
+      TrackerHitCont.PID.push_back(pid);
+      TrackerHitCont.PIDOrig.push_back(pidorig);
+      TrackerHitCont.trackID.push_back(trackid);
+  }
 
   //G4cout << "          TCSHistoManager::AddHit: hit pushed back" << G4endl;
 }
