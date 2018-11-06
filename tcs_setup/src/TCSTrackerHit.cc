@@ -39,8 +39,8 @@ G4ThreadLocal G4Allocator<TCSTrackerHit>* TCSTrackerHitAllocator=0;
 
 TCSTrackerHit::TCSTrackerHit() : G4VHit(),
 				 fX(99999.), fY(99999.), fEdep(99999.),
-				 fQuarter(9), fLayer(9), fPIDOrig(0),
-				 fTrackID(999999), fStepID(99999)
+				 fQuarter(9), fLayer(9), fPID(0), fPIDOrig(0),
+				 fTrackID(999999)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -56,24 +56,26 @@ TCSTrackerHit::TCSTrackerHit(const TCSTrackerHit& right) : G4VHit()
   fEdep = right.fEdep;
   fQuarter = right.fQuarter;
   fLayer = right.fLayer;
+  fPID = right.fPID;
   fPIDOrig = right.fPIDOrig;
   fTrackID = right.fTrackID;
-  fStepID = right.fStepID;
+  //  fStepID = right.fStepID;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 TCSTrackerHit::TCSTrackerHit(G4double x, G4double y, G4double edep,
-			     G4int quarter, G4int layer, G4int pidorig,
-			     G4int trackid, G4int stepid) {
+			     G4int quarter, G4int layer, G4int pid,
+			     G4int pidorig, G4int trackid) {
   fX = x;
   fY = y;
   fEdep = edep;
   fQuarter = quarter;
   fLayer = layer;
+  fPID = pid;
   fPIDOrig = pidorig;
   fTrackID = trackid;
-  fStepID   = stepid;
+  //  fStepID   = stepid;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -85,9 +87,10 @@ const TCSTrackerHit& TCSTrackerHit::operator=(const TCSTrackerHit& right)
   fEdep    = right.fEdep;
   fQuarter = right.fQuarter;
   fLayer   = right.fLayer;
+  fPID     = right.fPID;
   fPIDOrig = right.fPIDOrig;
   fTrackID = right.fTrackID;
-  fStepID  = right.fStepID;
+  //  fStepID  = right.fStepID;
   return *this;
 }
 
@@ -125,9 +128,10 @@ void TCSTrackerHit::Print()
   G4cout << "  Edep    = " << fEdep << G4endl;
   G4cout << "  Quarter = " << fQuarter << G4endl;
   G4cout << "  Layer   = " << fLayer << G4endl;
+  G4cout << "  PID     = " << fPID << G4endl;
   G4cout << "  PIDOrig = " << fPIDOrig << G4endl;
   G4cout << "  TrackID = " << fTrackID << G4endl;
-  G4cout << "  StepID  = " << fStepID << G4endl;
+  //  G4cout << "  StepID  = " << fStepID << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -40,7 +40,8 @@ public:
   TCSTrackerHit();
   TCSTrackerHit(const TCSTrackerHit&);
   TCSTrackerHit(G4double x, G4double y, G4double edep, G4int quarter,
-		G4int layer, G4int pidorig, G4int trackid, G4int stepid);
+		G4int layer, G4int pid, G4int pidorig, G4int trackid);
+  //  G4int layer, G4int pidorig, G4int trackid, G4int stepid);
   virtual ~TCSTrackerHit();
   
   // operators
@@ -60,9 +61,10 @@ public:
   G4double GetEdep() const { return fEdep; };
   G4int GetQuarter() const { return fQuarter; };
   G4int GetLayer() const { return fLayer; };
+  G4int GetPID() const { return fPID; };
   G4int GetPIDOrig() const { return fPIDOrig; };
   G4int GetTrackID() const { return fTrackID; };
-  G4int GetStepID() const { return fStepID; };
+  //  G4int GetStepID() const { return fStepID; };
   
 private:
 
@@ -71,9 +73,10 @@ private:
   G4double      fEdep;
   G4int         fQuarter;
   G4int         fLayer;
+  G4int         fPID;
   G4int         fPIDOrig;
   G4int         fTrackID;
-  G4int         fStepID;
+  //  G4int         fStepID;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

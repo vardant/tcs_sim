@@ -336,8 +336,10 @@ void TCSEventAction::AddTrackerHit(TCSTrackerHitsCollection* HC,
 	G4double edep  = (*HC)[i]->GetEdep();
 	G4int    det   = (*HC)[i]->GetQuarter();
 	G4int    layer = (*HC)[i]->GetLayer();
+	G4int    pid = (*HC)[i]->GetPID();
 	G4int    pidorig = (*HC)[i]->GetPIDOrig();
-	fHistoManager->AddHit(x, y, edep/keV, det, layer, pidorig,
+	G4int    trackid = (*HC)[i]->GetTrackID();
+	fHistoManager->AddHit(x, y, edep/keV, det, layer, pid, pidorig, trackid,
 			      TrackerHitCont);
       }
 

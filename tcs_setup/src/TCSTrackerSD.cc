@@ -115,11 +115,12 @@ G4bool TCSTrackerSD::ProcessHits(G4Step* step, G4TouchableHistory*)
     G4double nonionedep = step->GetNonIonizingEnergyDeposit();
 
     G4int trackID = step->GetTrack()->GetTrackID();
-    G4int stepNumber = step->GetTrack()->GetCurrentStepNumber();
+    //    G4int stepNumber = step->GetTrack()->GetCurrentStepNumber();
 
     G4int origPID = info->GetOriginalParticle()->GetPDGEncoding();
 
-    //    G4int pid = step->GetTrack()->GetDefinition()->GetPDGEncoding();
+    G4int PID = step->GetTrack()->GetDefinition()->GetPDGEncoding();
+
     //    G4ThreeVector mom = step->GetTrack()->GetMomentum();
     //    G4double P = sqrt(mom[0]*mom[0]+mom[1]*mom[1]+mom[2]*mom[2]);
     //    TCSTrackerHit* hit = new TCSTrackerHit(pid, P, localPos, layer);
@@ -133,7 +134,7 @@ G4bool TCSTrackerSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 				   (locprePos.getY()+locpostPos.getY())/2,
 				   totedep - nonionedep,
 				   quarter, layer,
-				   origPID, trackID, stepNumber);
+				   PID, origPID, trackID);
 
     fHitsCollection->insert( hit );
 
