@@ -39,9 +39,9 @@ public:
 
   TCSTrackerHit();
   TCSTrackerHit(const TCSTrackerHit&);
-  TCSTrackerHit(G4double x, G4double y, G4double edep, G4int quarter,
-		G4int layer, G4int pid, G4int pidorig, G4int trackid);
-  //  G4int layer, G4int pidorig, G4int trackid, G4int stepid);
+  TCSTrackerHit(G4double x, G4double y, G4double edep, G4double length,
+		G4int quarter,G4int layer, G4int pid, G4int pidorig,
+		G4int trackid);
   virtual ~TCSTrackerHit();
   
   // operators
@@ -59,6 +59,7 @@ public:
   G4double GetX() const { return fX; };
   G4double GetY() const { return fY; };
   G4double GetEdep() const { return fEdep; };
+  G4double GetLength() const { return fLength; };
   G4int GetQuarter() const { return fQuarter; };
   G4int GetLayer() const { return fLayer; };
   G4int GetPID() const { return fPID; };
@@ -71,6 +72,7 @@ private:
   G4double      fX;
   G4double      fY;
   G4double      fEdep;
+  G4double      fLength;
   G4int         fQuarter;
   G4int         fLayer;
   G4int         fPID;

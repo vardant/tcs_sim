@@ -334,13 +334,14 @@ void TCSEventAction::AddTrackerHit(TCSTrackerHitsCollection* HC,
 	G4double x     = (*HC)[i]->GetX();
 	G4double y     = (*HC)[i]->GetY();
 	G4double edep  = (*HC)[i]->GetEdep();
+	G4double length  = (*HC)[i]->GetLength();
 	G4int    det   = (*HC)[i]->GetQuarter();
 	G4int    layer = (*HC)[i]->GetLayer();
 	G4int    pid = (*HC)[i]->GetPID();
 	G4int    pidorig = (*HC)[i]->GetPIDOrig();
 	G4int    trackid = (*HC)[i]->GetTrackID();
-	fHistoManager->AddHit(x, y, edep/keV, det, layer, pid, pidorig, trackid,
-			      TrackerHitCont);
+	fHistoManager->AddHit(x, y, edep/keV, length/mm, det, layer,
+			      pid, pidorig, trackid, TrackerHitCont);
       }
 
       //Check hit container's consistency first.

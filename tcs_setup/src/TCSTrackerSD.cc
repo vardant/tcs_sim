@@ -114,6 +114,8 @@ G4bool TCSTrackerSD::ProcessHits(G4Step* step, G4TouchableHistory*)
     G4double totedep = step->GetTotalEnergyDeposit();
     G4double nonionedep = step->GetNonIonizingEnergyDeposit();
 
+    G4double length = step->GetStepLength();
+
     G4int trackID = step->GetTrack()->GetTrackID();
     //    G4int stepNumber = step->GetTrack()->GetCurrentStepNumber();
 
@@ -132,7 +134,7 @@ G4bool TCSTrackerSD::ProcessHits(G4Step* step, G4TouchableHistory*)
     TCSTrackerHit* hit = new TCSTrackerHit(
 				   (locprePos.getX()+locpostPos.getX())/2,
 				   (locprePos.getY()+locpostPos.getY())/2,
-				   totedep - nonionedep,
+				   totedep - nonionedep, length,
 				   quarter, layer,
 				   PID, origPID, trackID);
 

@@ -167,6 +167,7 @@ void TCSHistoManager::book()
  fTrackerTree->Branch("xcont", &(fTrackerHitCont.X));
  fTrackerTree->Branch("ycont", &(fTrackerHitCont.Y));
  fTrackerTree->Branch("edepcont", &(fTrackerHitCont.Edep));
+ fTrackerTree->Branch("lengthcont", &(fTrackerHitCont.Length));
  fTrackerTree->Branch("detcont", &(fTrackerHitCont.Det));
  fTrackerTree->Branch("layercont", &(fTrackerHitCont.Layer));
  fTrackerTree->Branch("pidcont", &(fTrackerHitCont.PID));
@@ -449,7 +450,7 @@ void TCSHistoManager::AddHit(int det, uint chan, double edep, int pid,
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void TCSHistoManager::AddHit(double x, double y, double edep,
+void TCSHistoManager::AddHit(double x, double y, double edep, double length,
 			     int det, int layer, int pid,
 			     int pidorig, int trackid,
                              TrackerHitContainer& TrackerHitCont) {
@@ -468,15 +469,18 @@ void TCSHistoManager::AddHit(double x, double y, double edep,
       new_track = false;
 
       double edep_old = TrackerHitCont.Edep.at(i);
+      double length_old = TrackerHitCont.Length.at(i);
       double x_old = TrackerHitCont.X.at(i);
       double y_old = TrackerHitCont.Y.at(i);
       double edep_new = edep_old + edep;
+      double length_new = length_old + length;
       double x_new = (x_old*edep_old + x*edep)/edep_new;
       double y_new = (y_old*edep_old + y*edep)/edep_new;
 
       TrackerHitCont.X.at(i) = x_new;
       TrackerHitCont.Y.at(i) = y_new;
       TrackerHitCont.Edep.at(i) = edep_new;
+      TrackerHitCont.Length.at(i) = length_new;
       TrackerHitCont.Nstep.at(i)++;
 
       if (pid != TrackerHitCont.PID.at(i))
@@ -491,6 +495,7 @@ void TCSHistoManager::AddHit(double x, double y, double edep,
       TrackerHitCont.X.push_back(x);
       TrackerHitCont.Y.push_back(y);
       TrackerHitCont.Edep.push_back(edep);
+      TrackerHitCont.Length.push_back(length);
       TrackerHitCont.Det.push_back(det);
       TrackerHitCont.Layer.push_back(layer);
       TrackerHitCont.PID.push_back(pid);

@@ -38,7 +38,8 @@ G4ThreadLocal G4Allocator<TCSTrackerHit>* TCSTrackerHitAllocator=0;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 TCSTrackerHit::TCSTrackerHit() : G4VHit(),
-				 fX(99999.), fY(99999.), fEdep(99999.),
+				 fX(99999.), fY(99999.),
+				 fEdep(99999.), fLength(99999.),
 				 fQuarter(9), fLayer(9), fPID(0), fPIDOrig(0),
 				 fTrackID(999999)
 {}
@@ -54,6 +55,7 @@ TCSTrackerHit::TCSTrackerHit(const TCSTrackerHit& right) : G4VHit()
   fX = right.fX;
   fY = right.fY;
   fEdep = right.fEdep;
+  fLength = right.fLength;
   fQuarter = right.fQuarter;
   fLayer = right.fLayer;
   fPID = right.fPID;
@@ -64,12 +66,14 @@ TCSTrackerHit::TCSTrackerHit(const TCSTrackerHit& right) : G4VHit()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-TCSTrackerHit::TCSTrackerHit(G4double x, G4double y, G4double edep,
+TCSTrackerHit::TCSTrackerHit(G4double x, G4double y,
+			     G4double edep, G4double length,
 			     G4int quarter, G4int layer, G4int pid,
 			     G4int pidorig, G4int trackid) {
   fX = x;
   fY = y;
   fEdep = edep;
+  fLength = length;
   fQuarter = quarter;
   fLayer = layer;
   fPID = pid;
@@ -85,6 +89,7 @@ const TCSTrackerHit& TCSTrackerHit::operator=(const TCSTrackerHit& right)
   fX       = right.fX;
   fY       = right.fY;
   fEdep    = right.fEdep;
+  fLength  = right.fLength;
   fQuarter = right.fQuarter;
   fLayer   = right.fLayer;
   fPID     = right.fPID;
@@ -126,6 +131,7 @@ void TCSTrackerHit::Print()
   G4cout << "  X       = " << fX << G4endl;
   G4cout << "  Y       = " << fY << G4endl;
   G4cout << "  Edep    = " << fEdep << G4endl;
+  G4cout << "  Length  = " << fLength << G4endl;
   G4cout << "  Quarter = " << fQuarter << G4endl;
   G4cout << "  Layer   = " << fLayer << G4endl;
   G4cout << "  PID     = " << fPID << G4endl;
