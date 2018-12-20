@@ -62,6 +62,7 @@ public:
   mode GetMode() {return fMode;}
 
   double GetBremEnergy(double Ee, double Eg_min, double Eg_max);
+  G4ThreeVector GenRandomDirection(const G4ThreeVector axis,const double theta);
 
 private:
 
@@ -73,6 +74,7 @@ private:
   G4double fX0, fY0, fZ0;          // beam position
   G4double fDX, fDY, fDZ;          // beam dimensions
   G4double fPX, fPY, fPZ;          // beam direction
+  G4double fTheta;                 // beam divegence
   mode fMode;                      // beam/tcs mode  
 
   //  TCSGen fTCSGen;

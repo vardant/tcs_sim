@@ -64,6 +64,8 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
   getline(file, line);  iss.str(line);
   iss >> fPX >> fPY >> fPZ;
   getline(file, line);  iss.str(line);
+  iss >> fTheta;
+  getline(file, line);  iss.str(line);
   string mode_flag;
   iss >> mode_flag;
 
@@ -77,6 +79,7 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
   fDX *= mm;
   fDY *= mm;
   fDZ *= mm;
+  fTheta *= degree;
 
   if (mode_flag == "tcs")
     fMode = tcs;
@@ -101,6 +104,7 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
 	   << " mm^3" << G4endl;
     G4cout << "  Beam direction: (" << fPX << ", " << fPY << ", " << fPZ
 	   << ")" << G4endl;
+    G4cout << "  Beam divergence: " << fTheta/degree << " deg" << G4endl;
     break;
   case brem :
     G4cout << "  Bremsstrahlung mode." << G4endl;
@@ -113,6 +117,7 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
 	   << " mm^3" << G4endl;
     G4cout << "  Beam direction: (" << fPX << ", " << fPY << ", " << fPZ
 	   << ")" << G4endl;
+    G4cout << "  Beam divergence: " << fTheta/degree << " deg" << G4endl;
     break;
   case tcs :
     G4cout << "  *** TCS mode: will read TCS events from input file! ***"
@@ -203,7 +208,9 @@ void TCSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   }
   else if (fMode == beam) {
     fParticleGun->SetParticlePosition(G4ThreeVector(x,y,z));
-    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(fPX,fPY,fPZ));
+    //fParticleGun->SetParticleMomentumDirection(G4ThreeVector(fPX,fPY,fPZ));
+    fParticleGun->SetParticleMomentumDirection(
+	          GenRandomDirection(G4ThreeVector(fPX,fPY,fPZ), fTheta));
     fParticleGun->SetParticleEnergy(fEmin + G4UniformRand()*(fEmax-fEmin));
     fParticleGun->GeneratePrimaryVertex(anEvent);
   }
@@ -249,4 +256,44 @@ double TCSPrimaryGeneratorAction::GetBremEnergy(double Ee, double Eg_min,
   //  getchar();
 
   return Ee*y;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4ThreeVector TCSPrimaryGeneratorAction::GenRandomDirection(
+			    const G4ThreeVector axis, const double theta) {
+
+  //Generate random vector around axis. Theta is maximum divergence angle.
+
+  //  cout << "TCSPrimaryGeneratorAction::GenRandomDirection:" << endl;
+  //  cout << " axis: " << axis(0) << " " << axis(1) << " " << axis(2) << endl;
+  //  cout << " divegence = " << theta/degree << " deg" << endl;
+
+  //Random vector around Z axis.
+  double costheta = 1. - G4UniformRand()*(1.-cos(theta));
+  double phi = 2.*CLHEP::pi*G4UniformRand();
+  G4ThreeVector vrand(0.,0.,1.);
+  vrand.setMag(1.);
+  vrand.setTheta(acos(costheta));
+  vrand.setPhi(phi);
+
+  //  cout << " cos(theta) = " << costheta << "  theta = "
+  //       << acos(costheta)/degree
+  //       << " deg" << "  phi = " << phi/degree << " deg" << endl;
+  //  cout << " vrand at Z axis: " << vrand(0) << " " << vrand(1) << " "
+  //       << vrand(2) << endl;
+
+  //Rotate around axis perpendicular to Z axis and axis vector.
+  G4ThreeVector rot_axis = CLHEP::HepZHat.cross(axis);
+  double rot_angle = CLHEP::HepZHat.angle(axis);
+  vrand.rotate(rot_angle, rot_axis);
+
+  //  cout << " Rotation axis: " << rot_axis(0) << " " << rot_axis(1) << " "
+  //       << rot_axis(2) << endl;
+  //  cout << " Rotation angle = " << rot_angle/degree << " deg" << endl;
+  //  cout << " vrand at axis:   " << vrand(0) << " " << vrand(1) << " "
+  //       << vrand(2) << endl;
+  //  getchar();
+
+  return vrand;
 }
