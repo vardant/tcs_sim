@@ -311,7 +311,7 @@ void xslope_recon2(string rootfile="RootFiles/p_test.root", int quarter=0,
     cout << "*** Wrong fit limits! ***" << endl;
   }
   css->SaveAs(Form("slopeX_det_vs_slopeX_%d.gif",quarter+1));
-  cds->SaveAs(Form("slopeX_det_vs_slopeX_%d.pdf",quarter+1));
+  css->SaveAs(Form("slopeX_det_vs_slopeX_%d.pdf",quarter+1));
 
   cout << "Max hitlist size = " << max_hitlist_size << endl;
 }

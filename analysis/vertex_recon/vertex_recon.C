@@ -460,7 +460,7 @@ void vertex_recon(int runlo=1000, int runhi=1010) {
 
   }  //entries
 
-  /*
+
   TCanvas* cphi = new TCanvas("cphi", "#phi residuals", 1400, 335);
   cphi->Divide(3,1);
   for (int i=0; i<3; i++) {
@@ -513,7 +513,6 @@ void vertex_recon(int runlo=1000, int runhi=1010) {
   h_dq2->Draw();
   cq2->cd(2);
   h_dq2_vs_q2->Draw();
-  */
 
   TCanvas* ct = new TCanvas("ct", "-t residuals", 1400, 500);
   ct->Divide(2,1);
@@ -534,7 +533,6 @@ void vertex_recon(int runlo=1000, int runhi=1010) {
   //  gStyle->SetOptStat(0);
   h_dt_prof->Draw("same");
 
-  /*
   TCanvas* cs = new TCanvas("cs", "s residuals", 1400, 500);
   cs->Divide(2,1);
   cs->cd(1);
@@ -577,9 +575,7 @@ void vertex_recon(int runlo=1000, int runhi=1010) {
   cphiCM->cd(2);
   h_dphiCM_vs_phiCM->Draw();
   ////  h_phiCM_vs_phiCM->Draw();
-  */
 
-  /*
   gStyle->SetTitleSize(0.06,"t"); 
   gStyle->SetLabelSize(0.045,"X");
   gStyle->SetLabelSize(0.045,"Y");
@@ -597,7 +593,7 @@ void vertex_recon(int runlo=1000, int runhi=1010) {
   ckin->cd(7); h_dthetaCM->Draw();
   ckin->cd(8); h_dphiCM->Draw();
   ckin->cd(9); h_deg->Draw();
-  */
+
 }
 
 //=============================================================================

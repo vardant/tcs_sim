@@ -66,6 +66,8 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
   getline(file, line);  iss.str(line);
   iss >> fTheta;
   getline(file, line);  iss.str(line);
+  iss >> fPhi;
+  getline(file, line);  iss.str(line);
   string mode_flag;
   iss >> mode_flag;
 
@@ -80,6 +82,7 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
   fDY *= mm;
   fDZ *= mm;
   fTheta *= degree;
+  fPhi   *= degree;
 
   if (mode_flag == "tcs")
     fMode = tcs;
@@ -104,7 +107,12 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
 	   << " mm^3" << G4endl;
     G4cout << "  Beam direction: (" << fPX << ", " << fPY << ", " << fPZ
 	   << ")" << G4endl;
-    G4cout << "  Beam divergence: " << fTheta/degree << " deg" << G4endl;
+    if (fPhi<0)
+      G4cout << "  Beam divergence: " << fTheta/degree << " deg" << G4endl;
+    else
+      G4cout << "  Beam sampling in solid angle with thetaX = "
+	     << fTheta/degree << " deg,  thetaY = "
+	     << fPhi/degree << " deg" << G4endl;
     break;
   case brem :
     G4cout << "  Bremsstrahlung mode." << G4endl;
@@ -117,7 +125,7 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
 	   << " mm^3" << G4endl;
     G4cout << "  Beam direction: (" << fPX << ", " << fPY << ", " << fPZ
 	   << ")" << G4endl;
-    G4cout << "  Beam divergence: " << fTheta/degree << " deg" << G4endl;
+    //    G4cout << "  Beam divergence: " << fTheta/degree << " deg" << G4endl;
     break;
   case tcs :
     G4cout << "  *** TCS mode: will read TCS events from input file! ***"
@@ -138,6 +146,9 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
 
     G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
     G4ParticleDefinition* particle=particleTable->FindParticle(fParticleName);
+
+    //    particleTable->DumpTable();
+    //    getchar();
 
     fParticleGun->SetParticleDefinition(particle);
     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
@@ -208,10 +219,24 @@ void TCSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   }
   else if (fMode == beam) {
     fParticleGun->SetParticlePosition(G4ThreeVector(x,y,z));
-    //fParticleGun->SetParticleMomentumDirection(G4ThreeVector(fPX,fPY,fPZ));
-    fParticleGun->SetParticleMomentumDirection(
-	          GenRandomDirection(G4ThreeVector(fPX,fPY,fPZ), fTheta));
-    fParticleGun->SetParticleEnergy(fEmin + G4UniformRand()*(fEmax-fEmin));
+
+    ////fParticleGun->SetParticleMomentumDirection(G4ThreeVector(fPX,fPY,fPZ));
+    //    fParticleGun->SetParticleMomentumDirection(
+    //    GenRandomDirection(G4ThreeVector(fPX,fPY,fPZ), fTheta, fPhi));
+    //   fParticleGun->SetParticleEnergy(fEmin + G4UniformRand()*(fEmax-fEmin));
+
+    //Sample momentum projection on the YZ plane.
+    G4ThreeVector N=GenRandomDirection(G4ThreeVector(fPX,fPY,fPZ),fTheta,fPhi);
+    fParticleGun->SetParticleMomentumDirection(N);
+    double PYZ = fEmin + G4UniformRand()*(fEmax-fEmin);
+    double magP = PYZ/sqrt(N.getY()*N.getY()+N.getZ()*N.getZ())*
+    sqrt(N.getX()*N.getX()+N.getY()*N.getY()+N.getZ()*N.getZ());
+    fParticleGun->SetParticleMomentum(magP);
+    //cout << "TCSPrimaryGeneratorAction::GeneratePrimaries: P = " <<magP<<endl;
+    //cout << " N: " << N.getX() << " " << N.getY() << " " << N.getZ() << endl;
+    //cout << " PYZ = " << PYZ << endl;
+    //getchar();
+
     fParticleGun->GeneratePrimaryVertex(anEvent);
   }
   else if (fMode == brem) {
@@ -261,37 +286,54 @@ double TCSPrimaryGeneratorAction::GetBremEnergy(double Ee, double Eg_min,
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4ThreeVector TCSPrimaryGeneratorAction::GenRandomDirection(
-			    const G4ThreeVector axis, const double theta) {
+	    const G4ThreeVector Axis, const double Theta, const double Phi) {
 
-  //Generate random vector around axis. Theta is maximum divergence angle.
+  //Generate random vector around Axis. Treat Theta as maximum divergence angle
+  //if Phi<0. Otherwise Theta is max. deflection angle in XZ plane, Phi is
+  //max. defelection angle in YZ plane.
 
   //  cout << "TCSPrimaryGeneratorAction::GenRandomDirection:" << endl;
-  //  cout << " axis: " << axis(0) << " " << axis(1) << " " << axis(2) << endl;
-  //  cout << " divegence = " << theta/degree << " deg" << endl;
+  //  cout << " Axis: " << Axis(0) << " " << Axis(1) << " " << Axis(2) << endl;
+  // if (Phi>=0.)
+  //  cout << " divegence theta = " << Theta/degree << " deg" << endl;
+  // else
+  //  cout << " sampling in thetaX = " << Theta/degree << " deg,  thetaY = "
+  //  << Phi/degree << " deg" << endl;
 
   //Random vector around Z axis.
-  double costheta = 1. - G4UniformRand()*(1.-cos(theta));
-  double phi = 2.*CLHEP::pi*G4UniformRand();
   G4ThreeVector vrand(0.,0.,1.);
-  vrand.setMag(1.);
-  vrand.setTheta(acos(costheta));
-  vrand.setPhi(phi);
+  if (Phi < 0.) {
+    double costheta = 1. - G4UniformRand()*(1.-cos(Theta));
+    double phi = 2.*CLHEP::pi*G4UniformRand();
+    vrand.setMag(1.);
+    vrand.setTheta(acos(costheta));
+    vrand.setPhi(phi);
+    //  cout << " cos(theta) = " << costheta << "  theta = "
+    //       << acos(costheta)/degree
+    //       << " deg" << "  phi = " << phi/degree << " deg" << endl;
+  }
+  else {
+    double thetaX = (2.*G4UniformRand()-1.)*Theta;
+    double thetaY = (2.*G4UniformRand()-1.)*Phi;
+    vrand.setX(tan(thetaX));
+    vrand.setY(tan(thetaY));
+    vrand.setZ(1.);
+    //    cout << " thetaX = " << thetaX/degree << " deg,  thetaY = "
+    //	 << thetaY/degree << " deg" << endl;
+  }
 
-  //  cout << " cos(theta) = " << costheta << "  theta = "
-  //       << acos(costheta)/degree
-  //       << " deg" << "  phi = " << phi/degree << " deg" << endl;
   //  cout << " vrand at Z axis: " << vrand(0) << " " << vrand(1) << " "
   //       << vrand(2) << endl;
 
   //Rotate around axis perpendicular to Z axis and axis vector.
-  G4ThreeVector rot_axis = CLHEP::HepZHat.cross(axis);
-  double rot_angle = CLHEP::HepZHat.angle(axis);
+  G4ThreeVector rot_axis = CLHEP::HepZHat.cross(Axis);
+  double rot_angle = CLHEP::HepZHat.angle(Axis);
   vrand.rotate(rot_angle, rot_axis);
 
   //  cout << " Rotation axis: " << rot_axis(0) << " " << rot_axis(1) << " "
   //       << rot_axis(2) << endl;
   //  cout << " Rotation angle = " << rot_angle/degree << " deg" << endl;
-  //  cout << " vrand at axis:   " << vrand(0) << " " << vrand(1) << " "
+  //  cout << " vrand at Axis:   " << vrand(0) << " " << vrand(1) << " "
   //       << vrand(2) << endl;
   //  getchar();
 

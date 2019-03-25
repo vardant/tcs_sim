@@ -18,8 +18,14 @@
    <constant name="TransferThick" value="2."/>
    <constant name="InductionThick" value="2."/>
 
+   <!-- detector sizes for distance from target of 120 cm -->
    <constant name="dX" value="37.72"/>
    <constant name="dY" value="37.72"/>
+
+   <!-- detector sizes for distance from target of 60 cm -->
+   <!-- constant name="dX" value="18.86"/ -->
+   <!-- constant name="dY" value="18.86"/ -->
+
    <constant name="dZ" value="9.660"/>
    <constant name="eps" value="0.000001"/>
 

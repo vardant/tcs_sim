@@ -27,6 +27,7 @@
   <constant name="TRACKER3_DIST" value="140."/>
   <constant name="TRACKER2_DIST" value="130."/>
   <constant name="TRACKER1_DIST" value="120."/>
+  <!-- constant name="TRACKER1_DIST" value="60."/ -->
   <constant name="CPS_DIST" value="200."/>
 
   <rotation name="roty90" x="0" y="90" z="0" unit="deg"/>
