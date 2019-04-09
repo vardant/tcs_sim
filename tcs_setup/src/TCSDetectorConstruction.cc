@@ -25,6 +25,7 @@
 //
 
 #include "TCSDetectorConstruction.hh"
+#include "TCSCalorimeterConstruction.hh"
 #include "TCSTargetSD.hh"
 #include "TCSCalorimeterSD.hh"
 #include "TCSHodoXSD.hh"
@@ -100,6 +101,20 @@ TCSDetectorConstruction::~TCSDetectorConstruction()
 
 G4VPhysicalVolume* TCSDetectorConstruction::Construct()
 {
+
+  // Construct calorimeter.
+
+  TCSCalorimeterConstruction CalorimeterConstruction;
+  G4LogicalVolume* Calorimeter_log = CalorimeterConstruction.GetCalorimeter();
+
+  new G4PVPlacement(0,                       //no rotation
+                    G4ThreeVector(0.*cm,0.*cm,200.*cm),            //at position
+                    Calorimeter_log,             //its logical volume
+                    "Calorimeter",                //its name
+                    physWorld->GetLogicalVolume(),        //its mother  volume
+                    false,                   //no boolean operation
+                    0,                       //copy number
+                    1);          //overlaps checking
 
   // Setup Magnetic Field here!!!
   ConstructField();
@@ -178,8 +193,8 @@ void TCSDetectorConstruction::ConstructSDandField()
     //  G4AutoDelete::Register(caloSD);
   
     //  SetSensitiveDetector("CalorimeterAssembly", tcsSD, true);
-    SetSensitiveDetector("Block", caloSD, true);
-    SetSensitiveDetector("caloWorld", caloSD, true);
+    ////    SetSensitiveDetector("Block", caloSD, true);
+    ////    SetSensitiveDetector("caloWorld", caloSD, true);
 
     // Hodoscope SD
 

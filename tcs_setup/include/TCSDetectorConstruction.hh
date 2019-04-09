@@ -54,13 +54,18 @@ class TCSDetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
   TCSDetectorConstruction();
-  TCSDetectorConstruction(G4VPhysicalVolume *aworld,
-			  G4LogicalVolume *scoring)
+  TCSDetectorConstruction(G4VPhysicalVolume *aworld)
   {
     G4cout << "We are using GDML..."<<G4endl;
     physWorld =  aworld;
-    fScoringVolume = scoring;
   };
+  ////  TCSDetectorConstruction(G4VPhysicalVolume *aworld,
+  ////			  G4LogicalVolume *scoring)
+  ////  {
+  ////    G4cout << "We are using GDML..."<<G4endl;
+  ////    physWorld =  aworld;
+  ////    fScoringVolume = scoring;
+  ////  };
   
   virtual ~TCSDetectorConstruction();
 
