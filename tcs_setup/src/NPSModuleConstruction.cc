@@ -686,3 +686,7 @@ G4double NPSModuleConstruction::GetSizeY() {
 G4double NPSModuleConstruction::GetSizeZ() {
   return counter_z;
 }
+
+G4double NPSModuleConstruction::GetBlockSizeZ() {
+  return block_z;
+}

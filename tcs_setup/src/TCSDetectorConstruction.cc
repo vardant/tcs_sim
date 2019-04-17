@@ -107,14 +107,17 @@ G4VPhysicalVolume* TCSDetectorConstruction::Construct()
   TCSCalorimeterConstruction CalorimeterConstruction;
   G4LogicalVolume* Calorimeter_log = CalorimeterConstruction.GetCalorimeter();
 
-  new G4PVPlacement(0,                       //no rotation
-                    G4ThreeVector(0.*cm,0.*cm,200.*cm),            //at position
-                    Calorimeter_log,             //its logical volume
-                    "Calorimeter",                //its name
-                    physWorld->GetLogicalVolume(),        //its mother  volume
-                    false,                   //no boolean operation
-                    0,                       //copy number
-                    1);          //overlaps checking
+  for (int quarter=0; quarter<4; quarter++)
+    PositionCalorimeter(Calorimeter_log, quarter);
+
+  //  new G4PVPlacement(0,                       //no rotation
+  //                G4ThreeVector(0.*cm,0.*cm,200.*cm),            //at position
+  //                    Calorimeter_log,             //its logical volume
+  //                    "Calorimeter",                //its name
+  //                  physWorld->GetLogicalVolume(),        //its mother  volume
+  //                    false,                   //no boolean operation
+  //                    0,                       //copy number
+  //                    1);          //overlaps checking
 
   // Setup Magnetic Field here!!!
   ConstructField();
@@ -227,7 +230,7 @@ void TCSDetectorConstruction::ConstructSDandField()
     TCSTargetSD* targetSD = new TCSTargetSD("TargetSD",
 					    "TargetHitsCollection");
     G4SDManager::GetSDMpointer()->AddNewDetector(targetSD);
-    SetSensitiveDetector("TargetAssembly", targetSD, true);
+    ////    SetSensitiveDetector("TargetAssembly", targetSD, true);
 
     // Create global magnetic field messenger.
     // Uniform magnetic field is then created automatically if
@@ -242,4 +245,73 @@ void TCSDetectorConstruction::ConstructSDandField()
     initialized=true;
   }
 
+}
+
+//==============================================================================
+
+void TCSDetectorConstruction::PositionCalorimeter(
+			    G4LogicalVolume* Calorimeter_log, int quarter) {
+
+  // Positioning of the calorimeter quarters.
+
+  double phi, theta_tilt, theta_pos;
+
+  switch (quarter) {
+  case 0:
+    phi        = Calo.RotationAngle;
+    theta_tilt = -Calo.TiltAngle;
+    theta_pos  =  Calo.PositionAngle;
+    break;
+  case 1:
+    phi        = -Calo.RotationAngle;
+    theta_tilt = -Calo.TiltAngle;
+    theta_pos  =  Calo.PositionAngle;
+    break;
+  case 2:
+    phi        = -Calo.RotationAngle;
+    theta_tilt =  Calo.TiltAngle;
+    theta_pos  = -Calo.PositionAngle;
+    break;
+  case 3:
+    phi        =  Calo.RotationAngle;
+    theta_tilt =  Calo.TiltAngle;
+    theta_pos  = -Calo.PositionAngle;
+    break;
+  default:
+    phi        = 0.;
+    theta_tilt = 0.;
+    theta_pos  = 0.;
+  }
+
+
+  /*
+  //This is how it should be.
+ // u, v, w are the daughter axes, projected on the mother frame
+  G4ThreeVector u = G4ThreeVector(cos(phi), 0.,-sin(phi));
+  G4ThreeVector v = G4ThreeVector(-sin(theta_tilt)*sin(phi), cos(theta_tilt),
+				  -sin(theta_tilt)*cos(phi));
+  G4ThreeVector w = G4ThreeVector(sin(phi), 0., cos(phi));
+  G4RotationMatrix rotm = G4RotationMatrix(u, v, w);
+  G4cout << "Direct rotation matrix : ";
+  rotm.print(G4cout);     
+  */
+
+  //This is consistent with gdml coding.
+  G4RotationMatrix rotm;
+  rotm.rotateY(phi);
+  rotm.rotateX(theta_tilt);
+  rotm.rotateZ(0.);
+
+  G4ThreeVector position=G4ThreeVector(sin(phi)*cos(theta_pos), sin(theta_pos),
+				       cos(phi)*cos(theta_pos));
+  position *= Calo.Distance;
+
+  G4Transform3D transform = G4Transform3D(rotm, position);
+
+  new G4PVPlacement(transform,                     //position, rotation        
+                    Calorimeter_log,               //logical volume
+                    "Calorimeter",                 //name
+		    physWorld->GetLogicalVolume(), //its mother  volume
+                    false,                         //no boolean operation
+                    quarter);                      //copy number
 }

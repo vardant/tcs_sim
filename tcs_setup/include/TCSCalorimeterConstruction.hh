@@ -20,6 +20,7 @@ private:
   const int fNROW = 23;
 
   const double fFrameThick = 0.5*mm;
+  const double fFrameWidth = 2.*cm;
 
   void Construct();
 

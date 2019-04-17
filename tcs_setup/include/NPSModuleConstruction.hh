@@ -22,6 +22,7 @@ public:
   G4double GetSizeX();
   G4double GetSizeY();
   G4double GetSizeZ();
+  G4double GetBlockSizeZ();
 
 private:
 

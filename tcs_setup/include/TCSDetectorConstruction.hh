@@ -33,6 +33,7 @@
 #include "G4ThreeVector.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolumeStore.hh"
+#include "G4SystemOfUnits.hh"
 
 // attempt to use the GDML parser
 #include <vector>
@@ -86,6 +87,19 @@ private:
   G4double minStepMagneticField;
   G4MagIntegratorStepper* fStepper;
   G4ChordFinder*          fChordFinder;
+
+  struct {
+    const double PositionAngle = 13.835*degree;
+    const double TiltAngle     = 13.835*degree;
+    const double RotationAngle = 10.034*degree;
+    const double Distance = 150*cm + 9*cm;
+
+    //    const double PositionAngle = 60*degree;
+    //    const double TiltAngle     = 90*degree;
+    //    const double RotationAngle = 45*degree;
+  } Calo;
+
+  void PositionCalorimeter(G4LogicalVolume* Calorimeter_log, int quarter);
 
   G4VPhysicalVolume* physWorld;
 

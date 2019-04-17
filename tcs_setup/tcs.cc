@@ -139,8 +139,10 @@ int main(int argc,char** argv)
 
   parser.Read("tcs_gdmls/tcs_setup.gdml");
   runManager->SetUserInitialization(new TCSDetectorConstruction(
-  				    parser.GetWorldVolume(),
-  				    parser.GetVolume("Block")));
+					parser.GetWorldVolume()));
+  ////  runManager->SetUserInitialization(new TCSDetectorConstruction(
+  ////  				    parser.GetWorldVolume(),
+  ////  				    parser.GetVolume("Block")));
 
   // Example how to retrieve Auxiliary Information
 
