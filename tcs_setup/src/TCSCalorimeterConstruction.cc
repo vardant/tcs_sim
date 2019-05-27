@@ -45,16 +45,16 @@ void TCSCalorimeterConstruction::Construct() {
   double xstep = xmod + fFrameThick;
   double ystep = ymod + fFrameThick;
 
-  double xcol = xstep*fNCOL + fFrameThick;
-  double ycol = ystep*fNCOL + fFrameThick;
-  double zcol = zmod;
+  double xcol = xstep*fNCOL + fFrameThick + 1*mm;
+  double ycol = ystep*fNROW + fFrameThick + 1*mm;
+  double zcol = zmod + 1*mm;
   cout << "TCSCalorimeterConstruction::GetCalorimeter: calo sizes:" << endl;
   cout << "  xcol = " << xcol/cm << " cm" << endl;
   cout << "  ycol = " << ycol/cm << " cm" << endl;
   cout << "  zcol = " << zcol/cm << " cm" << endl;
   //  getchar();
 
-  G4Material* Air = man->FindOrBuildMaterial("G4_Air");
+  G4Material* Air = man->FindOrBuildMaterial("G4_AIR");
 
   G4Box* caloBox = new G4Box("caloBox", xcol/2, ycol/2, zcol/2);
   fCalorimeter = new G4LogicalVolume(caloBox, Air, "Calo", 0, 0, 0);

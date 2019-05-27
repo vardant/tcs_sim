@@ -76,6 +76,7 @@
 
 // Others...
 #include "G4AutoDelete.hh"
+#include <stdio.h>
 
 using namespace std;
 
@@ -105,10 +106,12 @@ G4VPhysicalVolume* TCSDetectorConstruction::Construct()
   // Construct calorimeter.
 
   TCSCalorimeterConstruction CalorimeterConstruction;
-  G4LogicalVolume* Calorimeter_log = CalorimeterConstruction.GetCalorimeter();
+  //G4LogicalVolume* Calorimeter_log = CalorimeterConstruction.GetCalorimeter();
+  Calorimeter_log = CalorimeterConstruction.GetCalorimeter();
 
-  for (int quarter=0; quarter<4; quarter++)
-    PositionCalorimeter(Calorimeter_log, quarter);
+  ////  for (int quarter=0; quarter<fNQuarters; quarter++)
+  for (int quarter=0; quarter<1; quarter++)
+    fPVCalo[quarter] = PositionCalorimeter(quarter);
 
   //  new G4PVPlacement(0,                       //no rotation
   //                G4ThreeVector(0.*cm,0.*cm,200.*cm),            //at position
@@ -124,6 +127,8 @@ G4VPhysicalVolume* TCSDetectorConstruction::Construct()
 
   // Setup sensitive detector!
   ConstructSDandField();
+
+  logWorld = physWorld->GetLogicalVolume();
 
   //always return the physical World
   return physWorld;
@@ -249,8 +254,7 @@ void TCSDetectorConstruction::ConstructSDandField()
 
 //==============================================================================
 
-void TCSDetectorConstruction::PositionCalorimeter(
-			    G4LogicalVolume* Calorimeter_log, int quarter) {
+G4VPhysicalVolume* TCSDetectorConstruction::PositionCalorimeter(int quarter) {
 
   // Positioning of the calorimeter quarters.
 
@@ -308,10 +312,24 @@ void TCSDetectorConstruction::PositionCalorimeter(
 
   G4Transform3D transform = G4Transform3D(rotm, position);
 
-  new G4PVPlacement(transform,                     //position, rotation        
+  char name[6];
+  sprintf(name,"Calo%d",quarter);
+
+  cout << "TCSDetectorConstruction::PositionCalorimeter:" << endl;
+  cout << "  name = " << name << endl;
+  if (physWorld->GetLogicalVolume()) {
+    cout << "  physWorld->GetLogicalVolume() exists!" << endl;
+    cout << "  it's name: " <<  physWorld->GetLogicalVolume()->GetName() <<endl;
+  }
+  else {
+    cout << "  physWorld->GetLogicalVolume() does not exist!" << endl;
+  }
+
+  return new G4PVPlacement(transform,              //position, rotation        
                     Calorimeter_log,               //logical volume
-                    "Calorimeter",                 //name
-		    physWorld->GetLogicalVolume(), //its mother  volume
+                    name,                          //name
+		    logWorld,                      //its mother  volume
+		   //physWorld->GetLogicalVolume(), //its mother  volume
                     false,                         //no boolean operation
                     quarter);                      //copy number
 }

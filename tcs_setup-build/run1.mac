@@ -13,7 +13,7 @@
 /control/verbose 2
 /run/verbose 0
 /event/verbose 0
-/tracking/verbose 0
+/tracking/verbose 1
 /material/g4/printMaterial
 # 
 # electron 11 GeV,  direction (0.,0.,1.)
@@ -23,3 +23,4 @@
 #/gun/energy 11 GeV
 #
 /run/beamOn 20000
+#/run/beamOn 1

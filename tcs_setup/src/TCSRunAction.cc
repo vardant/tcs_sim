@@ -41,8 +41,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 TCSRunAction::TCSRunAction(TCSHistoManager* histo)
-  : G4UserRunAction(), fHistoManager(histo), fAutoSeed(true)
-//  : G4UserRunAction(), fHistoManager(histo), fAutoSeed(false)
+////  : G4UserRunAction(), fHistoManager(histo), fAutoSeed(true)
+  : G4UserRunAction(), fHistoManager(histo), fAutoSeed(false)
 
 { 
   // add new units for dose

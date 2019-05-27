@@ -21,7 +21,7 @@
   <constant name="SIN_ROT" value="0.174229540245"/>
   <constant name="COS_ROT" value="0.984705066152"/>
 
-  <constant name="CALO_DIST" value="150.+9."/>
+  <!-- constant name="CALO_DIST" value="150.+9."/ -->
   <constant name="HODOY_DIST" value="150.-2.-0.5"/>
   <constant name="HODOX_DIST" value="150.-2.-0.5-0.51-0.5"/>
   <constant name="TRACKER3_DIST" value="140."/>
@@ -35,27 +35,27 @@
 
   <position name="beam_pipe_shift" x="0" y="0" z="287.15" unit="cm"/>
 
-  <position name="calo_lt_shift" x="CALO_DIST*COS_POS*SIN_ROT"
+  <!-- position name="calo_lt_shift" x="CALO_DIST*COS_POS*SIN_ROT"
 	                         y="CALO_DIST*SIN_POS"
-	                         z="CALO_DIST*COS_POS*COS_ROT" unit="cm"/>
+	                         z="CALO_DIST*COS_POS*COS_ROT" unit="cm"/ -->
   <rotation name="calo_lt_rot" x="DET_TILT_ANGLE" y="-DET_ROT_ANGLE" z="0"
 	    unit="deg"/>
 
-  <position name="calo_rt_shift" x="-CALO_DIST*COS_POS*SIN_ROT"
+  <!-- position name="calo_rt_shift" x="-CALO_DIST*COS_POS*SIN_ROT"
 	                         y="CALO_DIST*SIN_POS"
-	                         z="CALO_DIST*COS_POS*COS_ROT" unit="cm"/>
+	                         z="CALO_DIST*COS_POS*COS_ROT" unit="cm"/ -->
   <rotation name="calo_rt_rot" x="DET_TILT_ANGLE" y="DET_ROT_ANGLE" z="0"
 	    unit="deg"/>
 
-  <position name="calo_rb_shift" x="-CALO_DIST*COS_POS*SIN_ROT"
+  <!-- position name="calo_rb_shift" x="-CALO_DIST*COS_POS*SIN_ROT"
 	                         y="-CALO_DIST*SIN_POS"
-	                         z="CALO_DIST*COS_POS*COS_ROT" unit="cm"/>
+	                         z="CALO_DIST*COS_POS*COS_ROT" unit="cm"/ -->
   <rotation name="calo_rb_rot" x="-DET_TILT_ANGLE" y="DET_ROT_ANGLE" z="0"
 	    unit="deg"/>
 
-  <position name="calo_lb_shift" x="CALO_DIST*COS_POS*SIN_ROT"
+  <!-- position name="calo_lb_shift" x="CALO_DIST*COS_POS*SIN_ROT"
 	                         y="-CALO_DIST*SIN_POS"
-				 z="CALO_DIST*COS_POS*COS_ROT" unit="cm"/>
+				 z="CALO_DIST*COS_POS*COS_ROT" unit="cm"/ -->
   <rotation name="calo_lb_rot" x="-DET_TILT_ANGLE" y="-DET_ROT_ANGLE" z="0"
 	    unit="deg"/>
 
@@ -170,11 +170,11 @@
    <materialref ref="Air"/>
    <solidref ref="WorldBox"/>
 
-   <physvol>
-     <file name="tcs_gdmls/scattering_chamber.gdml"/>
-     <positionref ref="center"/>
-     <rotationref ref="roty90"/>
-   </physvol>
+   <!-- physvol -->
+     <!-- file name="tcs_gdmls/scattering_chamber.gdml"/ -->
+     <!-- positionref ref="center"/ -->
+     <!-- rotationref ref="roty90"/ -->
+   <!-- /physvol -->
 
    <!-- physvol -->
      <!-- file name="tcs_gdmls/beam_pipe.gdml"/ -->
@@ -182,29 +182,29 @@
      <!-- rotationref ref="identity"/ -->
    <!-- /physvol -->
 
-   <physvol>
-     <file name="tcs_gdmls/calorimeter.gdml"/>
-     <positionref ref="calo_lt_shift"/>
-     <rotationref ref="calo_lt_rot"/>
-   </physvol>
+   <!-- physvol -->
+     <!-- file name="tcs_gdmls/calorimeter.gdml"/ -->
+     <!-- positionref ref="calo_lt_shift"/ -->
+     <!-- rotationref ref="calo_lt_rot"/ -->
+   <!-- /physvol -->
 
-   <physvol>
-     <file name="tcs_gdmls/calorimeter.gdml"/>
-     <positionref ref="calo_rt_shift"/>
-     <rotationref ref="calo_rt_rot"/>
-   </physvol>
+   <!-- physvol -->
+     <!-- file name="tcs_gdmls/calorimeter.gdml"/ -->
+     <!-- positionref ref="calo_rt_shift"/ -->
+     <!-- rotationref ref="calo_rt_rot"/ -->
+   <!-- /physvol -->
 
-   <physvol>
-     <file name="tcs_gdmls/calorimeter.gdml"/>
-     <positionref ref="calo_rb_shift"/>
-     <rotationref ref="calo_rb_rot"/>
-   </physvol>
+   <!-- physvol -->
+     <!-- file name="tcs_gdmls/calorimeter.gdml"/ -->
+     <!-- positionref ref="calo_rb_shift"/ -->
+     <!-- rotationref ref="calo_rb_rot"/ -->
+   <!-- /physvol -->
 
-   <physvol>
-     <file name="tcs_gdmls/calorimeter.gdml"/>
-     <positionref ref="calo_lb_shift"/>
-     <rotationref ref="calo_lb_rot"/>
-   </physvol>
+   <!-- physvol -->
+     <!-- file name="tcs_gdmls/calorimeter.gdml"/ -->
+     <!-- positionref ref="calo_lb_shift"/ -->
+     <!-- rotationref ref="calo_lb_rot"/ -->
+   <!-- /physvol -->
 
    <physvol>
      <file name="tcs_gdmls/hodoY.gdml"/>
@@ -326,11 +326,11 @@
      <rotationref ref="calo_lb_rot"/>
    </physvol>
 
-   <physvol>
-     <file name="tcs_gdmls/cps.gdml"/>
-     <positionref ref="cps_shift"/>
-     <rotationref ref="identity"/>
-   </physvol>
+   <!-- physvol -->
+     <!-- file name="tcs_gdmls/cps.gdml"/ -->
+     <!-- positionref ref="cps_shift"/ -->
+     <!-- rotationref ref="identity"/ -->
+   <!-- /physvol -->
 
   </volume>
 

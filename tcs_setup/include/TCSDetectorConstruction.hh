@@ -99,8 +99,15 @@ private:
     //    const double RotationAngle = 45*degree;
   } Calo;
 
-  void PositionCalorimeter(G4LogicalVolume* Calorimeter_log, int quarter);
+  static const int fNQuarters = 4;
 
+  G4VPhysicalVolume* fPVCalo[fNQuarters];
+
+  G4LogicalVolume* Calorimeter_log;
+
+  G4VPhysicalVolume* PositionCalorimeter(int quarter);
+
+  G4LogicalVolume* logWorld;
   G4VPhysicalVolume* physWorld;
 
   G4UserLimits* fStepLimit;            // pointer to user step limits

@@ -138,8 +138,12 @@ int main(int argc,char** argv)
   // parser.SetStripFlag(false);
 
   parser.Read("tcs_gdmls/tcs_setup.gdml");
-  runManager->SetUserInitialization(new TCSDetectorConstruction(
-					parser.GetWorldVolume()));
+
+  TCSDetectorConstruction* tcs_setup =
+    new TCSDetectorConstruction(parser.GetWorldVolume());
+
+  runManager->SetUserInitialization(tcs_setup);
+
   ////  runManager->SetUserInitialization(new TCSDetectorConstruction(
   ////  				    parser.GetWorldVolume(),
   ////  				    parser.GetVolume("Block")));
