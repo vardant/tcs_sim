@@ -5,7 +5,7 @@
 #include "G4SystemOfUnits.hh"
 #include "G4PVPlacement.hh"
 #include "G4VisAttributes.hh"
-#include "G4MultiUnion.hh"
+//#include "G4MultiUnion.hh"
 #include "G4SubtractionSolid.hh"
 
 #include <iostream>
@@ -54,7 +54,7 @@ void TCSCalorimeterConstruction::Construct() {
   cout << "  zcol = " << zcol/cm << " cm" << endl;
   //  getchar();
 
-  G4Material* Air = man->FindOrBuildMaterial("G4_Air");
+  G4Material* Air = man->FindOrBuildMaterial("G4_AIR");
 
   G4Box* caloBox = new G4Box("caloBox", xcol/2, ycol/2, zcol/2);
   fCalorimeter = new G4LogicalVolume(caloBox, Air, "Calo", 0, 0, 0);
@@ -107,6 +107,7 @@ void TCSCalorimeterConstruction::Construct() {
   carbon_composite->AddMaterial(carbon_fiber, 50.*perCent);
   carbon_composite->AddMaterial(epoxy,        50.*perCent);
 
+  /*
   G4Box* cellBox = new G4Box("cellBox", xmod/2, ymod/2, fFrameWidth/2+0.5*mm);
   G4MultiUnion* cellsSolid = new G4MultiUnion("cellsSolid");
 
@@ -156,6 +157,52 @@ void TCSCalorimeterConstruction::Construct() {
 		    false,                                      //no bool. op.
 		    0,                                          //copy number
 		    0);                                         //overlaps check
+  */
+
+  G4Box* voidBox = new G4Box("voidBox", xmod/2, ymod/2, fFrameWidth/2+0.5*mm);
+  G4Box* frameBox = new G4Box("frameBox", (xmod+fFrameThick)/2,
+			                  (ymod+fFrameThick)/2,
+			                  fFrameWidth/2);
+  G4SubtractionSolid* frameSolid =
+    new G4SubtractionSolid("frameSolid", frameBox, voidBox);
+
+  G4LogicalVolume* frameLog = new G4LogicalVolume(frameSolid, carbon_composite,
+						  "frame", 0, 0, 0);
+
+  copy_number = 0;
+
+  ypos = -ycol/2 + ystep/2;
+  for (int irow = 0; irow<fNROW; irow++) {
+
+    double xpos = -xcol/2 + xstep/2;
+    for (int icol = 0; icol<fNCOL; icol++) {
+  
+      new G4PVPlacement(0,                                //no rotation
+			G4ThreeVector(xpos,ypos,-zcol/2+fFrameWidth/2), //at pos
+			frameLog,                         //its logical volume
+			"front frame",                    //its name
+			fCalorimeter,                     //its mother  volume
+			false,                            //no boolean operation
+			copy_number,                      //copy number
+			0);                               //overlaps checking
+
+      double zpos_frame =
+	     -zcol/2+ModuleConstruction->GetBlockSizeZ()-fFrameWidth/2;
+      new G4PVPlacement(0,                                //no rotation
+			G4ThreeVector(xpos,ypos,zpos_frame), //at pos
+			frameLog,                         //its logical volume
+			"back frame",                     //its name
+			fCalorimeter,                     //its mother  volume
+			false,                            //no boolean operation
+			copy_number,                      //copy number
+			0);                               //overlaps checking
+
+      copy_number++;
+      xpos += xstep;
+    }
+
+    ypos += ystep;
+  }
 
   //  fCalorimeter->SetVisAttributes (G4VisAttributes::Invisible);
 }

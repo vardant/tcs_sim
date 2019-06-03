@@ -80,7 +80,7 @@ void TCSEventAction::BeginOfEventAction(const G4Event* evt)
     fCalorimeterCollID = SDman->GetCollectionID("CalorimeterHitsCollection");
     //G4cout << "  Calorimeter collection id = " << fCalorimeterCollID << G4endl;
   }
-
+  /*
   if(fHodoXCollID<0)
   {
     fHodoXCollID = SDman->GetCollectionID("HodoXHitsCollection");
@@ -101,7 +101,7 @@ void TCSEventAction::BeginOfEventAction(const G4Event* evt)
     fTargetCollID = SDman->GetCollectionID("TargetHitsCollection");
     //    G4cout << "  Target collection id = " << fTargetCollID << G4endl;
   }
-
+  */
   // initialization of per event quantities
 
   fEdep = 0.;   //Per event total energy deposition in the calorimeter.
@@ -143,7 +143,7 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
   G4HCofThisEvent * HCE = event->GetHCofThisEvent();
 
   // Target hits.
-
+  /*
   TCSTargetHitsCollection* TC = 0;
   if(HCE) {
     TC = (TCSTargetHitsCollection*)(HCE->GetHC(fTargetCollID));
@@ -166,7 +166,7 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
 	 << "target hit container inconsistent! ***" << endl;
     //    getchar();
   }
-
+  */
   // Calorimeter hits.
 
   TCSCalorimeterHitsCollection* CC = 0;
@@ -203,7 +203,7 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
   }
 
   // HodoX hits.
-
+  /*
   TCSHodoHitsCollection* HXC = 0;
   if(HCE) {
     HXC = (TCSHodoHitsCollection*)(HCE->GetHC(fHodoXCollID));
@@ -229,9 +229,9 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
     }
 
   }
-
+  */
   // Tracker hits.
-
+  /*
   TCSTrackerHitsCollection* TrC = 0;
   if(HCE) {
     TrC = (TCSTrackerHitsCollection*)(HCE->GetHC(fTrackerCollID));
@@ -243,6 +243,7 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
     }
 
   }
+  */
 
   int nvertex =  event->GetNumberOfPrimaryVertex();
 
@@ -279,10 +280,10 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
 
   }
 
-  if (CC || HXC || HYC || TrC) {
-    fHistoManager->FillTrees();
-    //    getchar();
-  }
+  ///  if (CC || HXC || HYC || TrC) {
+  ///    fHistoManager->FillTrees();
+  ///    //    getchar();
+  ///  }
   
 
   ////  if (fEvtNo%1000 == 0) fHistoManager->autosave();

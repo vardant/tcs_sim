@@ -37,7 +37,7 @@
 
 // attempt to use the GDML parser
 #include <vector>
-#include "G4GDMLParser.hh"
+///#include "G4GDMLParser.hh"
 
 class G4LogicalVolumeStore;
 class G4LogicalVolume;
@@ -55,11 +55,11 @@ class TCSDetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
   TCSDetectorConstruction();
-  TCSDetectorConstruction(G4VPhysicalVolume *aworld)
-  {
-    G4cout << "We are using GDML..."<<G4endl;
-    physWorld =  aworld;
-  };
+  ///  TCSDetectorConstruction(G4VPhysicalVolume *aworld)
+  ///  {
+  ///    G4cout << "We are using GDML..."<<G4endl;
+  ///    physWorld =  aworld;
+  ///  };
   ////  TCSDetectorConstruction(G4VPhysicalVolume *aworld,
   ////			  G4LogicalVolume *scoring)
   ////  {
@@ -100,6 +100,10 @@ private:
   } Calo;
 
   void PositionCalorimeter(G4LogicalVolume* Calorimeter_log, int quarter);
+
+  const double fXWorld = 3.*m;
+  const double fYWorld = 3.*m;
+  const double fZWorld = 7.*m;
 
   G4VPhysicalVolume* physWorld;
 

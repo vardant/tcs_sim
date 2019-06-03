@@ -77,6 +77,9 @@
 // Others...
 #include "G4AutoDelete.hh"
 
+#include "G4Material.hh"
+#include "G4MaterialTable.hh"
+
 using namespace std;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -102,11 +105,23 @@ TCSDetectorConstruction::~TCSDetectorConstruction()
 G4VPhysicalVolume* TCSDetectorConstruction::Construct()
 {
 
+  G4NistManager* man = G4NistManager::Instance();
+  //  man->SetVerbose(1);
+  G4Material* Air = man->FindOrBuildMaterial("G4_AIR");
+
+  // Create the hall
+  //
+  G4Box * WorldBox = new G4Box("WorldBox",fXWorld/2, fYWorld/2, fZWorld/2);
+  G4LogicalVolume * WorldLV = new G4LogicalVolume(WorldBox, Air,"WorldLV");
+  physWorld = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), WorldLV, "World",
+				0, false, 0);
+
   // Construct calorimeter.
 
   TCSCalorimeterConstruction CalorimeterConstruction;
   G4LogicalVolume* Calorimeter_log = CalorimeterConstruction.GetCalorimeter();
 
+  //  for (int quarter=0; quarter<1; quarter++)
   for (int quarter=0; quarter<4; quarter++)
     PositionCalorimeter(Calorimeter_log, quarter);
 
@@ -200,7 +215,7 @@ void TCSDetectorConstruction::ConstructSDandField()
     ////    SetSensitiveDetector("caloWorld", caloSD, true);
 
     // Hodoscope SD
-
+    /*
     TCSHodoXSD* hodoxSD = new TCSHodoXSD("HodoscopeXSD", "HodoXHitsCollection");
     G4SDManager::GetSDMpointer()->AddNewDetector(hodoxSD);
     SetSensitiveDetector("HXBar", hodoxSD, true);
@@ -210,7 +225,7 @@ void TCSDetectorConstruction::ConstructSDandField()
     G4SDManager::GetSDMpointer()->AddNewDetector(hodoySD);
     SetSensitiveDetector("HYBar", hodoySD, true);
     SetSensitiveDetector("hodoYWorld", hodoySD, true);
-
+    */
     // Tracker SD
 
     ////    TCSTrackerXSD* trackerxSD = new TCSTrackerXSD("TrackerXSD",
@@ -218,7 +233,7 @@ void TCSDetectorConstruction::ConstructSDandField()
     ////    G4SDManager::GetSDMpointer()->AddNewDetector(trackerxSD);
     ////    SetSensitiveDetector("TXBar", trackerxSD, true);
     ////    SetSensitiveDetector("trackerXWorld", trackerxSD, true);
-
+    /*
     TCSTrackerSD* trackerSD = new TCSTrackerSD("TrackerSD",
 					       "TrackerHitsCollection");
     G4SDManager::GetSDMpointer()->AddNewDetector(trackerSD);
@@ -226,10 +241,12 @@ void TCSDetectorConstruction::ConstructSDandField()
     SetSensitiveDetector("tracker1World", trackerSD, true);
     SetSensitiveDetector("tracker2World", trackerSD, true);
     SetSensitiveDetector("tracker3World", trackerSD, true);
-
+    */
+    /*
     TCSTargetSD* targetSD = new TCSTargetSD("TargetSD",
 					    "TargetHitsCollection");
     G4SDManager::GetSDMpointer()->AddNewDetector(targetSD);
+    */
     ////    SetSensitiveDetector("TargetAssembly", targetSD, true);
 
     // Create global magnetic field messenger.
