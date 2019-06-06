@@ -121,8 +121,8 @@ G4VPhysicalVolume* TCSDetectorConstruction::Construct()
   TCSCalorimeterConstruction CalorimeterConstruction;
   G4LogicalVolume* Calorimeter_log = CalorimeterConstruction.GetCalorimeter();
 
-  //  for (int quarter=0; quarter<1; quarter++)
-  for (int quarter=0; quarter<4; quarter++)
+  //  for (int quarter=0; quarter<4; quarter++)
+  for (int quarter=0; quarter<1; quarter++)
     PositionCalorimeter(Calorimeter_log, quarter);
 
   //  new G4PVPlacement(0,                       //no rotation
@@ -133,6 +133,41 @@ G4VPhysicalVolume* TCSDetectorConstruction::Construct()
   //                    false,                   //no boolean operation
   //                    0,                       //copy number
   //                    1);          //overlaps checking
+
+  // Read trackers from the gdml files.
+
+  G4LogicalVolume* Tracker1_log = GetGDMLVolume(
+		   "tcs_gdmls/pointer_referenced/tracker1_ref.gdml",
+		   "TrackerAssembly0xe91030");
+  for (int quarter=0; quarter<4; quarter++)
+    PositionTracker(Tracker1_log, quarter, 1);
+
+  G4LogicalVolume* Tracker2_log = GetGDMLVolume(
+		   "tcs_gdmls/pointer_referenced/tracker2_ref.gdml",
+		   "TrackerAssembly0x1a10030");
+  for (int quarter=0; quarter<4; quarter++)
+    PositionTracker(Tracker2_log, quarter, 2);
+
+  G4LogicalVolume* Tracker3_log = GetGDMLVolume(
+		   "tcs_gdmls/pointer_referenced/tracker3_ref.gdml",
+		   "TrackerAssembly0x1760030");
+  for (int quarter=0; quarter<4; quarter++)
+    PositionTracker(Tracker3_log, quarter, 3);
+
+  //Scattering chamber.
+
+  fParser.ReadModule("tcs_gdmls/scattering_chamber.gdml");
+  G4LogicalVolume* chamber_log = fParser.GetVolume("ChamberAssembly");
+  G4RotationMatrix*  cham_rot = new G4RotationMatrix();
+  cham_rot->rotateY(90.*degree);
+  new G4PVPlacement(cham_rot,
+		    G4ThreeVector(0.,0.,0.),
+		    chamber_log,
+		    "Chamber",
+		    physWorld->GetLogicalVolume(), //its mother  volume
+		    false,
+		    0,
+                    false);
 
   // Setup Magnetic Field here!!!
   ConstructField();
@@ -331,4 +366,79 @@ void TCSDetectorConstruction::PositionCalorimeter(
 		    physWorld->GetLogicalVolume(), //its mother  volume
                     false,                         //no boolean operation
                     quarter);                      //copy number
+}
+//==============================================================================
+
+void TCSDetectorConstruction::PositionTracker(G4LogicalVolume* Tracker_log,
+					      int quarter, int layer) {
+
+  // Positioning of the tracker quarters.
+
+  double phi, theta_tilt, theta_pos;
+
+  switch (quarter) {
+  case 0:
+    phi        =  Tracker.RotationAngle;
+    theta_tilt = -Tracker.TiltAngle;
+    theta_pos  =  Tracker.PositionAngle;
+    break;
+  case 1:
+    phi        = -Tracker.RotationAngle;
+    theta_tilt = -Tracker.TiltAngle;
+    theta_pos  =  Tracker.PositionAngle;
+    break;
+  case 2:
+    phi        = -Tracker.RotationAngle;
+    theta_tilt =  Tracker.TiltAngle;
+    theta_pos  = -Tracker.PositionAngle;
+    break;
+  case 3:
+    phi        =  Tracker.RotationAngle;
+    theta_tilt =  Tracker.TiltAngle;
+    theta_pos  = -Tracker.PositionAngle;
+    break;
+  default:
+    phi        = 0.;
+    theta_tilt = 0.;
+    theta_pos  = 0.;
+  }
+
+  /*
+  //This is how it should be.
+ // u, v, w are the daughter axes, projected on the mother frame
+  G4ThreeVector u = G4ThreeVector(cos(phi), 0.,-sin(phi));
+  G4ThreeVector v = G4ThreeVector(-sin(theta_tilt)*sin(phi), cos(theta_tilt),
+				  -sin(theta_tilt)*cos(phi));
+  G4ThreeVector w = G4ThreeVector(sin(phi), 0., cos(phi));
+  G4RotationMatrix rotm = G4RotationMatrix(u, v, w);
+  G4cout << "Direct rotation matrix : ";
+  rotm.print(G4cout);     
+  */
+
+  //This is consistent with gdml coding.
+  G4RotationMatrix rotm;
+  rotm.rotateY(phi);
+  rotm.rotateX(theta_tilt);
+  rotm.rotateZ(0.);
+
+  G4ThreeVector position=G4ThreeVector(sin(phi)*cos(theta_pos), sin(theta_pos),
+				       cos(phi)*cos(theta_pos));
+  position *= Tracker.Distance[layer-1];
+
+  G4Transform3D transform = G4Transform3D(rotm, position);
+
+  new G4PVPlacement(transform,                     //position, rotation        
+                    Tracker_log,                   //logical volume
+                    "Tracker",                     //name
+		    physWorld->GetLogicalVolume(), //its mother  volume
+                    false,                         //no boolean operation
+                    quarter);                      //copy number
+}
+
+//==============================================================================
+
+G4LogicalVolume* TCSDetectorConstruction::GetGDMLVolume(const string file_name,
+							const string vol_name) {
+  fParser.ReadModule(file_name);
+  return fParser.GetVolume(vol_name);
 }

@@ -36,8 +36,8 @@
 #include "G4SystemOfUnits.hh"
 
 // attempt to use the GDML parser
-#include <vector>
-///#include "G4GDMLParser.hh"
+//#include <vector>
+#include "G4GDMLParser.hh"
 
 class G4LogicalVolumeStore;
 class G4LogicalVolume;
@@ -99,11 +99,24 @@ private:
     //    const double RotationAngle = 45*degree;
   } Calo;
 
+  struct {
+    const double PositionAngle = 13.835*degree;
+    const double TiltAngle     = 13.835*degree;
+    const double RotationAngle = 10.034*degree;
+    const double Distance[3] {120*cm, 130*cm, 140*cm};
+  } Tracker;
+
   void PositionCalorimeter(G4LogicalVolume* Calorimeter_log, int quarter);
+
+  void PositionTracker(G4LogicalVolume* Tracker_log, int quarter, int layer);
+
+  G4LogicalVolume* GetGDMLVolume(const string file_name, const string vol_name);
 
   const double fXWorld = 3.*m;
   const double fYWorld = 3.*m;
   const double fZWorld = 7.*m;
+
+  G4GDMLParser fParser;
 
   G4VPhysicalVolume* physWorld;
 

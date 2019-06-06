@@ -44,7 +44,7 @@
 
 // attempt to use the GDML parser
 #include <vector>
-#include "G4GDMLParser.hh"
+////#include "G4GDMLParser.hh"
 
 ////#ifdef G4MULTITHREADED
 ////#include "G4MTRunManager.hh"
@@ -76,6 +76,7 @@
 #include "G4UIExecutive.hh"
 #endif
 
+/*
 void print_aux(const G4GDMLAuxListType* auxInfoList, G4String prepend="|")
 {  
   for(std::vector<G4GDMLAuxStructType>::const_iterator
@@ -91,6 +92,7 @@ void print_aux(const G4GDMLAuxListType* auxInfoList, G4String prepend="|")
     }
   return;
 }
+*/
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -132,17 +134,21 @@ int main(int argc,char** argv)
 
   // GDML parser.
 
-  G4GDMLParser parser;
+  ////  G4GDMLParser parser;
 
   // Uncomment the following if wish to avoid names stripping
   // parser.SetStripFlag(false);
 
-  parser.Read("tcs_gdmls/tcs_setup.gdml");
-  runManager->SetUserInitialization(new TCSDetectorConstruction(
-					parser.GetWorldVolume()));
+  ///  parser.Read("tcs_gdmls/tcs_setup.gdml");
+  ///  runManager->SetUserInitialization(new TCSDetectorConstruction(
+  ///					parser.GetWorldVolume()));
   ////  runManager->SetUserInitialization(new TCSDetectorConstruction(
   ////  				    parser.GetWorldVolume(),
   ////  				    parser.GetVolume("Block")));
+
+  TCSDetectorConstruction* setup = new TCSDetectorConstruction;
+
+  runManager->SetUserInitialization(setup);
 
   // Example how to retrieve Auxiliary Information
 
@@ -221,7 +227,7 @@ int main(int argc,char** argv)
     }     //ipair
   }       //lvciter
   */
-
+  /*
   const G4GDMLAuxMapType* auxmap = parser.GetAuxMap();
   G4cout << "Found " << auxmap->size()
 	 << " volume(s) with auxiliary information."
@@ -265,7 +271,8 @@ int main(int argc,char** argv)
   G4cout << std::endl;
    
   // End of Auxiliary Information block
-  
+  */
+
   ////  G4VModularPhysicsList* physicsList = new FTFP_BERT;
   G4VModularPhysicsList* physicsList = new QGSP_BERT;
 
