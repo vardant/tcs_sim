@@ -365,8 +365,8 @@ void TCSHistoManager::AddHit(double edep, int pid) {
   if (!found) {
     fTargetHitCont.Edep.push_back(edep);
     fTargetHitCont.PID.push_back(pid);
-    //cout << "Pushed back cal hit " << det << " " << col << " " << row << " "
-    //<< edep << endl;
+    cout << "TCSHistoManager::AddHit: pushed back Target edep = " << edep
+	 << " pid = " << pid << endl;
   }
 
 }

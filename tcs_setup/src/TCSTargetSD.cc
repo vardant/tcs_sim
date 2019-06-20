@@ -71,7 +71,7 @@ void TCSTargetSD::Initialize(G4HCofThisEvent* hce)
     = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);
   hce->AddHitsCollection( hcID, fHitsCollection ); 
 
-  //  G4cout << "TCSTargetSD::Initialize: initialized" << G4endl;
+  G4cout << "TCSTargetSD::Initialize: initialized" << G4endl;
   //  getchar();
 }
 

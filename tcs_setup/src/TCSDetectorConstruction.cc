@@ -163,7 +163,7 @@ G4VPhysicalVolume* TCSDetectorConstruction::Construct()
   new G4PVPlacement(cham_rot,
 		    G4ThreeVector(0.,0.,0.),
 		    chamber_log,
-		    "Chamber",
+		    "ChamberAssembly_PV",
 		    physWorld->GetLogicalVolume(), //its mother  volume
 		    false,
 		    0,
@@ -277,12 +277,12 @@ void TCSDetectorConstruction::ConstructSDandField()
     SetSensitiveDetector("tracker2World", trackerSD, true);
     SetSensitiveDetector("tracker3World", trackerSD, true);
     */
-    /*
+
     TCSTargetSD* targetSD = new TCSTargetSD("TargetSD",
 					    "TargetHitsCollection");
     G4SDManager::GetSDMpointer()->AddNewDetector(targetSD);
-    */
-    ////    SetSensitiveDetector("TargetAssembly", targetSD, true);
+
+    SetSensitiveDetector("TargetAssembly", targetSD, true);
 
     // Create global magnetic field messenger.
     // Uniform magnetic field is then created automatically if

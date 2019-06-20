@@ -95,13 +95,13 @@ void TCSEventAction::BeginOfEventAction(const G4Event* evt)
     {
       fTrackerCollID = SDman->GetCollectionID("TrackerHitsCollection");
     }
-
+  */
   if(fTargetCollID<0)
   {
     fTargetCollID = SDman->GetCollectionID("TargetHitsCollection");
     //    G4cout << "  Target collection id = " << fTargetCollID << G4endl;
   }
-  */
+
   // initialization of per event quantities
 
   fEdep = 0.;   //Per event total energy deposition in the calorimeter.
@@ -143,16 +143,16 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
   G4HCofThisEvent * HCE = event->GetHCofThisEvent();
 
   // Target hits.
-  /*
+
   TCSTargetHitsCollection* TC = 0;
   if(HCE) {
     TC = (TCSTargetHitsCollection*)(HCE->GetHC(fTargetCollID));
-    //    G4cout << "  Found target hit collection." << G4endl;
+    G4cout << "  Found target hit collection." << G4endl;
   }
 
   if(TC) {
     int n_hit = TC->entries();
-    //    G4cout << "  target n_hit = " << n_hit << G4endl;
+    G4cout << "  target n_hit = " << n_hit << G4endl;
     for(int i=0;i<n_hit;i++) {
       G4int pid =(*TC)[i]->GetPID();
       G4double energy=(*TC)[i]->GetEnergy();
@@ -166,7 +166,7 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
 	 << "target hit container inconsistent! ***" << endl;
     //    getchar();
   }
-  */
+
   // Calorimeter hits.
 
   TCSCalorimeterHitsCollection* CC = 0;
@@ -281,7 +281,7 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
   }
 
   ///  if (CC || HXC || HYC || TrC) {
-  ///    fHistoManager->FillTrees();
+  fHistoManager->FillTrees();
   ///    //    getchar();
   ///  }
   
