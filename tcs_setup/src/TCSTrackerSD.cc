@@ -46,9 +46,9 @@ TCSTrackerSD::TCSTrackerSD(const G4String& name,
 {
   collectionName.insert(hitsCollectionName);
 
-  //  G4cout << "TCSTrackerXSD::TCSTrackerXSD: constructed" << G4endl;
-  //  G4cout << "   name = " << name << G4endl;
-  //  G4cout << "   hitsCollectionName = " << hitsCollectionName << G4endl;
+  G4cout << "TCSTrackerXSD::TCSTrackerXSD: constructed" << G4endl;
+  G4cout << "   name = " << name << G4endl;
+  G4cout << "   hitsCollectionName = " << hitsCollectionName << G4endl;
   //  getchar();
 }
 
@@ -73,9 +73,9 @@ void TCSTrackerSD::Initialize(G4HCofThisEvent* hce)
     = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);
   hce->AddHitsCollection( hcID, fHitsCollection ); 
 
-  //  G4cout << "TCSTrackerSD::Initialize: initialized" << G4endl;
-  // G4cout << "   SensitiveDetectorName = " << SensitiveDetectorName << G4endl;
-  //  G4cout << "   collectionName = " << collectionName[0] << G4endl;
+  G4cout << "TCSTrackerSD::Initialize: initialized" << G4endl;
+  G4cout << "   SensitiveDetectorName = " << SensitiveDetectorName << G4endl;
+  G4cout << "   collectionName = " << collectionName[0] << G4endl;
   //  getchar();
 }
 
@@ -90,15 +90,23 @@ G4bool TCSTrackerSD::ProcessHits(G4Step* step, G4TouchableHistory*)
     step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName();
 
   // Particle in the tracker's drift gas volume.
-  if (vname == "Drift_PV") {
+  ///  if (vname == "Drift_PV") {
+  if (vname.substr(0,8) == "Drift_PV") {
 
     G4int layer = -1;
-    string WorldName =
-      step->GetPreStepPoint()->GetTouchableHandle()->GetVolume(2)->GetName();
-    if (WorldName.substr(0,7) == "tracker" && WorldName.substr(8,5) == "World")
-      layer = atoi(WorldName.substr(7,1).c_str()) - 1;
+
+    //    string WorldName =
+      //step->GetPreStepPoint()->GetTouchableHandle()->GetVolume(2)->GetName();
+    //if (WorldName.substr(0,7)== "tracker" && WorldName.substr(8,5) == "World")
+    //layer = atoi(WorldName.substr(7,1).c_str()) - 1;
+
+    string detName =
+      step->GetPreStepPoint()->GetTouchableHandle()->GetVolume(1)->GetName();
+    if (detName.substr(0,7)== "Tracker")
+      layer = atoi(detName.substr(7,1).c_str()) - 1;
     else
-      G4cout << "*** TCSTrackerSD::ProcessHits: wrong WorldName ***" << G4endl;
+      G4cout << "*** TCSTrackerSD::ProcessHits: wrong detName = "
+	     << detName << " ***" << G4endl;
 
     //    G4ThreeVector trackPos = step->GetTrack()->GetPosition();
     G4ThreeVector prestepPos = step->GetPreStepPoint()->GetPosition();

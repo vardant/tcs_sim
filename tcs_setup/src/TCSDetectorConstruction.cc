@@ -139,18 +139,21 @@ G4VPhysicalVolume* TCSDetectorConstruction::Construct()
   G4LogicalVolume* Tracker1_log = GetGDMLVolume(
 		   "tcs_gdmls/pointer_referenced/tracker1_ref.gdml",
 		   "TrackerAssembly0xe91030");
+  //		   "tracker1World0xe915c0");
   for (int quarter=0; quarter<4; quarter++)
     PositionTracker(Tracker1_log, quarter, 1);
 
   G4LogicalVolume* Tracker2_log = GetGDMLVolume(
 		   "tcs_gdmls/pointer_referenced/tracker2_ref.gdml",
 		   "TrackerAssembly0x1a10030");
+		   //		   "tracker2World0x1a105c0");
   for (int quarter=0; quarter<4; quarter++)
     PositionTracker(Tracker2_log, quarter, 2);
 
   G4LogicalVolume* Tracker3_log = GetGDMLVolume(
 		   "tcs_gdmls/pointer_referenced/tracker3_ref.gdml",
 		   "TrackerAssembly0x1760030");
+		   //		   "tracker3World0x17605c0");
   for (int quarter=0; quarter<4; quarter++)
     PositionTracker(Tracker3_log, quarter, 3);
 
@@ -268,15 +271,17 @@ void TCSDetectorConstruction::ConstructSDandField()
     ////    G4SDManager::GetSDMpointer()->AddNewDetector(trackerxSD);
     ////    SetSensitiveDetector("TXBar", trackerxSD, true);
     ////    SetSensitiveDetector("trackerXWorld", trackerxSD, true);
-    /*
+
     TCSTrackerSD* trackerSD = new TCSTrackerSD("TrackerSD",
 					       "TrackerHitsCollection");
     G4SDManager::GetSDMpointer()->AddNewDetector(trackerSD);
-    SetSensitiveDetector("Drift", trackerSD, true);
-    SetSensitiveDetector("tracker1World", trackerSD, true);
-    SetSensitiveDetector("tracker2World", trackerSD, true);
-    SetSensitiveDetector("tracker3World", trackerSD, true);
-    */
+    //    SetSensitiveDetector("Drift", trackerSD, true);
+    SetSensitiveDetector("Drift0xe15800", trackerSD, true);   //tracker 1
+    SetSensitiveDetector("Drift0x1994830", trackerSD, true);  //tracker 2
+    SetSensitiveDetector("Drift0x16e4830", trackerSD, true);  //tracker 1
+    //    SetSensitiveDetector("tracker1World0xe915c0", trackerSD, true);
+    //    SetSensitiveDetector("tracker2World0x1a105c0", trackerSD, true);
+    //    SetSensitiveDetector("tracker3World0x17605c0", trackerSD, true);
 
     TCSTargetSD* targetSD = new TCSTargetSD("TargetSD",
 					    "TargetHitsCollection");
@@ -429,7 +434,7 @@ void TCSDetectorConstruction::PositionTracker(G4LogicalVolume* Tracker_log,
 
   new G4PVPlacement(transform,                     //position, rotation        
                     Tracker_log,                   //logical volume
-                    "Tracker",                     //name
+                    "Tracker"+to_string(layer),    //name
 		    physWorld->GetLogicalVolume(), //its mother  volume
                     false,                         //no boolean operation
                     quarter);                      //copy number

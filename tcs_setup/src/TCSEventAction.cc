@@ -90,12 +90,12 @@ void TCSEventAction::BeginOfEventAction(const G4Event* evt)
   {
     fHodoYCollID = SDman->GetCollectionID("HodoYHitsCollection");
   }
-
+  */
   if(fTrackerCollID<0)
     {
       fTrackerCollID = SDman->GetCollectionID("TrackerHitsCollection");
     }
-  */
+
   if(fTargetCollID<0)
   {
     fTargetCollID = SDman->GetCollectionID("TargetHitsCollection");
@@ -147,12 +147,12 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
   TCSTargetHitsCollection* TC = 0;
   if(HCE) {
     TC = (TCSTargetHitsCollection*)(HCE->GetHC(fTargetCollID));
-    G4cout << "  Found target hit collection." << G4endl;
+    //    G4cout << "  Found target hit collection." << G4endl;
   }
 
   if(TC) {
     int n_hit = TC->entries();
-    G4cout << "  target n_hit = " << n_hit << G4endl;
+    //    G4cout << "  target n_hit = " << n_hit << G4endl;
     for(int i=0;i<n_hit;i++) {
       G4int pid =(*TC)[i]->GetPID();
       G4double energy=(*TC)[i]->GetEnergy();
@@ -231,7 +231,7 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
   }
   */
   // Tracker hits.
-  /*
+
   TCSTrackerHitsCollection* TrC = 0;
   if(HCE) {
     TrC = (TCSTrackerHitsCollection*)(HCE->GetHC(fTrackerCollID));
@@ -243,7 +243,6 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
     }
 
   }
-  */
 
   int nvertex =  event->GetNumberOfPrimaryVertex();
 
@@ -281,9 +280,10 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
   }
 
   ///  if (CC || HXC || HYC || TrC) {
-  fHistoManager->FillTrees();
-  ///    //    getchar();
-  ///  }
+  if (CC || TrC) {
+    fHistoManager->FillTrees();
+    //    getchar();
+  }
   
 
   ////  if (fEvtNo%1000 == 0) fHistoManager->autosave();
