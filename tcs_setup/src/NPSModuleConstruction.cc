@@ -435,7 +435,7 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
   //
   G4Box* counter_box = new G4Box("Counter",counter_x/2,counter_y/2,counter_z/2);
 
-  counter_log = new G4LogicalVolume(counter_box,Air,"Counter",0,0,0);
+  counter_log = new G4LogicalVolume(counter_box,Air,"Counter_log",0,0,0);
 
   // The experimental Hall
   //

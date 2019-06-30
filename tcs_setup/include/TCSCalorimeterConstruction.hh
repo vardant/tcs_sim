@@ -14,6 +14,11 @@ public:
   ~TCSCalorimeterConstruction();
   G4LogicalVolume* GetCalorimeter();
 
+  void Construct();
+
+  int GetNCOL() {return fNCOL;};
+  int GetNROW() {return fNROW;};
+
 private:
 
   const int fNCOL = 23;
@@ -21,8 +26,6 @@ private:
 
   const double fFrameThick = 0.5*mm;
   const double fFrameWidth = 2.*cm;
-
-  void Construct();
 
   G4LogicalVolume* fCalorimeter;
 };

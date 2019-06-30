@@ -13,7 +13,7 @@
 using namespace std;
 
 TCSCalorimeterConstruction::TCSCalorimeterConstruction() {
-  Construct();
+  //  Construct();  call separately
 }
 
 TCSCalorimeterConstruction::~TCSCalorimeterConstruction() {;}
@@ -56,8 +56,10 @@ void TCSCalorimeterConstruction::Construct() {
 
   G4Material* Air = man->FindOrBuildMaterial("G4_AIR");
 
-  G4Box* caloBox = new G4Box("caloBox", xcol/2, ycol/2, zcol/2);
-  fCalorimeter = new G4LogicalVolume(caloBox, Air, "Calo", 0, 0, 0);
+  ///  G4Box* caloBox = new G4Box("caloBox", xcol/2, ycol/2, zcol/2);
+  //Calo box little bit longer to allow for flux hit count in the CalorimeterSD.
+  G4Box* caloBox = new G4Box("caloBox", xcol/2, ycol/2, zcol/2+0.1*mm);
+  fCalorimeter = new G4LogicalVolume(caloBox, Air, "Calorimeter_LV", 0, 0, 0);
 
   // Positioning of modules in the calorimeter.
 
@@ -74,7 +76,7 @@ void TCSCalorimeterConstruction::Construct() {
       new G4PVPlacement(0,                                //no rotation
 			G4ThreeVector(xpos,ypos,zpos),    //at position
 			Module_log,                       //its logical volume
-			"Module",                         //its name
+			"Module_phys",                    //its name
 			fCalorimeter,                     //its mother  volume
 			false,                            //no boolean operation
 			copy_number,                      //copy number

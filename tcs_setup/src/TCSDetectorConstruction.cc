@@ -119,20 +119,13 @@ G4VPhysicalVolume* TCSDetectorConstruction::Construct()
   // Construct calorimeter.
 
   TCSCalorimeterConstruction CalorimeterConstruction;
+  CalorimeterConstruction.Construct();
   G4LogicalVolume* Calorimeter_log = CalorimeterConstruction.GetCalorimeter();
 
   //  for (int quarter=0; quarter<4; quarter++)
   for (int quarter=0; quarter<1; quarter++)
     PositionCalorimeter(Calorimeter_log, quarter);
 
-  //  new G4PVPlacement(0,                       //no rotation
-  //                G4ThreeVector(0.*cm,0.*cm,200.*cm),            //at position
-  //                    Calorimeter_log,             //its logical volume
-  //                    "Calorimeter",                //its name
-  //                  physWorld->GetLogicalVolume(),        //its mother  volume
-  //                    false,                   //no boolean operation
-  //                    0,                       //copy number
-  //                    1);          //overlaps checking
 
   // Read trackers from the gdml files.
 
@@ -252,6 +245,10 @@ void TCSDetectorConstruction::ConstructSDandField()
     ////    SetSensitiveDetector("Block", caloSD, true);
     ////    SetSensitiveDetector("caloWorld", caloSD, true);
 
+    SetSensitiveDetector("Block_log", caloSD, true);
+    SetSensitiveDetector("Counter_log", caloSD, true);
+    SetSensitiveDetector("Calorimeter_LV", caloSD, true);
+
     // Hodoscope SD
     /*
     TCSHodoXSD* hodoxSD = new TCSHodoXSD("HodoscopeXSD", "HodoXHitsCollection");
@@ -265,12 +262,6 @@ void TCSDetectorConstruction::ConstructSDandField()
     SetSensitiveDetector("hodoYWorld", hodoySD, true);
     */
     // Tracker SD
-
-    ////    TCSTrackerXSD* trackerxSD = new TCSTrackerXSD("TrackerXSD",
-    ////					  "TrackerXHitsCollection");
-    ////    G4SDManager::GetSDMpointer()->AddNewDetector(trackerxSD);
-    ////    SetSensitiveDetector("TXBar", trackerxSD, true);
-    ////    SetSensitiveDetector("trackerXWorld", trackerxSD, true);
 
     TCSTrackerSD* trackerSD = new TCSTrackerSD("TrackerSD",
 					       "TrackerHitsCollection");
@@ -367,7 +358,7 @@ void TCSDetectorConstruction::PositionCalorimeter(
 
   new G4PVPlacement(transform,                     //position, rotation        
                     Calorimeter_log,               //logical volume
-                    "Calorimeter",                 //name
+                    "Calorimeter_PV",              //name
 		    physWorld->GetLogicalVolume(), //its mother  volume
                     false,                         //no boolean operation
                     quarter);                      //copy number

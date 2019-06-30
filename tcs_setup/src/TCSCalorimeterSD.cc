@@ -32,6 +32,7 @@
 #include "G4ios.hh"
 
 #include "TCSTrackInformation.hh"
+#include "TCSCalorimeterConstruction.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -90,11 +91,87 @@ G4bool TCSCalorimeterSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 
   G4ThreeVector pos = step->GetTrack()->GetPosition();
 
+  // Particle in the crystals, save energy deposit for dose calc-s.
+  /*
+  if (step->GetTrack()->GetVolume()->GetName() == "Block_phys") {
+
+    G4double edep = step->GetTotalEnergyDeposit();
+    if (edep > 0.) {
+
+      TCSCalorimeterConstruction cc;
+      int ncol = cc.GetNCOL();
+      int nrow = cc.GetNROW();
+      int nmod=step->GetPostStepPoint()->GetTouchableHandle()->GetCopyNumber(1);
+      int row = nmod/ncol;
+      int col = nmod - row*ncol;
+
+      if (row < 0 || row >= nrow)
+	G4cout << "*** TCSCalorimeterSD::ProcessHits: wrong row = " << row
+	       << G4endl;
+      if (col < 0 || col >= ncol)
+	G4cout << "*** TCSCalorimeterSD::ProcessHits: wrong col = " << col
+	       << G4endl;
+
+      TCSCalorimeterHit* hit_d = new TCSCalorimeterHit(col,row,pid,edep,pos, 0);
+      fHitsCollection->insert( hit_d );
+      //  hit_d->Print();
+      //  getchar();
+    }
+
+    return true;
+  }
+  */
+
   // Particle entering calorimeter, save kinetic energy for flux calc-s.
+
+  if (step->GetPostStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
+      "Module_phys" &&
+      step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
+      "Calorimeter_PV" &&
+      step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary) {
+
+    TCSCalorimeterConstruction cc;
+    int ncol = cc.GetNCOL();
+    int nrow = cc.GetNROW();
+    int nmod=step->GetPostStepPoint()->GetTouchableHandle()->GetCopyNumber(0);
+    int row = nmod/ncol;
+    int col = nmod - row*ncol;
+
+    if (row < 0 || row >= nrow)
+      G4cout << "*** TCSCalorimeterSD::ProcessHits: wrong row = " << row
+	     << G4endl;
+    if (col < 0 || col >= ncol)
+      G4cout << "*** TCSCalorimeterSD::ProcessHits: wrong col = " << col
+	     << G4endl;
+
+    G4double ekin = step->GetTrack()->GetKineticEnergy();
+    TCSCalorimeterHit* hit_f=new TCSCalorimeterHit(col,row,pid, ekin, pos, 1);
+    fHitsCollection->insert( hit_f );
+    return true;
+  }
+
+  /*
+  if (step->GetPostStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
+  "Module_phys" &&
+  step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary) {
+    G4cout << "At Module_phys boundary, PreStep Vol. = " << step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName() << G4endl;
+    return true;
+  }
+  */
+  /*
+  if (step->GetPostStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
+  "Calorimeter_PV" &&
+  step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary) {
+    G4cout << "At Calorimeter_PV boundary, PreStep Vol. = " << step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName() << G4endl;
+    return true;
+  }
+  */
+
+  /*
   if (step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
-      "caloWorld_PV" &&
+      "Module" &&
       step->GetPostStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
-      "Block_PV" &&
+      "Block_phys" &&
       step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary) {
     G4int col =step->GetPostStepPoint()->GetTouchableHandle()->GetCopyNumber();
     G4int row =step->GetPostStepPoint()->GetTouchableHandle()->GetCopyNumber(1);
@@ -105,7 +182,7 @@ G4bool TCSCalorimeterSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   }
 
   // Particle in the crystals, save energy deposit for dose calc-s.
-  if (step->GetTrack()->GetVolume()->GetName() == "Block_PV") {
+  if (step->GetTrack()->GetVolume()->GetName() == "Block_phys") {
     G4int col = step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber();
     G4int row = step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(1);
     G4double edep = step->GetTotalEnergyDeposit();
@@ -115,6 +192,7 @@ G4bool TCSCalorimeterSD::ProcessHits(G4Step* step, G4TouchableHistory*)
     //  getchar();
     ////    return true;
   }
+  */
 
   //  TCSTrackInformation* info =
   //    (TCSTrackInformation*)(step->GetTrack()->GetUserInformation());
