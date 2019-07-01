@@ -56,6 +56,7 @@
 #include "G4UImanager.hh"
 ////#include "FTFP_BERT.hh"
 #include "QGSP_BERT.hh"
+#include "NPSAddOptics.hh"
 
 #include "G4VModularPhysicsList.hh"
 ////#include "G4EmStandardPhysics.hh"
@@ -281,6 +282,7 @@ int main(int argc,char** argv)
   ////  physicsList->RegisterPhysics(new G4EmStandardPhysics_option4());
   //  physicsList->RegisterPhysics(new G4EmLivermorePhysics());
 
+  physicsList->RegisterPhysics(new NPSAddOptics("Cerenkov & Scintillation") );
   physicsList->RegisterPhysics(new G4StepLimiterPhysics());
   runManager->SetUserInitialization(physicsList);
 
