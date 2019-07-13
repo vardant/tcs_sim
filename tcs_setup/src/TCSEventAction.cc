@@ -29,6 +29,7 @@
 #include "TCSRunAction.hh"
 #include "TCSHistoManager.hh"
 #include "TCSCalorimeterHit.hh"
+#include "TCSCalorimeterPMTHit.hh"
 #include "TCSHodoHit.hh"
 #include "TCSTrackerHit.hh"
 #include "TCSTargetHit.hh"
@@ -50,7 +51,7 @@
 TCSEventAction::TCSEventAction(TCSHistoManager *histo)
   : G4UserEventAction(), fEdep(0.), fNTar_epos(0), fNTar_eneg(0),
     fHistoManager(histo), fPrintModulo(0),
-    fTargetCollID(-1), fCalorimeterCollID(-1),
+    fTargetCollID(-1), fCalorimeterCollID(-1), fCalorimeterPMTCollID(-1),
     fHodoXCollID(-1), fHodoYCollID(-1),
     fTrackerCollID(-1),
     fEvtNo(-1)
@@ -80,6 +81,15 @@ void TCSEventAction::BeginOfEventAction(const G4Event* evt)
     fCalorimeterCollID = SDman->GetCollectionID("CalorimeterHitsCollection");
     //G4cout << "  Calorimeter collection id = " << fCalorimeterCollID << G4endl;
   }
+
+  if(fCalorimeterPMTCollID<0)
+  {
+    //    G4cout << "  Getting calorimeter PMT collection id..." << G4endl;
+    fCalorimeterPMTCollID =
+      SDman->GetCollectionID("CalorimeterPMTHitsCollection");
+    //G4cout << "  Calorimeter PMT collection id = " << fCalorimeterPMTCollID << G4endl;
+  }
+
   /*
   if(fHodoXCollID<0)
   {
@@ -104,7 +114,7 @@ void TCSEventAction::BeginOfEventAction(const G4Event* evt)
 
   // initialization of per event quantities
 
-  fEdep = 0.;   //Per event total energy deposition in the calorimeter.
+  fEdep = 0.;   //Per event total energy deposition in the target.
   fNTar_epos = 0;
   fNTar_eneg = 0;
     
@@ -192,6 +202,35 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
 	G4double energy=(*CC)[i]->GetEnergy();
 	fHistoManager->AddHit(detpos, col, row, energy/MeV, pid);
       }
+    }
+
+    //Check hit container's consistency first.
+    if (!fHistoManager->CheckCaloHitCont())
+      cout <<"*** TCSEventAction::EndOfEventAction: "
+	   << "calorimeter hit container inconsistent! ***" << endl;
+
+    //    getchar();
+  }
+
+  //
+
+  TCSCalorimeterPMTHitsCollection* CCPMT = 0;
+  if(HCE) {
+    CCPMT=(TCSCalorimeterPMTHitsCollection*)(HCE->GetHC(fCalorimeterPMTCollID));
+    //    G4cout << "  Found calorimeter PMT hit collection." << G4endl;
+  }
+
+  if(CCPMT) {
+    int n_hit = CCPMT->entries();
+    //    G4cout << "  n_hit = " << n_hit << G4endl;
+    for(int i=0;i<n_hit;i++) {
+      G4ThreeVector pos=(*CCPMT)[i]->GetPos();
+      G4int detpos = GetQuarter(pos.getX(), pos.getY());
+      G4int col =(*CCPMT)[i]->GetCol();
+      G4int row =(*CCPMT)[i]->GetRow();
+      G4int pid =(*CCPMT)[i]->GetPID();
+      int npe=(*CCPMT)[i]->GetNpe();
+      fHistoManager->AddHit(detpos, col, row, npe, pid);
     }
 
     //Check hit container's consistency first.

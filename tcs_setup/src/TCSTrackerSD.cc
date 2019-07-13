@@ -73,9 +73,9 @@ void TCSTrackerSD::Initialize(G4HCofThisEvent* hce)
     = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);
   hce->AddHitsCollection( hcID, fHitsCollection ); 
 
-  G4cout << "TCSTrackerSD::Initialize: initialized" << G4endl;
-  G4cout << "   SensitiveDetectorName = " << SensitiveDetectorName << G4endl;
-  G4cout << "   collectionName = " << collectionName[0] << G4endl;
+  //  G4cout << "TCSTrackerSD::Initialize: initialized" << G4endl;
+  // G4cout << "   SensitiveDetectorName = " << SensitiveDetectorName << G4endl;
+  //  G4cout << "   collectionName = " << collectionName[0] << G4endl;
   //  getchar();
 }
 

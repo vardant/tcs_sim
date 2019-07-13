@@ -24,56 +24,37 @@
 // ********************************************************************
 //
 
-#ifndef TCSEventAction_h
-#define TCSEventAction_h 1
+#ifndef TCSCalorimeterPMTSD_h
+#define TCSCalorimeterPMTSD_h 1
 
-#include "G4UserEventAction.hh"
-#include "globals.hh"
-#include "TCSHistoManager.hh"
-#include "TCSHodoHit.hh"
-#include "TCSTrackerHit.hh"
+#include "G4VSensitiveDetector.hh"
 
-// Event action class
+#include "TCSCalorimeterPMTHit.hh"
 
-class G4PrimaryParticle;
-class TCSHistoManager;
+#include <vector>
 
-class TCSEventAction : public G4UserEventAction {
+class G4Step;
+class G4HCofThisEvent;
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+class TCSCalorimeterPMTSD : public G4VSensitiveDetector {
 
 public:
-  TCSEventAction(TCSHistoManager*);
-  virtual ~TCSEventAction();
-    
-  virtual void BeginOfEventAction(const G4Event* event);
-  virtual void EndOfEventAction(const G4Event* event);
-  TCSHistoManager *GetHistoManager() {return fHistoManager;}
-  void AddEdep(G4double edep) { fEdep += edep; }
-  void AddNTar_epos(int n) { fNTar_epos += n; }
-  void AddNTar_eneg(int n) { fNTar_eneg += n; }
-  G4int GetEvtNo() {return fEvtNo;}
+
+  TCSCalorimeterPMTSD(const G4String& name, const G4String& hitsCollectionName);
+  virtual ~TCSCalorimeterPMTSD();
   
+  // methods from base class
+  virtual void   Initialize(G4HCofThisEvent* hitCollection);
+  virtual G4bool ProcessHits(G4Step* step, G4TouchableHistory* history);
+  virtual void   EndOfEvent(G4HCofThisEvent* hitCollection);
+
 private:
 
-  G4double  fEdep;
-  int fNTar_epos;    //number of positrons from gamma conversion in target.
-  int fNTar_eneg;    //number of electrons from gamma conversion in target.
-  TCSHistoManager *fHistoManager;
-  G4int fPrintModulo;
-  G4int fTargetCollID;
-  G4int fCalorimeterCollID;
-  G4int fCalorimeterPMTCollID;
-  G4int fHodoXCollID;
-  G4int fHodoYCollID;
-  G4int fTrackerCollID;
-  G4int fEvtNo;
+  TCSCalorimeterPMTHitsCollection* fHitsCollection;
+  G4int lastID;
 
-  void AddHodoHit(TCSHodoHitsCollection* HC, HodoHitContainer& HodoHitCont);
-  void AddTrackerHit(TCSTrackerHitsCollection* HC,
-  		     TrackerHitContainer& TrackerHitCont);
-
-  static int GetQuarter(double x, double y);
-
-  friend class TCSTrackerSD;   //to use GetQuarter
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

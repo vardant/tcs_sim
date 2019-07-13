@@ -28,6 +28,7 @@
 #include "TCSCalorimeterConstruction.hh"
 #include "TCSTargetSD.hh"
 #include "TCSCalorimeterSD.hh"
+#include "TCSCalorimeterPMTSD.hh"
 #include "TCSHodoXSD.hh"
 #include "TCSHodoYSD.hh"
 #include "TCSTrackerSD.hh"
@@ -122,8 +123,8 @@ G4VPhysicalVolume* TCSDetectorConstruction::Construct()
   CalorimeterConstruction.Construct();
   G4LogicalVolume* Calorimeter_log = CalorimeterConstruction.GetCalorimeter();
 
-  //  for (int quarter=0; quarter<4; quarter++)
-  for (int quarter=0; quarter<1; quarter++)
+  //  for (int quarter=0; quarter<1; quarter++)
+  for (int quarter=0; quarter<4; quarter++)
     PositionCalorimeter(Calorimeter_log, quarter);
 
 
@@ -248,6 +249,12 @@ void TCSDetectorConstruction::ConstructSDandField()
     SetSensitiveDetector("Block_log", caloSD, true);
     SetSensitiveDetector("Counter_log", caloSD, true);
     SetSensitiveDetector("Calorimeter_LV", caloSD, true);
+
+    TCSCalorimeterPMTSD* caloPMTSD = new TCSCalorimeterPMTSD("CalorimeterPMTSD",
+				     "CalorimeterPMTHitsCollection");
+    G4SDManager::GetSDMpointer()->AddNewDetector(caloPMTSD);
+
+    SetSensitiveDetector("Cathode_log", caloPMTSD, true);
 
     // Hodoscope SD
     /*

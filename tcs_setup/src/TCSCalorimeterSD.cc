@@ -92,7 +92,7 @@ G4bool TCSCalorimeterSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   G4ThreeVector pos = step->GetTrack()->GetPosition();
 
   // Particle in the crystals, save energy deposit for dose calc-s.
-  /*
+
   if (step->GetTrack()->GetVolume()->GetName() == "Block_phys") {
 
     G4double edep = step->GetTotalEnergyDeposit();
@@ -120,10 +120,9 @@ G4bool TCSCalorimeterSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 
     return true;
   }
-  */
 
   // Particle entering calorimeter, save kinetic energy for flux calc-s.
-
+  /*
   if (step->GetPostStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
       "Module_phys" &&
       step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
@@ -149,6 +148,7 @@ G4bool TCSCalorimeterSD::ProcessHits(G4Step* step, G4TouchableHistory*)
     fHitsCollection->insert( hit_f );
     return true;
   }
+  */
 
   /*
   if (step->GetPostStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
@@ -157,102 +157,6 @@ G4bool TCSCalorimeterSD::ProcessHits(G4Step* step, G4TouchableHistory*)
     G4cout << "At Module_phys boundary, PreStep Vol. = " << step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName() << G4endl;
     return true;
   }
-  */
-  /*
-  if (step->GetPostStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
-  "Calorimeter_PV" &&
-  step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary) {
-    G4cout << "At Calorimeter_PV boundary, PreStep Vol. = " << step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName() << G4endl;
-    return true;
-  }
-  */
-
-  /*
-  if (step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
-      "Module" &&
-      step->GetPostStepPoint()->GetTouchableHandle()->GetVolume()->GetName() ==
-      "Block_phys" &&
-      step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary) {
-    G4int col =step->GetPostStepPoint()->GetTouchableHandle()->GetCopyNumber();
-    G4int row =step->GetPostStepPoint()->GetTouchableHandle()->GetCopyNumber(1);
-    G4double ekin = step->GetTrack()->GetKineticEnergy();
-    TCSCalorimeterHit* hit = new TCSCalorimeterHit(col, row, pid, ekin, pos, 1);
-    fHitsCollection->insert( hit );
-    ////    return true;
-  }
-
-  // Particle in the crystals, save energy deposit for dose calc-s.
-  if (step->GetTrack()->GetVolume()->GetName() == "Block_phys") {
-    G4int col = step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber();
-    G4int row = step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(1);
-    G4double edep = step->GetTotalEnergyDeposit();
-    TCSCalorimeterHit* hit = new TCSCalorimeterHit(col, row, pid, edep, pos, 0);
-    fHitsCollection->insert( hit );
-    //  hit->Print();
-    //  getchar();
-    ////    return true;
-  }
-  */
-
-  //  TCSTrackInformation* info =
-  //    (TCSTrackInformation*)(step->GetTrack()->GetUserInformation());
-  //  G4cout << " Original Track ID " << info->GetOriginalTrackID() << G4endl;
-  //  G4cout << " Original particle "
-  //	 << info->GetOriginalParticle()->GetPDGEncoding() << G4endl;
-  //  getchar();
-
-  //  G4cout << "TCSCalorimeterSD::ProcessHits:" << G4endl;
-  //  G4cout << " PreStepPoint volume:" <<
-  //    step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName()
-  //  	 << G4endl;
-  //  G4cout << " PostStepPoint volume:" <<
-  //    step->GetPostStepPoint()->GetTouchableHandle()->GetVolume()->GetName()
-  //  	 << G4endl;
-
-  /*
-  if (step->GetPreStepPoint()->GetStepStatus() == fGeomBoundary) {
-    G4cout << " PreStepPoint status: on Boundary !" << G4endl; 
-    G4cout << " Pre  col, row: " << col << "  " << row << G4endl;
-    G4int colpos =
-      step->GetPostStepPoint()->GetTouchableHandle()->GetCopyNumber();
-    G4int rowpos =
-      step->GetPostStepPoint()->GetTouchableHandle()->GetCopyNumber(1);
-    G4cout << " Post col, row: " << colpos << "  " << rowpos << G4endl;
-    getchar();
-  }
-
-  if (step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary) {
-    G4cout << " PostStepPoint status: on Boundary !" << G4endl; 
-    G4cout << " Pre  col, row: " << col << "  " << row << G4endl;
-    G4int colpos =
-      step->GetPostStepPoint()->GetTouchableHandle()->GetCopyNumber();
-    G4int rowpos =
-      step->GetPostStepPoint()->GetTouchableHandle()->GetCopyNumber(1);
-    G4cout << " Post col, row: " << colpos << "  " << rowpos << G4endl;
-    getchar();
-  }
-  */
-  /*
-  if (step->GetPreStepPoint()->GetStepStatus() == fGeomBoundary) {
-    G4cout << " PreStepPoint status: on Boundary !" << G4endl;
-    G4cout << " PreVol: "
-    << step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName()
-	   << G4endl;
-    G4cout << " PostVol: "
-    << step->GetPostStepPoint()->GetTouchableHandle()->GetVolume()->GetName()
-	   << G4endl;
-    getchar();
-  };
-  if (step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary) {
-    G4cout << " PostStepPoint status: on Boundary !" << G4endl;
-    G4cout << " PreVol: "
-    << step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName()
-	   << G4endl;
-    G4cout << " PostVol: "
-    << step->GetPostStepPoint()->GetTouchableHandle()->GetVolume()->GetName()
-	   << G4endl;
-    getchar();
-  };
   */
 
   return true;

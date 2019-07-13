@@ -407,7 +407,7 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
   G4Tubs*  PMTWin_tube =
   new G4Tubs("PMTWindow", 0., PMT_diameter/2, PMTWin_thick/2,0.*deg, 360.*deg);
 
-  PMTWin_right_log = new G4LogicalVolume(PMTWin_tube,Glass, "PMTWindow");
+  PMTWin_right_log = new G4LogicalVolume(PMTWin_tube,Glass, "PMTWindow_log");
 
   // PMT Housing
   //
@@ -422,7 +422,8 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
   G4Tubs*  Cathode_tube =
   new G4Tubs("Cathode", 0., Cathode_diam/2, Cathode_thick/2,0.*deg, 360.*deg);
 
-  Cathode_log = new G4LogicalVolume(Cathode_tube, Bialcali, "Cathode");
+  ///  Cathode_log = new G4LogicalVolume(Cathode_tube, Bialcali, "Cathode");
+  Cathode_log = new G4LogicalVolume(Cathode_tube, Bialcali, "Cathode_log");
 
   // Optical glue
   //
@@ -512,7 +513,7 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
   new G4PVPlacement(0,    //no rotation
 		    G4ThreeVector(x,y,z),
 		    PMTWin_right_log, //its logical volume
-		    "PMTWindow",      //its name
+		    "PMTWindow_phys",      //its name
 		    counter_log,    //its mother  volume
 		    false,            //no boolean oper.
 		    0);               //copy number
@@ -521,7 +522,7 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
   new G4PVPlacement(0, //no rotation
 		    G4ThreeVector(x,y,z),
 		    Cathode_log,  //its logical volume
-		    "Cathode", //its name
+		    "Cathode_phys", //its name
 		    counter_log, //its mother  volume
 		    false,       //no boolean operation
 		    0);          //copy number
@@ -617,7 +618,8 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
     reflCat[i] = 0.;
   }
 
-  G4OpticalSurface* surfCat = new G4OpticalSurface("Cathode");
+  ///  G4OpticalSurface* surfCat = new G4OpticalSurface("Cathode");
+  G4OpticalSurface* surfCat = new G4OpticalSurface("Cathode_surf");
 
   surfCat -> SetType(dielectric_metal);
   surfCat -> SetFinish(polished);
@@ -629,7 +631,8 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
 
   surfCat -> SetMaterialPropertiesTable(surfCatMPT);
 
-  new G4LogicalSkinSurface("Cathode",Cathode_log,surfCat);
+  ///  new G4LogicalSkinSurface("Cathode",Cathode_log,surfCat);
+  new G4LogicalSkinSurface("Cathode_skin",Cathode_log,surfCat);
 
   //test. PMT surface, black.
   //

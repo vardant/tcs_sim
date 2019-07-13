@@ -86,6 +86,7 @@ public:
   void SetTCSVertex(double e, G4ThreeVector p, G4ThreeVector orig, int pid);
   void AddHit(double edep, int pid);
   void AddHit(int det, uint col, uint row, double edep, int pid);
+  void AddHit(int det, uint col, uint row, int npe, int pid);
   void AddHit(int det, uint chan, double edep, int pid,
 	      HodoHitContainer &HodoHitCont);
   void AddHit(double x, double y, double edep, double length,
@@ -99,7 +100,8 @@ public:
   bool CheckCaloHitCont() {
     uint sz = fCaloHitCont.Det.size();
     return (fCaloHitCont.Col.size() != sz || fCaloHitCont.Row.size() != sz ||
-	    fCaloHitCont.Edep.size() != sz || fCaloHitCont.PID.size() != sz
+	    fCaloHitCont.Edep.size() != sz || fCaloHitCont.Npe.size() != sz ||
+	    fCaloHitCont.PID.size() != sz
 	    ? false : true);
   }
 
@@ -145,6 +147,7 @@ public:
     fCaloHitCont.Col.clear();
     fCaloHitCont.Row.clear();
     fCaloHitCont.Edep.clear();
+    fCaloHitCont.Npe.clear();
     fCaloHitCont.PID.clear();
   };
 
@@ -238,6 +241,7 @@ private:
     vector<uint> Col;
     vector<uint> Row;
     vector<double> Edep;
+    vector<int> Npe;
     vector<int> PID;
   } fCaloHitCont;
 
