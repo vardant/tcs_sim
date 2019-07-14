@@ -61,7 +61,8 @@ void TCSCalorimeterConstruction::Construct() {
   G4Box* caloBox = new G4Box("caloBox", xcol/2, ycol/2, zcol/2+0.1*mm);
   fCalorimeter = new G4LogicalVolume(caloBox, Air, "Calorimeter_LV", 0, 0, 0);
 
-  // Positioning of modules in the calorimeter.
+  // Positioning of modules in the calorimeter. Numbering of rows from bottom
+  // top, columns from left to right.
 
   int copy_number = 0;
   const double zpos = 0.;
@@ -69,7 +70,8 @@ void TCSCalorimeterConstruction::Construct() {
   double ypos = -ycol/2 + ystep/2;
   for (int irow = 0; irow<fNROW; irow++) {
 
-    double xpos = -xcol/2 + xstep/2;
+    ///    double xpos = -xcol/2 + xstep/2;
+    double xpos = xcol/2 - xstep/2;
     for (int icol = 0; icol<fNCOL; icol++) {
       G4LogicalVolume* Module_log = ModuleConstruction->GetModule();
 
@@ -83,7 +85,8 @@ void TCSCalorimeterConstruction::Construct() {
 			0);                               //overlaps checking
 
       copy_number++;
-      xpos += xstep;
+      ///      xpos += xstep;
+      xpos -= xstep;
     }
 
     ypos += ystep;
@@ -176,7 +179,8 @@ void TCSCalorimeterConstruction::Construct() {
   ypos = -ycol/2 + ystep/2;
   for (int irow = 0; irow<fNROW; irow++) {
 
-    double xpos = -xcol/2 + xstep/2;
+    ///    double xpos = -xcol/2 + xstep/2;
+    double xpos = xcol/2 - xstep/2;
     for (int icol = 0; icol<fNCOL; icol++) {
   
       new G4PVPlacement(0,                                //no rotation
@@ -200,7 +204,8 @@ void TCSCalorimeterConstruction::Construct() {
 			0);                               //overlaps checking
 
       copy_number++;
-      xpos += xstep;
+      ///      xpos += xstep;
+      xpos -= xstep;
     }
 
     ypos += ystep;

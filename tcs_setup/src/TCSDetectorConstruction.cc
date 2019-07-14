@@ -123,7 +123,7 @@ G4VPhysicalVolume* TCSDetectorConstruction::Construct()
   CalorimeterConstruction.Construct();
   G4LogicalVolume* Calorimeter_log = CalorimeterConstruction.GetCalorimeter();
 
-  //  for (int quarter=0; quarter<1; quarter++)
+  //for (int quarter=0; quarter<1; quarter++)
   for (int quarter=0; quarter<4; quarter++)
     PositionCalorimeter(Calorimeter_log, quarter);
 
