@@ -45,20 +45,20 @@ void TCSCalorimeterConstruction::Construct() {
   double xstep = xmod + fFrameThick;
   double ystep = ymod + fFrameThick;
 
-  double xcol = xstep*fNCOL + fFrameThick;
-  double ycol = ystep*fNCOL + fFrameThick;
-  double zcol = zmod;
+  double xcal = xstep*fNCOL + fFrameThick;
+  double ycal = ystep*fNROW + fFrameThick;
+  double zcal = zmod;
   cout << "TCSCalorimeterConstruction::GetCalorimeter: calo sizes:" << endl;
-  cout << "  xcol = " << xcol/cm << " cm" << endl;
-  cout << "  ycol = " << ycol/cm << " cm" << endl;
-  cout << "  zcol = " << zcol/cm << " cm" << endl;
+  cout << "  xcal = " << xcal/cm << " cm" << endl;
+  cout << "  ycal = " << ycal/cm << " cm" << endl;
+  cout << "  zcal = " << zcal/cm << " cm" << endl;
   //  getchar();
 
   G4Material* Air = man->FindOrBuildMaterial("G4_AIR");
 
-  ///  G4Box* caloBox = new G4Box("caloBox", xcol/2, ycol/2, zcol/2);
+  ///  G4Box* caloBox = new G4Box("caloBox", xcal/2, ycal/2, zcal/2);
   //Calo box little bit longer to allow for flux hit count in the CalorimeterSD.
-  G4Box* caloBox = new G4Box("caloBox", xcol/2, ycol/2, zcol/2+0.1*mm);
+  G4Box* caloBox = new G4Box("caloBox", xcal/2, ycal/2, zcal/2+0.1*mm);
   fCalorimeter = new G4LogicalVolume(caloBox, Air, "Calorimeter_LV", 0, 0, 0);
 
   // Positioning of modules in the calorimeter. Numbering of rows from bottom
@@ -67,11 +67,11 @@ void TCSCalorimeterConstruction::Construct() {
   int copy_number = 0;
   const double zpos = 0.;
 
-  double ypos = -ycol/2 + ystep/2;
+  double ypos = -ycal/2 + ystep/2;
   for (int irow = 0; irow<fNROW; irow++) {
 
-    ///    double xpos = -xcol/2 + xstep/2;
-    double xpos = xcol/2 - xstep/2;
+    ///    double xpos = -xcal/2 + xstep/2;
+    double xpos = xcal/2 - xstep/2;
     for (int icol = 0; icol<fNCOL; icol++) {
       G4LogicalVolume* Module_log = ModuleConstruction->GetModule();
 
@@ -116,10 +116,10 @@ void TCSCalorimeterConstruction::Construct() {
   G4Box* cellBox = new G4Box("cellBox", xmod/2, ymod/2, fFrameWidth/2+0.5*mm);
   G4MultiUnion* cellsSolid = new G4MultiUnion("cellsSolid");
 
-  ypos = -ycol/2 + ystep/2;
+  ypos = -ycal/2 + ystep/2;
   for (int irow = 0; irow<fNROW; irow++) {
 
-    double xpos = -xcol/2 + xstep/2;
+    double xpos = -xcal/2 + xstep/2;
     for (int icol = 0; icol<fNCOL; icol++) {
 
       G4RotationMatrix rotm  = G4RotationMatrix();
@@ -136,7 +136,7 @@ void TCSCalorimeterConstruction::Construct() {
 
   cellsSolid->Voxelize();
 
-  G4Box* frameBox = new G4Box("frameBox", xcol/2, ycol/2, fFrameWidth/2);
+  G4Box* frameBox = new G4Box("frameBox", xcal/2, ycal/2, fFrameWidth/2);
 
   G4SubtractionSolid* frameSolid =
     new G4SubtractionSolid("frameSolid", frameBox, cellsSolid);
@@ -145,7 +145,7 @@ void TCSCalorimeterConstruction::Construct() {
 						  "frame", 0, 0, 0);
 
   new G4PVPlacement(0,                                          //no rotation
-		    G4ThreeVector(0.,0.,-zcol/2+fFrameWidth/2), //at position
+		    G4ThreeVector(0.,0.,-zcal/2+fFrameWidth/2), //at position
 		    frameLog,                                   //logical volume
 		    "front frame",                              //its name
 		    fCalorimeter,                               //mother  volume
@@ -153,7 +153,7 @@ void TCSCalorimeterConstruction::Construct() {
 		    0,                                          //copy number
 		    0);                                         //overlaps check
 
-  double zpos_frame = -zcol/2+ModuleConstruction->GetBlockSizeZ()-fFrameWidth/2;
+  double zpos_frame = -zcal/2+ModuleConstruction->GetBlockSizeZ()-fFrameWidth/2;
   new G4PVPlacement(0,                                          //no rotation
 		    G4ThreeVector(0.,0.,zpos_frame),            //at position
 		    frameLog,                                   //logical volume
@@ -176,15 +176,15 @@ void TCSCalorimeterConstruction::Construct() {
 
   copy_number = 0;
 
-  ypos = -ycol/2 + ystep/2;
+  ypos = -ycal/2 + ystep/2;
   for (int irow = 0; irow<fNROW; irow++) {
 
-    ///    double xpos = -xcol/2 + xstep/2;
-    double xpos = xcol/2 - xstep/2;
+    ///    double xpos = -xcal/2 + xstep/2;
+    double xpos = xcal/2 - xstep/2;
     for (int icol = 0; icol<fNCOL; icol++) {
   
       new G4PVPlacement(0,                                //no rotation
-			G4ThreeVector(xpos,ypos,-zcol/2+fFrameWidth/2), //at pos
+			G4ThreeVector(xpos,ypos,-zcal/2+fFrameWidth/2), //at pos
 			frameLog,                         //its logical volume
 			"front frame",                    //its name
 			fCalorimeter,                     //its mother  volume
@@ -193,7 +193,7 @@ void TCSCalorimeterConstruction::Construct() {
 			0);                               //overlaps checking
 
       double zpos_frame =
-	     -zcol/2+ModuleConstruction->GetBlockSizeZ()-fFrameWidth/2;
+	     -zcal/2+ModuleConstruction->GetBlockSizeZ()-fFrameWidth/2;
       new G4PVPlacement(0,                                //no rotation
 			G4ThreeVector(xpos,ypos,zpos_frame), //at pos
 			frameLog,                         //its logical volume
