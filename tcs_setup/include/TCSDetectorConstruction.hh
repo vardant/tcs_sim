@@ -89,14 +89,20 @@ private:
   G4ChordFinder*          fChordFinder;
 
   struct {
-    const double PositionAngle = 13.835*degree;
-    const double TiltAngle     = 13.835*degree;
-    const double RotationAngle = 10.034*degree;
-    const double Distance = 150*cm + 9*cm;
+    ///    const double Distance = 150*cm + 9*cm;       //no carbon fiber mesh
+    const double Distance = 159.2*cm + 10.1*cm;   //NPS like calorimeter
 
-    //    const double PositionAngle = 60*degree;
-    //    const double TiltAngle     = 90*degree;
-    //    const double RotationAngle = 45*degree;
+    //For quarters.
+    //    const int NQuarter = 4;
+    //    const double PositionAngle = 13.835*degree;
+    //    const double TiltAngle     = 13.835*degree;
+    //    const double RotationAngle = 10.034*degree;
+
+    //For single caloromiter facing beam.
+    const int NQuarter = 1;
+    const double PositionAngle = 0*degree;
+    const double TiltAngle     = 0*degree;
+    const double RotationAngle = 0*degree;
   } Calo;
 
   struct {

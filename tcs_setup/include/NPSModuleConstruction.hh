@@ -47,6 +47,7 @@ private:
   G4double* refImIndex;
   G4double subRefrIndex;
   G4double* refRefl;
+  bool fFrontCoverFlag;
   
   G4double block_x;
   G4double block_y;

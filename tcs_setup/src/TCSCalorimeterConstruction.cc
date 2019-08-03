@@ -48,17 +48,26 @@ void TCSCalorimeterConstruction::Construct() {
   double xcal = xstep*fNCOL + fFrameThick;
   double ycal = ystep*fNROW + fFrameThick;
   double zcal = zmod;
-  cout << "TCSCalorimeterConstruction::GetCalorimeter: calo sizes:" << endl;
+  cout << "TCSCalorimeterConstruction::GetCalorimeter: calo matrix sizes:"
+       << endl;
   cout << "  xcal = " << xcal/cm << " cm" << endl;
   cout << "  ycal = " << ycal/cm << " cm" << endl;
   cout << "  zcal = " << zcal/cm << " cm" << endl;
+
+  //Calorimeter's case sizes.
+  double xcase = xcal + 1.*cm;
+  double ycase = ycal + 1.*cm;
+  double zcase = zcal + 1.*cm;
+  cout << "                              Calorimeter's case sizes:" << endl;
+  cout << "  xcase = " << xcase/cm << " cm" << endl;
+  cout << "  ycase = " << ycase/cm << " cm" << endl;
+  cout << "  zcase = " << zcase/cm << " cm" << endl;
+
   //  getchar();
 
   G4Material* Air = man->FindOrBuildMaterial("G4_AIR");
 
-  ///  G4Box* caloBox = new G4Box("caloBox", xcal/2, ycal/2, zcal/2);
-  //Calo box little bit longer to allow for flux hit count in the CalorimeterSD.
-  G4Box* caloBox = new G4Box("caloBox", xcal/2, ycal/2, zcal/2+0.1*mm);
+  G4Box* caloBox = new G4Box("caloBox", xcase/2, ycase/2, zcase/2);
   fCalorimeter = new G4LogicalVolume(caloBox, Air, "Calorimeter_LV", 0, 0, 0);
 
   // Positioning of modules in the calorimeter. Numbering of rows from bottom
@@ -210,6 +219,31 @@ void TCSCalorimeterConstruction::Construct() {
 
     ypos += ystep;
   }
+
+  // Case.
+
+  G4Material* Al = man->FindOrBuildMaterial("G4_Al");
+
+  G4Box* caseBox = new G4Box("caloBox", xcase/2, ycase/2, zcase/2);
+
+  const double caseThick = 1.*mm;
+
+  G4Box* caseVoid = new G4Box("caloBox", xcase/2-caseThick, ycase/2-caseThick,
+			      zcase/2-caseThick);
+  G4SubtractionSolid* caseSolid =
+    new G4SubtractionSolid("caseSolid", caseBox, caseVoid);
+
+  G4LogicalVolume* caseLog = new G4LogicalVolume(caseSolid, Al, "case_log",
+						 0, 0, 0);
+
+  new G4PVPlacement(0,                                //no rotation
+		    G4ThreeVector(),                  //at pos
+		    caseLog,                          //its logical volume
+		    "CaloCase phys",                  //its name
+		    fCalorimeter,                     //its mother  volume
+		    false,                            //no boolean operation
+		    0,                                //copy number
+		    0);                               //overlaps checking
 
   //  fCalorimeter->SetVisAttributes (G4VisAttributes::Invisible);
 }

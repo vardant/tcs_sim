@@ -123,8 +123,7 @@ G4VPhysicalVolume* TCSDetectorConstruction::Construct()
   CalorimeterConstruction.Construct();
   G4LogicalVolume* Calorimeter_log = CalorimeterConstruction.GetCalorimeter();
 
-  //for (int quarter=0; quarter<1; quarter++)
-  for (int quarter=0; quarter<4; quarter++)
+  for (int quarter=0; quarter<Calo.NQuarter; quarter++)
     PositionCalorimeter(Calorimeter_log, quarter);
 
 
@@ -134,21 +133,21 @@ G4VPhysicalVolume* TCSDetectorConstruction::Construct()
 		   "tcs_gdmls/pointer_referenced/tracker1_ref.gdml",
 		   "TrackerAssembly0xe91030");
   //		   "tracker1World0xe915c0");
-  for (int quarter=0; quarter<4; quarter++)
+  for (int quarter=0; quarter<Calo.NQuarter; quarter++)
     PositionTracker(Tracker1_log, quarter, 1);
 
   G4LogicalVolume* Tracker2_log = GetGDMLVolume(
 		   "tcs_gdmls/pointer_referenced/tracker2_ref.gdml",
 		   "TrackerAssembly0x1a10030");
 		   //		   "tracker2World0x1a105c0");
-  for (int quarter=0; quarter<4; quarter++)
+  for (int quarter=0; quarter<Calo.NQuarter; quarter++)
     PositionTracker(Tracker2_log, quarter, 2);
 
   G4LogicalVolume* Tracker3_log = GetGDMLVolume(
 		   "tcs_gdmls/pointer_referenced/tracker3_ref.gdml",
 		   "TrackerAssembly0x1760030");
 		   //		   "tracker3World0x17605c0");
-  for (int quarter=0; quarter<4; quarter++)
+  for (int quarter=0; quarter<Calo.NQuarter; quarter++)
     PositionTracker(Tracker3_log, quarter, 3);
 
   //Scattering chamber.

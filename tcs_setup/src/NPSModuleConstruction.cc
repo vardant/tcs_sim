@@ -45,7 +45,8 @@ NPSModuleConstruction::NPSModuleConstruction(G4NistManager* man) {
   getline(fin,line); istringstream iss4(line);
   iss4 >> refNumData;
   refWL = new G4double[refNumData];
-  if (refFlag!=0) {
+  ///  if (refFlag!=0) {
+  if (refFlag==1) {
     refReIndex = new G4double[refNumData];
     refImIndex = new G4double[refNumData];
     for (G4int i=refNumData-1; i>-1; i--)
@@ -57,7 +58,17 @@ NPSModuleConstruction::NPSModuleConstruction(G4NistManager* man) {
       fin >> refWL[i] >> refRefl[i];
   }
   
-  fin >> subRefrIndex;
+  ///  fin >> subRefrIndex;
+  ///  fin >> fFrontCoverFlag;
+
+  getline(fin,line);
+  getline(fin,line); istringstream iss5(line);
+  iss5 >> subRefrIndex;
+  //  G4cout << line << G4endl;
+  getline(fin,line); istringstream iss6(line);
+  iss6 >> fFrontCoverFlag;
+  //  G4cout << line << G4endl;
+
   fin.close();
 
   air_gap *= mm;
@@ -77,7 +88,8 @@ NPSModuleConstruction::NPSModuleConstruction(G4NistManager* man) {
   G4cout << "   Reflector data:" << G4endl;
   for (G4int i=refNumData-1; i>-1; i--) {
     G4cout << "   " << refWL[i]/nanometer << " ";
-    if (refFlag!=0)
+    ///    if (refFlag!=0)
+    if (refFlag==1)
       G4cout  << refReIndex[i] << " " << refImIndex[i];
     else
       G4cout << refRefl[i];
@@ -90,7 +102,14 @@ NPSModuleConstruction::NPSModuleConstruction(G4NistManager* man) {
   else
     G4cout << ", substrate layer between crystal and reflector.";
   G4cout << G4endl;
-    
+
+  G4cout << "   Front cover flag = " << fFrontCoverFlag;
+  if (fFrontCoverFlag)
+    G4cout << ", fronts of cystals covered by reflector.";
+  else
+    G4cout << ", fronts of cystals are not covered by reflector.";
+  G4cout << G4endl;
+
   tedlar_thick = 0.040*mm;   //40um Tedlar
   mylar_thick = 0.025*mm;    // + 25um Mylar
   ////  air_gap = 0.035*mm;        //guess
@@ -122,7 +141,7 @@ NPSModuleConstruction::NPSModuleConstruction(G4NistManager* man) {
 
   counter_x = tedlar_x;
   counter_y = tedlar_y;
-  counter_z = tedlar_z + 2*glue_thick +  2*PMTWin_thick;
+  counter_z = tedlar_z + 2*glue_thick +  2*PMTWin_thick;  //counter symmetric @0
 
   ///  expHall_x = counter_x * 1.5;
   ///  expHall_y = counter_y * 1.5;
@@ -363,15 +382,19 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
   G4SubtractionSolid* tedlar_holed = new G4SubtractionSolid("Tedlar_holed",
 			      tedlar_box, tedlar_hole, trans_tedlar_hole);
 
-  //Remove front wall of Tedlar
-  G4Box* tedlar_front = new G4Box("Tedlar_fr",
-				  tedlar_x/2,tedlar_y/2,tedlar_thick/2);
-  G4ThreeVector z_trans_tedlar_front(0, 0, -tedlar_z/2 + tedlar_thick/2);
-  G4Transform3D trans_tedlar_front(rot, z_trans_tedlar_front);
-  G4SubtractionSolid* tedlar_frame = new G4SubtractionSolid("Tedlar",
+  if (fFrontCoverFlag) {
+    tedlar_log = new G4LogicalVolume(tedlar_holed,Polymer,"Tedlar",0,0,0);
+  }
+  else {
+    //Remove front wall of Tedlar
+    G4Box* tedlar_front = new G4Box("Tedlar_fr",
+				    tedlar_x/2,tedlar_y/2,tedlar_thick/2);
+    G4ThreeVector z_trans_tedlar_front(0, 0, -tedlar_z/2 + tedlar_thick/2);
+    G4Transform3D trans_tedlar_front(rot, z_trans_tedlar_front);
+    G4SubtractionSolid* tedlar_frame = new G4SubtractionSolid("Tedlar",
 			      tedlar_holed, tedlar_front, trans_tedlar_front);
-
-  tedlar_log = new G4LogicalVolume(tedlar_frame,Polymer,"Tedlar",0,0,0);
+    tedlar_log = new G4LogicalVolume(tedlar_frame,Polymer,"Tedlar",0,0,0);
+  }
 
   //Mylar, reflector.
   
@@ -393,14 +416,18 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
   G4SubtractionSolid* mylar_holed = new G4SubtractionSolid("Mylar",
 				      mylar_box, mylar_hole, trans_mylar_hole);
 
-  //Remove front wall of Mylar
-  G4Box* mylar_front = new G4Box("Mylar_fr",mylar_x/2,mylar_y/2,mylar_thick/2);
-  G4ThreeVector z_trans_mylar_front(0, 0, -mylar_z/2 + mylar_thick/2);
-  G4Transform3D trans_mylar_front(rot, z_trans_mylar_front);
-  G4SubtractionSolid* mylar_frame = new G4SubtractionSolid("Mylar_holed",
+  if (fFrontCoverFlag) {
+    mylar_log=new G4LogicalVolume(mylar_holed,Mylar,"Mylar",0,0,0);
+  }
+  else {
+    //Remove front wall of Mylar
+    G4Box* mylar_front= new G4Box("Mylar_fr",mylar_x/2,mylar_y/2,mylar_thick/2);
+    G4ThreeVector z_trans_mylar_front(0, 0, -mylar_z/2 + mylar_thick/2);
+    G4Transform3D trans_mylar_front(rot, z_trans_mylar_front);
+    G4SubtractionSolid* mylar_frame = new G4SubtractionSolid("Mylar_holed",
 			      mylar_holed, mylar_front, trans_mylar_front);
-
-  mylar_log=new G4LogicalVolume(mylar_frame,Mylar,"Mylar",0,0,0);
+    mylar_log=new G4LogicalVolume(mylar_frame,Mylar,"Mylar",0,0,0);
+  }
 
   // PMT Window
   //
@@ -538,23 +565,27 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
   refKphot = new G4double[refNumData];
   for (G4int i=0; i<refNumData; i++) refKphot[i] = hc/refWL[i];
 
-    if (refFlag != 0) {
+  if (refFlag != 0) {
 
-    ReflectorMPT->AddProperty("REALRINDEX",refKphot,refReIndex,refNumData);
-    ReflectorMPT->AddProperty("IMAGINARYRINDEX",refKphot,refImIndex,refNumData);
+    if (refFlag == 1) {
+      ReflectorMPT->AddProperty("REALRINDEX",refKphot,refReIndex,refNumData);
+      ReflectorMPT->AddProperty("IMAGINARYRINDEX",refKphot,refImIndex,
+				refNumData);
+    }
+    else
+      ReflectorMPT -> AddProperty("REFLECTIVITY",refKphot,refRefl,refNumData);
 
     Reflector -> SetType(dielectric_metal);
     Reflector -> SetFinish(polished);
     Reflector -> SetModel(glisur);
   }
   else {
-    // Diffuse reflector, PTFE (Teflon).
+    // Non metallic reflector, PTFE (Teflon).
 
     ReflectorMPT -> AddProperty("REFLECTIVITY",refKphot,refRefl,refNumData);
-
     Reflector -> SetType(dielectric_dielectric);
     Reflector -> SetModel(unified);
-    Reflector -> SetFinish(groundfrontpainted);   //Purely Lambertian reflection
+    Reflector -> SetFinish(groundfrontpainted); //Purely Lambertian reflection
   }
 
   Reflector -> SetMaterialPropertiesTable(ReflectorMPT);
@@ -576,7 +607,7 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
 	   << ", substarate between crystal and reflector" << G4endl;
   }
   
-  // Cathode efficiency for Phylips XP3461 PMT.
+  // Cathode efficiency.
   //
 
   G4double wlCat[101] = {675.,670.,665.,660.,655.,650.,645.,640.,635.,630.,
