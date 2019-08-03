@@ -88,7 +88,6 @@ NPSModuleConstruction::NPSModuleConstruction(G4NistManager* man) {
   G4cout << "   Reflector data:" << G4endl;
   for (G4int i=refNumData-1; i>-1; i--) {
     G4cout << "   " << refWL[i]/nanometer << " ";
-    ///    if (refFlag!=0)
     if (refFlag==1)
       G4cout  << refReIndex[i] << " " << refImIndex[i];
     else
@@ -565,6 +564,7 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
   refKphot = new G4double[refNumData];
   for (G4int i=0; i<refNumData; i++) refKphot[i] = hc/refWL[i];
 
+  /*
   if (refFlag != 0) {
 
     if (refFlag == 1) {
@@ -586,6 +586,29 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
     Reflector -> SetType(dielectric_dielectric);
     Reflector -> SetModel(unified);
     Reflector -> SetFinish(groundfrontpainted); //Purely Lambertian reflection
+  }
+  */
+
+  if (refFlag == 1) {
+
+    ReflectorMPT->AddProperty("REALRINDEX",refKphot,refReIndex,refNumData);
+    ReflectorMPT->AddProperty("IMAGINARYRINDEX",refKphot,refImIndex,
+			      refNumData);
+
+    Reflector -> SetType(dielectric_metal);
+    Reflector -> SetFinish(polished);
+    Reflector -> SetModel(glisur);
+  }
+  else {
+    // Non metallic reflector, PTFE (Teflon), VM2000.
+
+    ReflectorMPT -> AddProperty("REFLECTIVITY",refKphot,refRefl,refNumData);
+    Reflector -> SetType(dielectric_dielectric);
+    Reflector -> SetModel(unified);
+    if (refFlag == 0)
+      Reflector -> SetFinish(groundfrontpainted); //Purely Lambertian reflection
+    else
+      Reflector -> SetFinish(polishedfrontpainted); //Purely specular reflection
   }
 
   Reflector -> SetMaterialPropertiesTable(ReflectorMPT);
