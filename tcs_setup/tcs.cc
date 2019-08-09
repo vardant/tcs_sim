@@ -54,8 +54,8 @@
 
 #include "G4LogicalVolumeStore.hh"
 #include "G4UImanager.hh"
-////#include "FTFP_BERT.hh"
-#include "QGSP_BERT.hh"
+#include "FTFP_BERT.hh"
+////#include "QGSP_BERT.hh"
 #include "NPSAddOptics.hh"
 
 #include "G4VModularPhysicsList.hh"
@@ -274,8 +274,8 @@ int main(int argc,char** argv)
   // End of Auxiliary Information block
   */
 
-  ////  G4VModularPhysicsList* physicsList = new FTFP_BERT;
-  G4VModularPhysicsList* physicsList = new QGSP_BERT;
+  G4VModularPhysicsList* physicsList = new FTFP_BERT;
+  ////  G4VModularPhysicsList* physicsList = new QGSP_BERT;
 
   //  G4VModularPhysicsList* physicsList = new G4VModularPhysicsList;
   ////  physicsList->RegisterPhysics(new G4EmStandardPhysics());
