@@ -30,7 +30,7 @@
 #include "G4UserEventAction.hh"
 #include "globals.hh"
 #include "TCSHistoManager.hh"
-#include "TCSHodoHit.hh"
+//#include "TCSHodoHit.hh"
 #include "TCSTrackerHit.hh"
 
 // Event action class
@@ -62,12 +62,12 @@ private:
   G4int fTargetCollID;
   G4int fCalorimeterCollID;
   G4int fCalorimeterPMTCollID;
-  G4int fHodoXCollID;
-  G4int fHodoYCollID;
+  //  G4int fHodoXCollID;
+  //  G4int fHodoYCollID;
   G4int fTrackerCollID;
   G4int fEvtNo;
 
-  void AddHodoHit(TCSHodoHitsCollection* HC, HodoHitContainer& HodoHitCont);
+  //  void AddHodoHit(TCSHodoHitsCollection* HC, HodoHitContainer& HodoHitCont);
   void AddTrackerHit(TCSTrackerHitsCollection* HC,
   		     TrackerHitContainer& TrackerHitCont);
 

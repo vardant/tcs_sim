@@ -30,7 +30,7 @@
 #include "TCSHistoManager.hh"
 #include "TCSCalorimeterHit.hh"
 #include "TCSCalorimeterPMTHit.hh"
-#include "TCSHodoHit.hh"
+//#include "TCSHodoHit.hh"
 #include "TCSTrackerHit.hh"
 #include "TCSTargetHit.hh"
 
@@ -52,7 +52,7 @@ TCSEventAction::TCSEventAction(TCSHistoManager *histo)
   : G4UserEventAction(), fEdep(0.), fNTar_epos(0), fNTar_eneg(0),
     fHistoManager(histo), fPrintModulo(0),
     fTargetCollID(-1), fCalorimeterCollID(-1), fCalorimeterPMTCollID(-1),
-    fHodoXCollID(-1), fHodoYCollID(-1),
+    //    fHodoXCollID(-1), fHodoYCollID(-1),
     fTrackerCollID(-1),
     fEvtNo(-1)
 {
@@ -334,7 +334,7 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
+/*
 void TCSEventAction::AddHodoHit(TCSHodoHitsCollection* HC,
                                 HodoHitContainer& HodoHitCont)
 {
@@ -361,7 +361,7 @@ void TCSEventAction::AddHodoHit(TCSHodoHitsCollection* HC,
         cout <<"*** TCSEventAction::EndOfEventAction: "
              << "hodoscope hit container inconsistent! ***" << endl;
 }
-
+*/
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void TCSEventAction::AddTrackerHit(TCSTrackerHitsCollection* HC,

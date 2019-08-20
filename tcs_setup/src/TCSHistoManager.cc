@@ -44,7 +44,7 @@ using namespace std;
 TCSHistoManager::TCSHistoManager() : fKinFile(0), fRootFile(0),
 				     fBeamTree(0), fTargetTree(0),
 				     fCaloTree(0),
-				     fHodoXTree(0), fHodoYTree(0),
+				     //	     fHodoXTree(0), fHodoYTree(0),
 				     fTrackerTree(0)
 {
   fKinFileName ="tcs_gen.kin_data";
@@ -65,7 +65,7 @@ TCSHistoManager::TCSHistoManager() : fKinFile(0), fRootFile(0),
 ////TCSHistoManager::TCSHistoManager(char *kname, char *rname) :
 TCSHistoManager::TCSHistoManager(string kname, string rname) :
   fKinFile(0), fRootFile(0), fBeamTree(0), fTargetTree(0), fCaloTree(0),
-  fHodoXTree(0), fHodoYTree(0),
+  //  fHodoXTree(0), fHodoYTree(0),
   fTrackerTree(0)
 {
   fKinFileName = kname;  
@@ -151,7 +151,7 @@ void TCSHistoManager::book()
  fCaloTree->Branch("edepcont", &(fCaloHitCont.Edep));
  fCaloTree->Branch("npecont", &(fCaloHitCont.Npe));
  fCaloTree->Branch("pidcont", &(fCaloHitCont.PID));
-
+ /*
  fHodoXTree = new TTree("hodox", "TCS X hodoscopes' per event hit collections");
  fHodoXTree->Branch("detcont", &(fHodoXHitCont.Det));
  fHodoXTree->Branch("chancont", &(fHodoXHitCont.Chan));
@@ -163,7 +163,7 @@ void TCSHistoManager::book()
  fHodoYTree->Branch("chancont", &(fHodoYHitCont.Chan));
  fHodoYTree->Branch("edepcont", &(fHodoYHitCont.Edep));
  fHodoYTree->Branch("pidcont", &(fHodoYHitCont.PID));
-
+ */
  fTrackerTree = new TTree("tracker", "TCS trackers' per event hit collections");
  fTrackerTree->Branch("xcont", &(fTrackerHitCont.X));
  fTrackerTree->Branch("ycont", &(fTrackerHitCont.Y));
@@ -218,8 +218,8 @@ void TCSHistoManager::autosave() {
   fBeamTree->AutoSave();
   fTargetTree->AutoSave();
   fCaloTree->AutoSave(); // save tree to file
-  fHodoXTree->AutoSave();
-  fHodoYTree->AutoSave();
+  //  fHodoXTree->AutoSave();
+  //  fHodoYTree->AutoSave();
   fTrackerTree->AutoSave();
   fKinTree->AutoSave();
   fRootFile->SaveSelf();  // save file directory containing this tree
@@ -274,17 +274,17 @@ void TCSHistoManager::FillTrees()
     fCaloTree->Fill();
   }
 
-  if (fHodoXTree) {
+  //  if (fHodoXTree) {
     //G4cout <<"Filling Tree right now! fHitList size = " << fHitList.size()
     //<< "\n";
-    fHodoXTree->Fill();
-  }
+  //    fHodoXTree->Fill();
+  //  }
 
-  if (fHodoYTree) {
+  //  if (fHodoYTree) {
     //G4cout <<"Filling Tree right now! fHitList size = " << fHitList.size()
     //<< "\n";
-    fHodoYTree->Fill();
-  }
+  //    fHodoYTree->Fill();
+  //  }
 
   if (fTrackerTree) {
     //G4cout <<"Filling Tree right now! fHitList size = " << fHitList.size()
@@ -451,7 +451,7 @@ void TCSHistoManager::AddHit(int det, uint col,uint row, int npe, int pid) {
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
+/*
 void TCSHistoManager::AddHit(int det, uint chan, double edep, int pid,
                              HodoHitContainer& HodoHitCont) {
 
@@ -488,7 +488,7 @@ void TCSHistoManager::AddHit(int det, uint chan, double edep, int pid,
   }
 
 }
-
+*/
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void TCSHistoManager::AddHit(double x, double y, double edep, double length,

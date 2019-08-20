@@ -29,8 +29,8 @@
 #include "TCSTargetSD.hh"
 #include "TCSCalorimeterSD.hh"
 #include "TCSCalorimeterPMTSD.hh"
-#include "TCSHodoXSD.hh"
-#include "TCSHodoYSD.hh"
+//#include "TCSHodoXSD.hh"
+//#include "TCSHodoYSD.hh"
 #include "TCSTrackerSD.hh"
 #include "G4SDManager.hh"
 
