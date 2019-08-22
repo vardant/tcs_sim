@@ -26,6 +26,7 @@
 
 #include "TCSDetectorConstruction.hh"
 #include "TCSCalorimeterConstruction.hh"
+#include "TCSHodoscopeConstruction.hh"
 #include "TCSTargetSD.hh"
 #include "TCSCalorimeterSD.hh"
 #include "TCSCalorimeterPMTSD.hh"
@@ -125,6 +126,15 @@ G4VPhysicalVolume* TCSDetectorConstruction::Construct()
 
   for (int quarter=0; quarter<Calo.NQuarter; quarter++)
     PositionCalorimeter(Calorimeter_log, quarter);
+
+  // Construct hodoscope.
+
+  TCSHodoscopeConstruction HodoscopeConstruction;
+  HodoscopeConstruction.Construct();
+  G4LogicalVolume* Hodoscope_log = HodoscopeConstruction.GetHodoscope();
+
+  for (int quarter=0; quarter<Calo.NQuarter; quarter++)
+    PositionHodoscope(Hodoscope_log, quarter);
 
 
   // Read trackers from the gdml files.
@@ -369,6 +379,62 @@ void TCSDetectorConstruction::PositionCalorimeter(
                     false,                         //no boolean operation
                     quarter);                      //copy number
 }
+//==============================================================================
+
+void TCSDetectorConstruction::PositionHodoscope(
+			    G4LogicalVolume* Hodoscope_log, int quarter) {
+
+  // Positioning of the hodoscope quarters.
+
+  double phi, theta_tilt, theta_pos;
+
+  switch (quarter) {
+  case 0:
+    phi        =  Hodo.RotationAngle;
+    theta_tilt = -Hodo.TiltAngle;
+    theta_pos  =  Hodo.PositionAngle;
+    break;
+  case 1:
+    phi        = -Hodo.RotationAngle;
+    theta_tilt = -Hodo.TiltAngle;
+    theta_pos  =  Hodo.PositionAngle;
+    break;
+  case 2:
+    phi        = -Hodo.RotationAngle;
+    theta_tilt =  Hodo.TiltAngle;
+    theta_pos  = -Hodo.PositionAngle;
+    break;
+  case 3:
+    phi        =  Hodo.RotationAngle;
+    theta_tilt =  Hodo.TiltAngle;
+    theta_pos  = -Hodo.PositionAngle;
+    break;
+  default:
+    phi        = 0.;
+    theta_tilt = 0.;
+    theta_pos  = 0.;
+  }
+
+  //This is consistent with gdml coding.
+  G4RotationMatrix rotm;
+  rotm.rotateY(phi);
+  rotm.rotateX(theta_tilt);
+  rotm.rotateZ(0.);
+
+  G4ThreeVector position=G4ThreeVector(sin(phi)*cos(theta_pos), sin(theta_pos),
+				       cos(phi)*cos(theta_pos));
+  position *= Hodo.Distance;
+
+  G4Transform3D transform = G4Transform3D(rotm, position);
+
+  new G4PVPlacement(transform,                     //position, rotation        
+                    Hodoscope_log,               //logical volume
+                    "Hodoscope_PV",              //name
+		    physWorld->GetLogicalVolume(), //its mother  volume
+                    false,                         //no boolean operation
+                    quarter);                      //copy number
+}
+
 //==============================================================================
 
 void TCSDetectorConstruction::PositionTracker(G4LogicalVolume* Tracker_log,

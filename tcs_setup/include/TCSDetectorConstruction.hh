@@ -93,17 +93,25 @@ private:
     const double Distance = 159.2*cm + 10.1*cm;   //NPS like calorimeter
 
     //For quarters.
-    //    const int NQuarter = 4;
-    //    const double PositionAngle = 13.835*degree;
-    //    const double TiltAngle     = 13.835*degree;
-    //    const double RotationAngle = 10.034*degree;
+    const int NQuarter = 4;
+    const double PositionAngle = 13.835*degree;
+    const double TiltAngle     = 13.835*degree;
+    const double RotationAngle = 10.034*degree;
 
     //For single caloromiter facing beam.
-    const int NQuarter = 1;
-    const double PositionAngle = 0*degree;
-    const double TiltAngle     = 0*degree;
-    const double RotationAngle = 0*degree;
+    //    const int NQuarter = 1;
+    //    const double PositionAngle = 0*degree;
+    //    const double TiltAngle     = 0*degree;
+    //    const double RotationAngle = 0*degree;
+
   } Calo;
+
+  struct {
+    const double Distance = 150.*cm;
+    const double PositionAngle = 13.835*degree;
+    const double TiltAngle     = 13.835*degree;
+    const double RotationAngle = 10.034*degree;
+  } Hodo;
 
   struct {
     const double PositionAngle = 13.835*degree;
@@ -113,7 +121,7 @@ private:
   } Tracker;
 
   void PositionCalorimeter(G4LogicalVolume* Calorimeter_log, int quarter);
-
+  void PositionHodoscope(G4LogicalVolume* Hodoscope_log, int quarter);
   void PositionTracker(G4LogicalVolume* Tracker_log, int quarter, int layer);
 
   G4LogicalVolume* GetGDMLVolume(const string file_name, const string vol_name);
