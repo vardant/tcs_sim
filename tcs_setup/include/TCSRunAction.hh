@@ -33,6 +33,7 @@
 class G4Run;
 class TCSHistoManager;
 class G4LogicalVolume;
+class G4Timer;
 
 /// Run action class
 
@@ -55,6 +56,7 @@ private:
 
   TCSHistoManager* fHistoManager;
   G4bool fAutoSeed;
+  G4Timer* fTimer;
 
 };
 

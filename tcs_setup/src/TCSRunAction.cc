@@ -37,6 +37,7 @@
 #include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
 #include <ctime>
+#include "G4Timer.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -58,12 +59,16 @@ TCSRunAction::TCSRunAction(TCSHistoManager* histo)
   new G4UnitDefinition("microgray", "microGy" , "Dose", microgray);
   new G4UnitDefinition("nanogray" , "nanoGy"  , "Dose", nanogray);
   new G4UnitDefinition("picogray" , "picoGy"  , "Dose", picogray);        
+
+  fTimer = new G4Timer;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 TCSRunAction::~TCSRunAction()
-{}
+{
+  delete fTimer;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -92,8 +97,9 @@ void TCSRunAction::BeginOfRunAction(const G4Run*)
   }
 
   //histograms
-
   fHistoManager->book(); 
+
+  fTimer->Start();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -186,6 +192,9 @@ void TCSRunAction::EndOfRunAction(const G4Run* run)
   //
   fHistoManager->PrintStatistic();
   fHistoManager->save();   
+
+  fTimer->Stop();
+  G4cout << "Number of events " << nofEvents << ",  " << *fTimer << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
