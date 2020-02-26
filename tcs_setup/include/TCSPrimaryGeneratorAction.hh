@@ -71,12 +71,12 @@ private:
 
   // Beam default parameter.
   string fParticleName;
-  G4double fEmin, fEmax;           // energy range
+  G4double fPmin, fPmax;           // momentum range
   G4double fX0, fY0, fZ0;          // beam position
   G4double fDX, fDY, fDZ;          // beam dimensions
-  G4double fPX, fPY, fPZ;          // beam direction
-  G4double fTheta;                 // beam divegence (+/-thetaX if Phi>=0)
-  G4double fPhi;                   // beam divegence (+/-thetaY if >=0)
+  G4double fThetaX, fThetaY;       // beam deflection angles in X and Y [deg]
+  G4double fdThetaX;               // beam divegence (+/-dThetaX if dThetaY>=0)
+  G4double fdThetaY;               // beam divegence (+/-dThetaY if >=0)
   mode fMode;                      // beam/tcs mode  
 
   //  TCSGen fTCSGen;

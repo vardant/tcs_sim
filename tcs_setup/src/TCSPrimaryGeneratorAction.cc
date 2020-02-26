@@ -56,33 +56,33 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
   getline(file, line);  iss.str(line);
   iss >> fParticleName;
   getline(file, line);  iss.str(line);
-  iss >> fEmin >> fEmax;
+  iss >> fPmin >> fPmax;
   getline(file, line);  iss.str(line);
   iss >> fX0 >> fY0 >> fZ0;
   getline(file, line);  iss.str(line);
   iss >> fDX >> fDY >> fDZ;
   getline(file, line);  iss.str(line);
-  iss >> fPX >> fPY >> fPZ;
+  iss >> fThetaX >> fThetaY;
   getline(file, line);  iss.str(line);
-  iss >> fTheta;
-  getline(file, line);  iss.str(line);
-  iss >> fPhi;
+  iss >> fdThetaX >> fdThetaY;
   getline(file, line);  iss.str(line);
   string mode_flag;
   iss >> mode_flag;
 
   file.close();
 
-  fEmin *= GeV;
-  fEmax *= GeV;
+  fPmin *= GeV;
+  fPmax *= GeV;
   fX0 *= cm;
   fY0 *= cm;
   fZ0 *= cm;
   fDX *= mm;
   fDY *= mm;
   fDZ *= mm;
-  fTheta *= degree;
-  fPhi   *= degree;
+  fThetaX *= degree;
+  fThetaY *= degree;
+  fdThetaX *= degree;
+  fdThetaY *= degree;
 
   if (mode_flag == "tcs")
     fMode = tcs;
@@ -99,33 +99,33 @@ TCSPrimaryGeneratorAction::TCSPrimaryGeneratorAction() :
   case beam :
     G4cout << "  Beam mode." << G4endl;
     G4cout << "  Particle " << fParticleName << G4endl;
-    G4cout << "  Energy range: " << fEmin/GeV << " -- " << fEmax/GeV << " GeV"
+    G4cout << "  Momentum range: " << fPmin/GeV << " -- " << fPmax/GeV << " GeV"
 	   << G4endl;
     G4cout << "  Position: (" << fX0/cm << ", " << fY0/cm << ", " << fZ0/cm
 	   << ") cm" << G4endl;
     G4cout << "  Beam sizes: " << fDX/mm << " x " << fDY/mm << " x " << fDZ
 	   << " mm^3" << G4endl;
-    G4cout << "  Beam direction: (" << fPX << ", " << fPY << ", " << fPZ
-	   << ")" << G4endl;
-    if (fPhi<0)
-      G4cout << "  Beam divergence: " << fTheta/degree << " deg" << G4endl;
+    G4cout << "  Beam deflection: ThetaX = " << fThetaX/degree
+	   << " deg, ThetaY = " << fThetaY/degree << " deg" << G4endl;
+    if (fdThetaY<0)
+      G4cout << "  Beam divergence: " << fdThetaX/degree << " deg" << G4endl;
     else
-      G4cout << "  Beam sampling in solid angle with thetaX = "
-	     << fTheta/degree << " deg,  thetaY = "
-	     << fPhi/degree << " deg" << G4endl;
+      G4cout << "  Beam sampling in solid angle with dThetaX = "
+	     << fdThetaX/degree << " deg,  dThetaY = "
+	     << fdThetaY/degree << " deg" << G4endl;
     break;
   case brem :
     G4cout << "  Bremsstrahlung mode." << G4endl;
     G4cout << "  Bremsstrahlung photons from electron beam." << G4endl;
-    G4cout << "  Bremsstrahlung photon energy range: " << fEmin/GeV << " -- "
-	   << fEmax/GeV <<" GeV" << G4endl;
+    G4cout << "  Bremsstrahlung photon momentum range: " << fPmin/GeV << " -- "
+	   << fPmax/GeV <<" GeV" << G4endl;
     G4cout << "  Position: (" << fX0/cm << ", " << fY0/cm << ", " << fZ0/cm
 	   << ") cm" << G4endl;
     G4cout << "  Beam sizes: " << fDX/mm << " x " << fDY/mm << " x " << fDZ
 	   << " mm^3" << G4endl;
-    G4cout << "  Beam direction: (" << fPX << ", " << fPY << ", " << fPZ
-	   << ")" << G4endl;
-    //    G4cout << "  Beam divergence: " << fTheta/degree << " deg" << G4endl;
+    G4cout << "  Beam deflection: ThetaX = " << fThetaX/degree
+	   << " deg, ThetaY = " << fThetaY/degree << " deg" << G4endl;
+    //   G4cout << "  Beam divergence: " << fdThetaX/degree << " deg" << G4endl;
     break;
   case tcs :
     G4cout << "  *** TCS mode: will read TCS events from input file! ***"
@@ -213,6 +213,8 @@ void TCSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   //  G4cout << "   xyz: " << x << " " << y << " " << z << G4endl;
 
+  const G4ThreeVector BeamDir(tan(fThetaX), tan(fThetaY), 1.);
+
   if (fMode == tcs) {
     fHEPEvt->SetParticlePosition(G4ThreeVector(x,y,z));
     fHEPEvt->GeneratePrimaryVertex(anEvent);
@@ -221,17 +223,17 @@ void TCSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     fParticleGun->SetParticlePosition(G4ThreeVector(x,y,z));
 
     ////fParticleGun->SetParticleMomentumDirection(G4ThreeVector(fPX,fPY,fPZ));
-    //    fParticleGun->SetParticleMomentumDirection(
-    //    GenRandomDirection(G4ThreeVector(fPX,fPY,fPZ), fTheta, fPhi));
-    //   fParticleGun->SetParticleEnergy(fEmin + G4UniformRand()*(fEmax-fEmin));
+    fParticleGun->SetParticleMomentumDirection(
+        GenRandomDirection(BeamDir, fdThetaX, fdThetaY));
+    fParticleGun->SetParticleMomentum(fPmin + G4UniformRand()*(fPmax-fPmin));
 
     //Sample momentum projection on the YZ plane.
-    G4ThreeVector N=GenRandomDirection(G4ThreeVector(fPX,fPY,fPZ),fTheta,fPhi);
-    fParticleGun->SetParticleMomentumDirection(N);
-    double PYZ = fEmin + G4UniformRand()*(fEmax-fEmin);
-    double magP = PYZ/sqrt(N.getY()*N.getY()+N.getZ()*N.getZ())*
-    sqrt(N.getX()*N.getX()+N.getY()*N.getY()+N.getZ()*N.getZ());
-    fParticleGun->SetParticleMomentum(magP);
+    //G4ThreeVector N=GenRandomDirection(BeamDir,fdThetaX,fdThetaY);
+    //fParticleGun->SetParticleMomentumDirection(N);
+    //double PYZ = fPmin + G4UniformRand()*(fPmax-fPmin);
+    //double magP = PYZ/sqrt(N.getY()*N.getY()+N.getZ()*N.getZ())*
+    //sqrt(N.getX()*N.getX()+N.getY()*N.getY()+N.getZ()*N.getZ());
+    //fParticleGun->SetParticleMomentum(magP);
     //cout << "TCSPrimaryGeneratorAction::GeneratePrimaries: P = " <<magP<<endl;
     //cout << " N: " << N.getX() << " " << N.getY() << " " << N.getZ() << endl;
     //cout << " PYZ = " << PYZ << endl;
@@ -241,10 +243,10 @@ void TCSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   }
   else if (fMode == brem) {
     fParticleGun->SetParticlePosition(G4ThreeVector(x,y,z));
-    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(fPX,fPY,fPZ));
-    ////    double Ee = fEmin + G4UniformRand()*(fEmax-fEmin);
+    fParticleGun->SetParticleMomentumDirection(BeamDir);
+    ////    double Pe = fEmin + G4UniformRand()*(fEmax-fEmin);
     ////    fParticleGun->SetParticleEnergy(GetBremEnergy(Ee, 10.*MeV, Ee));
-    fParticleGun->SetParticleEnergy(GetBremEnergy(fEmax, fEmin, fEmax));
+    fParticleGun->SetParticleEnergy(GetBremEnergy(fPmax, fPmin, fPmax));
     fParticleGun->GeneratePrimaryVertex(anEvent);
   }
 
