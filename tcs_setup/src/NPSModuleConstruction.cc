@@ -33,17 +33,13 @@ NPSModuleConstruction::NPSModuleConstruction(G4NistManager* man) {
   G4cout << "NPSModuleConstruction::NPSModuleConstruction:" << G4endl;
 
   ifstream fin;
-  fin.open("nps_module_reflector.inp");
+  fin.open("nps_module.inp");
 
   G4String line;
-  getline(fin,line); istringstream iss1(line);
-  iss1 >> air_gap;
-  getline(fin,line); istringstream iss2(line);
-  iss2 >> refFlag;
-  getline(fin,line); istringstream iss3(line);
-  iss3 >> refName;
-  getline(fin,line); istringstream iss4(line);
-  iss4 >> refNumData;
+  fin >> air_gap; getline(fin,line);
+  fin >> refFlag; getline(fin,line);
+  fin >> refName; getline(fin,line);
+  fin >> refNumData;
   refWL = new G4double[refNumData];
   ///  if (refFlag!=0) {
   if (refFlag==1) {
@@ -57,17 +53,10 @@ NPSModuleConstruction::NPSModuleConstruction(G4NistManager* man) {
     for (G4int i=refNumData-1; i>-1; i--)
       fin >> refWL[i] >> refRefl[i];
   }
-  
-  ///  fin >> subRefrIndex;
-  ///  fin >> fFrontCoverFlag;
-
-  getline(fin,line);
-  getline(fin,line); istringstream iss5(line);
-  iss5 >> subRefrIndex;
-  //  G4cout << line << G4endl;
-  getline(fin,line); istringstream iss6(line);
-  iss6 >> fFrontCoverFlag;
-  //  G4cout << line << G4endl;
+  fin >> subRefrIndex; getline(fin,line);
+  fin >> fFrontCoverFlag; getline(fin,line);
+  fin >> fCherFlag; getline(fin,line);
+  fin >> fScinFlag; getline(fin,line);
 
   fin.close();
 
@@ -107,6 +96,20 @@ NPSModuleConstruction::NPSModuleConstruction(G4NistManager* man) {
     G4cout << ", fronts of cystals covered by reflector.";
   else
     G4cout << ", fronts of cystals are not covered by reflector.";
+  G4cout << G4endl;
+
+  G4cout << "   Cherenkov flag = " << fCherFlag;
+  if (fCherFlag)
+    G4cout << ", Cherenkov light generation & tracking.";
+  else
+    G4cout << ", no Cherenkov light generation.";
+  G4cout << G4endl;
+
+  G4cout << "   Scintillation flag = " << fScinFlag;
+  if (fCherFlag)
+    G4cout << ", Scintillation light generation & tracking.";
+  else
+    G4cout << ", no Scintillation light generation.";
   G4cout << G4endl;
 
   tedlar_thick = 0.040*mm;   //40um Tedlar
@@ -254,21 +257,28 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
 
   G4double PbWO4_sc_slow[82];
   for (G4int i=0; i<82; i++) PbWO4_sc_slow[i] = PbWO4_sc_fast[i];
+
+  if (fCherFlag || fScinFlag) {
     
-  G4MaterialPropertiesTable *PbWO4MPT = new G4MaterialPropertiesTable();
+    G4MaterialPropertiesTable *PbWO4MPT = new G4MaterialPropertiesTable();
   
-  PbWO4MPT -> AddProperty("RINDEX",kphotPbWO4,rindPbWO4,52);
-  PbWO4MPT -> AddProperty("ABSLENGTH",kphotPbWO4,abslength,52);
+    PbWO4MPT -> AddProperty("ABSLENGTH",kphotPbWO4,abslength,52);
 
-  PbWO4MPT->AddProperty("FASTCOMPONENT",kphotPbWO4_sc_fast,PbWO4_sc_fast,82);
-  PbWO4MPT->AddProperty("SLOWCOMPONENT",kphotPbWO4_sc_slow,PbWO4_sc_slow,82);
-  PbWO4MPT->AddConstProperty("SCINTILLATIONYIELD", 40000*0.377/100/MeV);
-  PbWO4MPT->AddConstProperty("RESOLUTIONSCALE", 1.0);
-  PbWO4MPT->AddConstProperty("FASTTIMECONSTANT", 10.*ns);
-  PbWO4MPT->AddConstProperty("SLOWTIMECONSTANT", 30.*ns);
-  PbWO4MPT->AddConstProperty("YIELDRATIO", 0.077/(0.077+0.3));
+    if (fCherFlag)
+      PbWO4MPT -> AddProperty("RINDEX",kphotPbWO4,rindPbWO4,52);
 
-  PbWO4 -> SetMaterialPropertiesTable(PbWO4MPT);
+    if (fScinFlag) {
+     PbWO4MPT->AddProperty("FASTCOMPONENT",kphotPbWO4_sc_fast,PbWO4_sc_fast,82);
+     PbWO4MPT->AddProperty("SLOWCOMPONENT",kphotPbWO4_sc_slow,PbWO4_sc_slow,82);
+     PbWO4MPT->AddConstProperty("SCINTILLATIONYIELD", 40000*0.377/100/MeV);
+     PbWO4MPT->AddConstProperty("RESOLUTIONSCALE", 1.0);
+     PbWO4MPT->AddConstProperty("FASTTIMECONSTANT", 10.*ns);
+     PbWO4MPT->AddConstProperty("SLOWTIMECONSTANT", 30.*ns);
+     PbWO4MPT->AddConstProperty("YIELDRATIO", 0.077/(0.077+0.3));
+    }
+
+    PbWO4 -> SetMaterialPropertiesTable(PbWO4MPT);
+  }
 
   // Air
   // 
@@ -277,13 +287,15 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
   Air->AddElement(O, 30.*perCent);
   //G4Material* Air = man->FindOrBuildMaterial("G4_Air"); does not work with MPT
 
-  G4double rindAir[52];
-  for (G4int i=0; i<52; i++) {
-    rindAir[i] = 1.000293;   //Air @ STP
-  };
-  G4MaterialPropertiesTable *AirMPT = new G4MaterialPropertiesTable();
-  AirMPT -> AddProperty("RINDEX",kphotPbWO4,rindAir,52);
-  Air -> SetMaterialPropertiesTable(AirMPT);
+  if (fCherFlag) {
+    G4double rindAir[52];
+    for (G4int i=0; i<52; i++) {
+      rindAir[i] = 1.000293;   //Air @ STP
+    };
+    G4MaterialPropertiesTable *AirMPT = new G4MaterialPropertiesTable();
+    AirMPT -> AddProperty("RINDEX",kphotPbWO4,rindAir,52);
+    Air -> SetMaterialPropertiesTable(AirMPT);
+  }
 
   // Glass
   //
@@ -293,14 +305,16 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
   Glass->AddElement(Si, 1);
   Glass->AddElement(O,  2);
 
-  G4double rindGlass[52];
-  for (G4int i=0; i<52; i++) {
-    rindGlass[i] = 1.525;              //average of 1.51-1.54
-  };
+  if (fCherFlag) {
+    G4double rindGlass[52];
+    for (G4int i=0; i<52; i++) {
+      rindGlass[i] = 1.525;              //average of 1.51-1.54
+    };
 
-  G4MaterialPropertiesTable *GlassMPT = new G4MaterialPropertiesTable();
-  GlassMPT -> AddProperty("RINDEX",kphotPbWO4,rindGlass,52);
-  Glass -> SetMaterialPropertiesTable(GlassMPT);
+    G4MaterialPropertiesTable *GlassMPT = new G4MaterialPropertiesTable();
+    GlassMPT -> AddProperty("RINDEX",kphotPbWO4,rindGlass,52);
+    Glass -> SetMaterialPropertiesTable(GlassMPT);
+  }
 
   // Optical grease BC630 from Bicron
   //
@@ -308,14 +322,16 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
   G4Material* OpticalGlue = new G4Material("Silgard", density, ncomponents=1);
   OpticalGlue->AddElement(Si, 1); //not known
 
-  G4double rindGlue[52];
-  for (G4int i=0; i<52; i++) {
-    rindGlue[i] = 1.465;
-  };
+  if (fCherFlag) {
+    G4double rindGlue[52];
+    for (G4int i=0; i<52; i++) {
+      rindGlue[i] = 1.465;
+    };
 
-  G4MaterialPropertiesTable *GlueMPT = new G4MaterialPropertiesTable();
-  GlueMPT -> AddProperty("RINDEX",kphotPbWO4,rindGlue,52);
-  OpticalGlue -> SetMaterialPropertiesTable(GlueMPT);
+    G4MaterialPropertiesTable *GlueMPT = new G4MaterialPropertiesTable();
+    GlueMPT -> AddProperty("RINDEX",kphotPbWO4,rindGlue,52);
+    OpticalGlue -> SetMaterialPropertiesTable(GlueMPT);
+  }
 
   // Optical insulation
   //
@@ -326,7 +342,7 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
 
   G4Material* Mylar = man->FindOrBuildMaterial("G4_MYLAR");
 
-  if (subRefrIndex != 0.) {
+  if (subRefrIndex != 0. && fCherFlag) {
     
     //Mylar refractive index.
     G4double rindMylar[52];

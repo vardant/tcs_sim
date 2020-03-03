@@ -48,6 +48,8 @@ private:
   G4double subRefrIndex;
   G4double* refRefl;
   bool fFrontCoverFlag;
+  bool fCherFlag;
+  bool fScinFlag;
   
   G4double block_x;
   G4double block_y;
