@@ -325,15 +325,23 @@ void TCSHistoManager::SetTCSVertex(double e, G4ThreeVector p,
   //  cout << "TCSHistoManager::SetTCSVertex:" << endl;
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+
   G4ParticleDefinition* electron=particleTable->FindParticle("e-");
   G4ParticleDefinition* positron=particleTable->FindParticle("e+");
   G4ParticleDefinition* proton=particleTable->FindParticle("proton");
+
+  //Pions for background calcualtions.
+  G4ParticleDefinition* pi_plus=particleTable->FindParticle("pi+");
+  G4ParticleDefinition* pi_minus=particleTable->FindParticle("pi-");
 
   //  cout << "   Got particle definitions..." << endl;
 
   int electron_pid = electron->GetPDGEncoding();
   int positron_pid = positron->GetPDGEncoding();
   int proton_pid = proton->GetPDGEncoding();
+
+  int pi_plus_pid = pi_plus->GetPDGEncoding();
+  int pi_minus_pid = pi_minus->GetPDGEncoding();
 
   //  cout << "  electron_pid = " << electron_pid << endl;
   //  cout << "  positron_pid = " << positron_pid << endl;
@@ -345,9 +353,9 @@ void TCSHistoManager::SetTCSVertex(double e, G4ThreeVector p,
   //  << endl;
   //  getchar();
 
-  if (pid == electron_pid)
+  if (pid == electron_pid || pid == pi_minus_pid)
     copy(P, P+4, fKinVar.P_minus_lab);
-  else if (pid == positron_pid)
+  else if (pid == positron_pid || pid == pi_plus_pid)
     copy(P, P+4, fKinVar.P_plus_lab);
   else if (pid == proton_pid)
     copy(P, P+4, fKinVar.P_recoil_lab);
