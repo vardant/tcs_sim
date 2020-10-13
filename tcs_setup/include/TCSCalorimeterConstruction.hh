@@ -24,8 +24,8 @@ private:
   const int fNCOL = 23;
   const int fNROW = 23;
 
-  ////  const double fFrameThick = 0.5*mm;
-  const double fFrameThick = 1.*mm;    //test
+  //  const double fFrameThick = 1.*mm;    //test
+  const double fFrameThick = 0.5*mm;
   const double fFrameWidth = 2.*cm;
 
   G4LogicalVolume* fCalorimeter;
