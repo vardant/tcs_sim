@@ -3,7 +3,9 @@
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
+#include <TMath.h>
 
+using namespace std;
 // Create ascii file of TCS events in HEP format.
 
 #define Mele 0.000511
@@ -14,7 +16,7 @@
 #define Npos  -11
 #define Npro 2212
 
-#define PSF 269.5   //may be wrong.
+//#define PSF 269.5   //may be wrong.
 
 void deepgen::Loop()
 {
@@ -56,6 +58,17 @@ void deepgen::Loop()
     Long64_t ientry = LoadTree(jentry);
     if (ientry < 0) break;
 
+    if (jentry==0) {
+      for (int i=1; i<4; i++) {
+	//	if (::isnan(ALV_minus_lab[i])) ALV_minus_lab[i] = 0.;
+	//	if (::isnan(ALV_plus_lab[i]))  ALV_plus_lab[i] = 0.;
+	//	if (::isnan(ALV_Recoil_lab[i])) ALV_Recoil_lab[i] = 0.;
+	ALV_minus_lab[i] = 0.;
+	ALV_plus_lab[i] = 0.;
+	ALV_Recoil_lab[i] = 0.;
+      }
+    }
+
     ofs << "3" << endl;
     ofs << "1 " << Nele << " 0 0 "
 	<< ALV_minus_lab[1] << " "
@@ -73,20 +86,23 @@ void deepgen::Loop()
           << ALV_Recoil_lab[3] << " "
           << Mpro << endl;
 
-		     double s = 0.;
-		     double tau = 0.;
-		     double eta = 0.;
-		     double xi = 0.;
-		     if (Egamma > 0.) {
-		       s = Mpro*Mpro + 2*Mpro*Egamma;
-		       tau = Qp2/(s-Mpro*Mpro);
-		       eta = tau/(tau - 2.);
-		       xi = Qp2/(2.*(s-Mpro*Mpro)+tt-Qp2);
-		     };
+      double s = 0.;
+      double tau = 0.;
+      double eta = 0.;
+      double xi = 0.;
+      //      if (Egamma > 0.) {
+      if (Egamma > 1.e-32) {
+	s = Mpro*Mpro + 2*Mpro*Egamma;
+	tau = Qp2/(s-Mpro*Mpro);
+	eta = tau/(tau - 2.);
+	xi = Qp2/(2.*(s-Mpro*Mpro)+tt-Qp2);
+      };
 		     
       ofs_kin << Qp2 << " " << tt << " " << s << " " << xi << " " << tau << " "
-	      << eta << " " << Phi_CMV << " " << Theta_CMV << " " << PSF << " "
-	      << Flux_bmr << " " << cross_tot_unpol << " " << Egamma << endl;
+	      << eta << " " << Phi_CMV << " " << Theta_CMV << " " << 0. << " "
+	      << 0. << " " << W_tot_unpol << " " << Egamma << endl;
+      //	      << eta << " " << Phi_CMV << " " << Theta_CMV << " " << PSF << " "
+      //	      << Flux_bmr << " " << cross_tot_unpol << " " << Egamma << endl;
 
       nb = fChain->GetEntry(jentry);   nbytes += nb;
       // if (Cut(ientry) < 0) continue;
