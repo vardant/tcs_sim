@@ -186,7 +186,8 @@ void TCSHistoManager::book()
  fKinTree->Branch("phi_cm",&fKinVar.phi_cm);
  fKinTree->Branch("the_cm",&fKinVar.the_cm);
  fKinTree->Branch("psf",&fKinVar.psf);
- fKinTree->Branch("flux_factor",&fKinVar.flux_factor);
+ // fKinTree->Branch("flux_factor",&fKinVar.flux_factor);
+ fKinTree->Branch("FlagSing",&fKinVar.FlagSing);
  fKinTree->Branch("crs_BH",&fKinVar.crs_BH);
  fKinTree->Branch("Eg",&fKinVar.Eg);
  fKinTree->Branch("pminus",fKinVar.P_minus_lab,"pminus[4]/D");
@@ -294,7 +295,7 @@ void TCSHistoManager::FillTrees()
 
   fKinFile >> fKinVar.Q2 >> fKinVar.t >> fKinVar.s >> fKinVar.xi >> fKinVar.tau
 	   >> fKinVar.eta >> fKinVar.phi_cm >> fKinVar.the_cm
-	   >> fKinVar.psf >> fKinVar.flux_factor >> fKinVar.crs_BH
+	   >> fKinVar.psf >> fKinVar.FlagSing >> fKinVar.crs_BH
 	   >> fKinVar.Eg;
 
   if (fKinTree) {

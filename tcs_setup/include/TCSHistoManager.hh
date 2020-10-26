@@ -181,7 +181,8 @@ public:
     fKinVar.phi_cm = 0.;
     fKinVar.the_cm = 0.;
     fKinVar.psf = 0.;
-    fKinVar.flux_factor = 0.;
+    //    fKinVar.flux_factor = 0.;
+    fKinVar.FlagSing = 0;
     fKinVar.crs_BH = 0.;
     fKinVar.Eg = 0.;
     for (int i=0; i<4; i++) {
@@ -260,7 +261,8 @@ private:
     double phi_cm;
     double the_cm;
     double psf;
-    double flux_factor;
+    //    double flux_factor;
+    int FlagSing;   //BH singularity flag
     double crs_BH;
     double Eg;
     double P_minus_lab[4];   //momenta at the TCS vertex
