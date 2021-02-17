@@ -209,18 +209,47 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
   G4double kphotPbWO4[52];   //Momenta of optical photons in eV units.
   for (G4int i=0; i<52; i++) kphotPbWO4[i] = hc/wlPbWO4[i];
 
-  G4double abslength[52] = {
-    1400.,
-    1400.,1400.,1400.,1400.,1400.,1400.,1400.,933.3,933.3,933.3,
-    933.3,933.3,933.3,933.3,933.3,933.3,700.0,700.0,622.2,560.0,
-    560.0,466.6,350.0,280.0,233.3,175.0,151.3,112.0,71.79,45.52,
-    29.62,17.07,10.17,6.026,3.557,2.092,1.227,0.717,0.418,0.243,
-    0.140,0.081,0.047,0.027,0.016,0.009,0.005,0.003,0.002,0.001,
-    0.000711281};
+  // Old absorptin length.
+  //  G4double abslength[52] = {
+  //    1400.,
+  //    1400.,1400.,1400.,1400.,1400.,1400.,1400.,933.3,933.3,933.3,
+  //    933.3,933.3,933.3,933.3,933.3,933.3,700.0,700.0,622.2,560.0,
+  //    560.0,466.6,350.0,280.0,233.3,175.0,151.3,112.0,71.79,45.52,
+  //    29.62,17.07,10.17,6.026,3.557,2.092,1.227,0.717,0.418,0.243,
+  //    0.140,0.081,0.047,0.027,0.016,0.009,0.005,0.003,0.002,0.001,
+  //    0.000711281};
 
-  for (G4int i=0; i<52; i++) {
+  //Absorption length from transmittance measurements of 19 SICCAS crystals
+  //at CUA. Transmittances from Vladimir.
+  const int nAbsl = 60;
+  double wlAbsl[nAbsl] = {800.,790.,780.,770.,760.,750.,740.,730.,720.,710.,
+			  700.,690.,680.,670.,660.,650.,640.,630.,620.,610.,
+			  600.,590.,580.,570.,560.,550.,540.,530.,520.,510.,
+			  500.,490.,480.,470.,460.,450.,440.,430.,420.,410.,
+			  400.,390.,380.,370.,360.,350.,340.,330.,320.,310.,
+			  300.,290.,280.,270.,260.,250.,240.,230.,220.,210.};
+  double abslength[nAbsl] = {440.983, 441.162, 442.037, 447.54, 451.036, 
+			     449.096, 440.888, 437.576, 431.158, 434.123, 
+			     425.697, 426.832, 428.482, 419.536, 414.457, 
+			     416.837, 408.455, 396.617, 398.019, 392.691, 
+			     393.791, 384.79 , 373.348, 372.505, 367.286, 
+			     348.639, 345.557, 336.343, 324.083, 308.243, 
+			     301.369, 289.736, 279.774, 270.555, 256.633, 
+			     238.905, 224.355, 206.619, 185.351, 160.239, 
+			     134.945, 108.963, 85.5356, 57.4822, 26.29, 
+			     //8.28956,  2.3158,      0.,      0., 2.28963, 
+			     //2.21313, 2.16771, 2.13827, 2.10315, 1.91101
+			     0.     , 0.     , 0.     , 0.     , 0.     , 
+			     0.     , 0.     , 0.     , 0.     , 0.     };
+
+  for (G4int i=0; i<nAbsl; i++) wlAbsl[i] *= nanometer;
+
+  for (G4int i=0; i<nAbsl; i++) {
     abslength[i] *= cm;
   };
+
+  G4double kphotAbsl[nAbsl];   //Momenta of optical photons in eV units.
+  for (G4int i=0; i<nAbsl; i++) kphotAbsl[i] = hc/wlAbsl[i];
 
   //  G4double rindPbWO4[52];
   //  for (G4int i=0; i<52; i++) {
@@ -280,12 +309,19 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
     G4MaterialPropertiesTable *PbWO4MPT = new G4MaterialPropertiesTable();
   
     PbWO4MPT -> AddProperty("RINDEX",kphotPbWO4,rindPbWO4,52);
-    PbWO4MPT -> AddProperty("ABSLENGTH",kphotPbWO4,abslength,52);
+    //    PbWO4MPT -> AddProperty("ABSLENGTH",kphotPbWO4,abslength,52);
+    PbWO4MPT -> AddProperty("ABSLENGTH",kphotAbsl,abslength,nAbsl);
 
     if (fScinFlag) {
      PbWO4MPT->AddProperty("FASTCOMPONENT",kphotPbWO4_sc_fast,PbWO4_sc_fast,82);
      PbWO4MPT->AddProperty("SLOWCOMPONENT",kphotPbWO4_sc_slow,PbWO4_sc_slow,82);
-     PbWO4MPT->AddConstProperty("SCINTILLATIONYIELD", 40000*0.377/100/MeV);
+     //PDG
+     //PbWO4MPT->AddConstProperty("SCINTILLATIONYIELD", 40000*0.377/100/MeV);
+
+     //SICCAS, tuned to 6.90 pe/MeV (16.4 pe/MeV for PMT full coverage,
+     //2 GeV/c mu- vertical at middle of crystal.)
+     PbWO4MPT->AddConstProperty("SCINTILLATIONYIELD", 2.25*40000*0.377/100/MeV);
+
      PbWO4MPT->AddConstProperty("RESOLUTIONSCALE", 1.0);
      PbWO4MPT->AddConstProperty("FASTTIMECONSTANT", 10.*ns);
      PbWO4MPT->AddConstProperty("SLOWTIMECONSTANT", 30.*ns);
