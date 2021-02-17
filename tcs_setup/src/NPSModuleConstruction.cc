@@ -221,6 +221,7 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
 
   //Absorption length from transmittance measurements of 19 SICCAS crystals
   //at CUA. Transmittances from Vladimir.
+  /*
   const int nAbsl = 60;
   double wlAbsl[nAbsl] = {800.,790.,780.,770.,760.,750.,740.,730.,720.,710.,
 			  700.,690.,680.,670.,660.,650.,640.,630.,620.,610.,
@@ -241,6 +242,34 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
 			     //2.21313, 2.16771, 2.13827, 2.10315, 1.91101
 			     0.     , 0.     , 0.     , 0.     , 0.     , 
 			     0.     , 0.     , 0.     , 0.     , 0.     };
+  */
+
+  //Absorption length from transmittance measurement of a Crytur crystal
+  //at CUA. Transmittances from Vladimir.
+  const int nAbsl = 61;
+  double wlAbsl[nAbsl] = {800.,790.,780.,770.,760.,750.,740.,730.,720.,710.,
+			  700.,690.,680.,670.,660.,650.,640.,630.,620.,610.,
+			  600.,590.,580.,570.,560.,550.,540.,530.,520.,510.,
+			  500.,490.,480.,470.,460.,450.,440.,430.,420.,410.,
+			  400.,390.,380.,370.,360.,350.,340.,330.,320.,310.,
+			  300.,290.,280.,270.,260.,250.,240.,230.,220.,210.,
+			  200.};
+  double abslength[nAbsl] = {796.786, 734.961, 789.161, 747.455, 803.081, 
+			     798.21 , 725.257, 815.755, 768.501, 743.501, 
+			     756.055, 796.412, 809.239, 720.358, 742.132, 
+			     725.029, 751.585, 697.754, 713.542, 709.338, 
+			     716.528, 692.502, 675.357, 681.138, 649.767, 
+			     645.957, 638.725, 614.09 , 608.476, 606.628, 
+			     640.36 , 630.599, 565.443, 564.31 , 596.479, 
+			     585.38 , 587.096, 580.228, 521.699, 511.217, 
+			     490.883, 430.125, 307.714, 150.343, 46.2254, 
+			     //11.4686,   0.   ,   0.   ,   0.   ,  2.75252, 
+			     //2.53861, 2.7026 , 2.90355, 2.90012, 2.76918, 
+			     //2.41157, 0.     , 0.     , 0.     , 0.     , 
+			     11.4686,   0.   ,   0.   ,   0.   ,  0., 
+			     0.     ,   0.   ,   0.   ,   0.   ,  0., 
+			     0.     ,   0.   ,   0.   ,   0.   ,  0., 
+			     0.};
 
   for (G4int i=0; i<nAbsl; i++) wlAbsl[i] *= nanometer;
 
@@ -320,7 +349,11 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
 
      //SICCAS, tuned to 6.90 pe/MeV (16.4 pe/MeV for PMT full coverage,
      //2 GeV/c mu- vertical at middle of crystal.)
-     PbWO4MPT->AddConstProperty("SCINTILLATIONYIELD", 2.25*40000*0.377/100/MeV);
+     //PbWO4MPT->AddConstProperty("SCINTILLATIONYIELD", 2.25*40000*0.377/100/MeV);
+
+     //Crytur, tuned to 6.77 pe/MeV (16.1 pe/MeV for PMT full coverage,
+     //2 GeV/c mu- vertical at middle of crystal.)
+     PbWO4MPT->AddConstProperty("SCINTILLATIONYIELD", 1.6*40000*0.377/100/MeV);
 
      PbWO4MPT->AddConstProperty("RESOLUTIONSCALE", 1.0);
      PbWO4MPT->AddConstProperty("FASTTIMECONSTANT", 10.*ns);
