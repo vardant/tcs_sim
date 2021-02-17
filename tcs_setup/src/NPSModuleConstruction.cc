@@ -112,6 +112,13 @@ NPSModuleConstruction::NPSModuleConstruction(G4NistManager* man) {
     G4cout << ", no Scintillation light generation.";
   G4cout << G4endl;
 
+  //Turn on Cherenkov generation if scintillation is on.
+  if (fScinFlag && !fCherFlag) {
+    fCherFlag = 1;
+    cout << "=> Cherenkov light generation & tracking is turned ON";
+    cout << "due to scintillation!" << endl;
+  }
+
   tedlar_thick = 0.040*mm;   //40um Tedlar
   mylar_thick = 0.025*mm;    // + 25um Mylar
   ////  air_gap = 0.035*mm;        //guess
@@ -258,14 +265,12 @@ void NPSModuleConstruction::Construct(G4NistManager* man)
   G4double PbWO4_sc_slow[82];
   for (G4int i=0; i<82; i++) PbWO4_sc_slow[i] = PbWO4_sc_fast[i];
 
-  if (fCherFlag || fScinFlag) {
+  if (fCherFlag) {
     
     G4MaterialPropertiesTable *PbWO4MPT = new G4MaterialPropertiesTable();
   
+    PbWO4MPT -> AddProperty("RINDEX",kphotPbWO4,rindPbWO4,52);
     PbWO4MPT -> AddProperty("ABSLENGTH",kphotPbWO4,abslength,52);
-
-    if (fCherFlag)
-      PbWO4MPT -> AddProperty("RINDEX",kphotPbWO4,rindPbWO4,52);
 
     if (fScinFlag) {
      PbWO4MPT->AddProperty("FASTCOMPONENT",kphotPbWO4_sc_fast,PbWO4_sc_fast,82);
