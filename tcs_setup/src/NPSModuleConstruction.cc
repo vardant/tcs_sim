@@ -106,7 +106,7 @@ NPSModuleConstruction::NPSModuleConstruction(G4NistManager* man) {
   G4cout << G4endl;
 
   G4cout << "   Scintillation flag = " << fScinFlag;
-  if (fCherFlag)
+  if (fScinFlag)
     G4cout << ", Scintillation light generation & tracking.";
   else
     G4cout << ", no Scintillation light generation.";
