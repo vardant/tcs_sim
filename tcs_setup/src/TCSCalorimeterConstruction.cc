@@ -101,7 +101,8 @@ void TCSCalorimeterConstruction::Construct() {
     ypos += ystep;
   }
 
-  // Support frames, made from carbon composite (carbon fiber + epoxy).
+  // Support frames, made from carbon composite (carbon fiber + epoxy,
+  // front frame) and mu-metal (rear frame).
 
   G4Element* C  = man->FindOrBuildElement("C");
   G4Element* O  = man->FindOrBuildElement("O");
@@ -110,6 +111,16 @@ void TCSCalorimeterConstruction::Construct() {
   //Carbon fiber of average density.
   G4Material* carbon_fiber = new G4Material("Carbon fiber", 1.84*g/cm3, 1);
   carbon_fiber->AddElement(C, 1);
+
+  G4Element* Ni  = man->FindOrBuildElement("Ni");
+  G4Element* Mo  = man->FindOrBuildElement("Mo");
+  G4Element* Fe  = man->FindOrBuildElement("Fe");
+
+  //mu-metal (ASTM A753 Alloy 4) according to mu-metal.com.
+  G4Material* mu_metal = new G4Material("mu-metal", 8.7*g/cm3, 3);
+  mu_metal->AddElement(Ni, 80.*perCent);
+  mu_metal->AddElement(Mo,  5.*perCent);
+  mu_metal->AddElement(Fe, 15.*perCent);
 
   //Bisphenol A epoxy resin, with typical epoxy density.
   G4Material* epoxy = new G4Material("Bisphenol A", 1.25*g/cm3, 3);
@@ -180,8 +191,11 @@ void TCSCalorimeterConstruction::Construct() {
   G4SubtractionSolid* frameSolid =
     new G4SubtractionSolid("frameSolid", frameBox, voidBox);
 
-  G4LogicalVolume* frameLog = new G4LogicalVolume(frameSolid, carbon_composite,
-						  "frame", 0, 0, 0);
+  G4LogicalVolume* FrontFrameLog = new G4LogicalVolume(frameSolid,
+				   carbon_composite, "front frame", 0, 0, 0);
+
+  G4LogicalVolume* RearFrameLog = new G4LogicalVolume(frameSolid,
+				  mu_metal, "rear frame", 0, 0, 0);
 
   copy_number = 0;
 
@@ -194,7 +208,7 @@ void TCSCalorimeterConstruction::Construct() {
   
       new G4PVPlacement(0,                                //no rotation
 			G4ThreeVector(xpos,ypos,-zcal/2+fFrameWidth/2), //at pos
-			frameLog,                         //its logical volume
+			FrontFrameLog,                    //its logical volume
 			"front frame",                    //its name
 			fCalorimeter,                     //its mother  volume
 			false,                            //no boolean operation
@@ -205,8 +219,8 @@ void TCSCalorimeterConstruction::Construct() {
 	     -zcal/2+ModuleConstruction->GetBlockSizeZ()-fFrameWidth/2;
       new G4PVPlacement(0,                                //no rotation
 			G4ThreeVector(xpos,ypos,zpos_frame), //at pos
-			frameLog,                         //its logical volume
-			"back frame",                     //its name
+			RearFrameLog,                     //its logical volume
+			"rear frame",                     //its name
 			fCalorimeter,                     //its mother  volume
 			false,                            //no boolean operation
 			copy_number,                      //copy number
