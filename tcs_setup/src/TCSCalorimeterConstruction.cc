@@ -57,7 +57,7 @@ void TCSCalorimeterConstruction::Construct() {
   //Calorimeter's case sizes.
   double xcase = xcal + 3.*cm;
   double ycase = ycal + 3.*cm;
-  double zcase = zcal + 3.*cm;
+  double zcase = zcal + 12.*cm;
   cout << "                              Calorimeter's case sizes:" << endl;
   cout << "  xcase = " << xcase/cm << " cm" << endl;
   cout << "  ycase = " << ycase/cm << " cm" << endl;
@@ -234,7 +234,66 @@ void TCSCalorimeterConstruction::Construct() {
     ypos += ystep;
   }
 
-  // Case.
+  // PE front plate for sensosrs. ----------------------------------------------
+
+  const double sensor_plateThick = 15.*mm;
+
+  G4Box* sensor_plateBox = new G4Box("sensor_plateBox", xcal/2., ycal/2.,
+				     sensor_plateThick/2.);
+
+  G4Material* PE = man->FindOrBuildMaterial("G4_POLYETHYLENE");
+
+  G4LogicalVolume* sensor_plateLog = new G4LogicalVolume(sensor_plateBox,
+					 PE, "sensor_plate_log", 0, 0, 0);
+
+  double sensor_plateZ = -zcal/2. - 1.*cm - sensor_plateThick/2.;
+
+  new G4PVPlacement(0,                                //no rotation
+		    G4ThreeVector(0.,0.,sensor_plateZ), //at pos
+		    sensor_plateLog,                  //its logical volume
+		    "SensorPlate phys",               //its name
+		    fCalorimeter,                     //its mother  volume
+		    false,                            //no boolean operation
+		    0,                                //copy number
+		    0);                               //overlaps checking
+
+  //  G4Colour yellow(0.5, 0.5, 0.);
+  //  G4VisAttributes*PEVisAttributes= new G4VisAttributes(yellow);
+  //  sensor_plateLog->SetVisAttributes(PEVisAttributes);
+
+  // Cooling plates. -----------------------------------------------------------
+  /*
+  const double cool_plateThick =  12.*mm;
+  const double cool_plateWidth = 165.*mm;
+
+  G4Box* cool_plateBox = new G4Box("cool_plateBox",
+				   (xcal+cool_plateThick)/2.,
+				   (ycal+cool_plateThick)/2.,
+				   cool_plateWidth/2.);
+  G4Box* cool_plateVoid  = new G4Box("cool_plateVoid",xcal/2.,ycal/2.,zcal/2.);
+
+  G4SubtractionSolid* cool_plateSolid =
+    new G4SubtractionSolid("cool_plateSolid", cool_plateBox, cool_plateVoid);
+
+  G4Material* Cu  = man->FindOrBuildMaterial("G4_Cu");
+
+  G4LogicalVolume* cool_plateLog = new G4LogicalVolume(cool_plateSolid,
+				       Cu, "cool_plate_log", 0,0,0);
+
+  new G4PVPlacement(0,                                //no rotation
+		    G4ThreeVector(),                  //at pos
+		    cool_plateLog,                    //its logical volume
+		    "CoolingPlates phys",             //its name
+		    fCalorimeter,                     //its mother  volume
+		    false,                            //no boolean operation
+		    0,                                //copy number
+		    0);                               //overlaps checking
+
+  G4Colour brown(0.7, 0.4, 0.1);
+  G4VisAttributes*copperVisAttributes= new G4VisAttributes(brown);
+  cool_plateLog->SetVisAttributes(copperVisAttributes);
+  */
+  // Case. ---------------------------------------------------------------------
 
   //  G4Material* Al = man->FindOrBuildMaterial("G4_Al");
   G4Material* PVC = man->FindOrBuildMaterial("G4_POLYVINYL_CHLORIDE");
@@ -262,5 +321,5 @@ void TCSCalorimeterConstruction::Construct() {
 		    0,                                //copy number
 		    0);                               //overlaps checking
 
-  //  fCalorimeter->SetVisAttributes (G4VisAttributes::Invisible);
+  fCalorimeter->SetVisAttributes (G4VisAttributes::Invisible);
 }
