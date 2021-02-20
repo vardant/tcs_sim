@@ -55,9 +55,9 @@ void TCSCalorimeterConstruction::Construct() {
   cout << "  zcal = " << zcal/cm << " cm" << endl;
 
   //Calorimeter's case sizes.
-  double xcase = xcal + 1.*cm;
-  double ycase = ycal + 1.*cm;
-  double zcase = zcal + 1.*cm;
+  double xcase = xcal + 3.*cm;
+  double ycase = ycal + 3.*cm;
+  double zcase = zcal + 3.*cm;
   cout << "                              Calorimeter's case sizes:" << endl;
   cout << "  xcase = " << xcase/cm << " cm" << endl;
   cout << "  ycase = " << ycase/cm << " cm" << endl;
@@ -236,18 +236,21 @@ void TCSCalorimeterConstruction::Construct() {
 
   // Case.
 
-  G4Material* Al = man->FindOrBuildMaterial("G4_Al");
+  //  G4Material* Al = man->FindOrBuildMaterial("G4_Al");
+  G4Material* PVC = man->FindOrBuildMaterial("G4_POLYVINYL_CHLORIDE");
 
   G4Box* caseBox = new G4Box("caloBox", xcase/2, ycase/2, zcase/2);
 
-  const double caseThick = 1.*mm;
+  //  const double caseThick = 1.*mm;
+  const double caseThick = 10.*mm;   //10 or 15 mm (from Carlos)
 
   G4Box* caseVoid = new G4Box("caloBox", xcase/2-caseThick, ycase/2-caseThick,
 			      zcase/2-caseThick);
   G4SubtractionSolid* caseSolid =
     new G4SubtractionSolid("caseSolid", caseBox, caseVoid);
 
-  G4LogicalVolume* caseLog = new G4LogicalVolume(caseSolid, Al, "case_log",
+  //  G4LogicalVolume* caseLog = new G4LogicalVolume(caseSolid, Al, "case_log",
+  G4LogicalVolume* caseLog = new G4LogicalVolume(caseSolid, PVC, "case_log",
 						 0, 0, 0);
 
   new G4PVPlacement(0,                                //no rotation
