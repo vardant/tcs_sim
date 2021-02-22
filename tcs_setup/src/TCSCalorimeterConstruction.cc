@@ -55,8 +55,8 @@ void TCSCalorimeterConstruction::Construct() {
   cout << "  zcal = " << zcal/cm << " cm" << endl;
 
   //Calorimeter's case sizes.
-  double xcase = xcal + 3.*cm;
-  double ycase = ycal + 3.*cm;
+  double xcase = xcal + 3.5*cm;
+  double ycase = ycal + 8.5*cm;
   double zcase = zcal + 12.*cm;
   cout << "                              Calorimeter's case sizes:" << endl;
   cout << "  xcase = " << xcase/cm << " cm" << endl;
@@ -246,10 +246,10 @@ void TCSCalorimeterConstruction::Construct() {
   G4LogicalVolume* sensor_plateLog = new G4LogicalVolume(sensor_plateBox,
 					 PE, "sensor_plate_log", 0, 0, 0);
 
-  double sensor_plateZ = -zcal/2. - 1.*cm - sensor_plateThick/2.;
+  double sensor_plate_Z = -zcal/2. - 1.*cm - sensor_plateThick/2.;
 
   new G4PVPlacement(0,                                //no rotation
-		    G4ThreeVector(0.,0.,sensor_plateZ), //at pos
+		    G4ThreeVector(0.,0.,sensor_plate_Z), //at pos
 		    sensor_plateLog,                  //its logical volume
 		    "SensorPlate phys",               //its name
 		    fCalorimeter,                     //its mother  volume
@@ -261,15 +261,49 @@ void TCSCalorimeterConstruction::Construct() {
   //  G4VisAttributes*PEVisAttributes= new G4VisAttributes(yellow);
   //  sensor_plateLog->SetVisAttributes(PEVisAttributes);
 
+  // Cooling plate sizes. ------------------------------------------------------
+
+  const double cool_plate_dX =  12.*mm;
+  const double cool_plate_dZ = 165.*mm;
+
+  // Front Aluminum frame. -----------------------------------------------------
+
+  const double front_frame_dZ = 20.*mm;
+  const double front_frame_dY = 36.*mm;
+
+  G4Box* front_frameBox = new G4Box("front_frameBox",
+				    //(2.*front_frame_dY + xcal)/2.,
+				    (2.*cool_plate_dX + xcal)/2.,
+				    (2.*front_frame_dY + ycal)/2.,
+				    front_frame_dZ/2.);
+  G4Box* front_frameVoid = new G4Box("front_frameVoid",xcal/2.,ycal/2.,zcal/2.);
+  G4SubtractionSolid* front_frameSolid = new G4SubtractionSolid(
+		      "front_frameSolid", front_frameBox, front_frameVoid);
+
+  G4Material* Al = man->FindOrBuildMaterial("G4_Al");
+
+  G4LogicalVolume* front_frameLog = new G4LogicalVolume(front_frameSolid, Al,
+							"front_frameLog",0,0,0);
+
+  //Thickness of platic frame (to hold front reflector)
+  const double deltaZ = 2.5*mm;
+  const double front_frame_Z = -zcal/2. - deltaZ + front_frame_dZ/2.;
+
+  new G4PVPlacement(0,                                //no rotation
+		    G4ThreeVector(0.,0.,front_frame_Z), //at pos
+		    front_frameLog,                   //its logical volume
+		    "FrontFrame phys",                //its name
+		    fCalorimeter,                     //its mother  volume
+		    false,                            //no boolean operation
+		    0,                                //copy number
+		    0);                               //overlaps checking
+
   // Cooling plates. -----------------------------------------------------------
-  /*
-  const double cool_plateThick =  12.*mm;
-  const double cool_plateWidth = 165.*mm;
 
   G4Box* cool_plateBox = new G4Box("cool_plateBox",
-				   (xcal+cool_plateThick)/2.,
-				   (ycal+cool_plateThick)/2.,
-				   cool_plateWidth/2.);
+				   (xcal+cool_plate_dX)/2.,
+				   (ycal+cool_plate_dX)/2.,
+				   cool_plate_dZ/2.);
   G4Box* cool_plateVoid  = new G4Box("cool_plateVoid",xcal/2.,ycal/2.,zcal/2.);
 
   G4SubtractionSolid* cool_plateSolid =
@@ -280,8 +314,10 @@ void TCSCalorimeterConstruction::Construct() {
   G4LogicalVolume* cool_plateLog = new G4LogicalVolume(cool_plateSolid,
 				       Cu, "cool_plate_log", 0,0,0);
 
+  double cool_plate_Z = front_frame_Z + front_frame_dZ/2. + cool_plate_dZ/2.;
+
   new G4PVPlacement(0,                                //no rotation
-		    G4ThreeVector(),                  //at pos
+		    G4ThreeVector(0.,0.,cool_plate_Z), //at pos
 		    cool_plateLog,                    //its logical volume
 		    "CoolingPlates phys",             //its name
 		    fCalorimeter,                     //its mother  volume
@@ -292,18 +328,32 @@ void TCSCalorimeterConstruction::Construct() {
   G4Colour brown(0.7, 0.4, 0.1);
   G4VisAttributes*copperVisAttributes= new G4VisAttributes(brown);
   cool_plateLog->SetVisAttributes(copperVisAttributes);
-  */
+
+  // Rear aluminum frame, assume identical to the Front frame.------------------
+
+  double rear_frame_Z = cool_plate_Z + cool_plate_dZ/2. + front_frame_dZ/2.;
+
+  new G4PVPlacement(0,                                //no rotation
+		    G4ThreeVector(0.,0.,rear_frame_Z), //at pos
+		    front_frameLog,                   //its logical volume
+		    "RearFrame phys",                //its name
+		    fCalorimeter,                     //its mother  volume
+		    false,                            //no boolean operation
+		    0,                                //copy number
+		    0);                               //overlaps checking
+
   // Case. ---------------------------------------------------------------------
 
   //  G4Material* Al = man->FindOrBuildMaterial("G4_Al");
   G4Material* PVC = man->FindOrBuildMaterial("G4_POLYVINYL_CHLORIDE");
 
-  G4Box* caseBox = new G4Box("caloBox", xcase/2, ycase/2, zcase/2);
+  G4Box* caseBox = new G4Box("caseBox", xcase/2, ycase/2, zcase/2);
 
   //  const double caseThick = 1.*mm;
-  const double caseThick = 10.*mm;   //10 or 15 mm (from Carlos)
+  //  const double caseThick = 10.*mm;   //10 or 15 mm (from Carlos)
+  const double caseThick = 5.*mm;
 
-  G4Box* caseVoid = new G4Box("caloBox", xcase/2-caseThick, ycase/2-caseThick,
+  G4Box* caseVoid = new G4Box("caseVoid", xcase/2-caseThick, ycase/2-caseThick,
 			      zcase/2-caseThick);
   G4SubtractionSolid* caseSolid =
     new G4SubtractionSolid("caseSolid", caseBox, caseVoid);
