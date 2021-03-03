@@ -101,7 +101,8 @@ G4bool TCSCalorimeterSD::ProcessHits(G4Step* step, G4TouchableHistory*)
       TCSCalorimeterConstruction cc;
       int ncol = cc.GetNCOL();
       int nrow = cc.GetNROW();
-      int nmod=step->GetPostStepPoint()->GetTouchableHandle()->GetCopyNumber(1);
+      ///int nmod=step->GetPostStepPoint()->GetTouchableHandle()->GetCopyNumber(1);
+      int nmod=step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(1);
       int row = nmod/ncol;
       int col = nmod - row*ncol;
 
@@ -114,8 +115,23 @@ G4bool TCSCalorimeterSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 
       TCSCalorimeterHit* hit_d = new TCSCalorimeterHit(col,row,pid,edep,pos, 0);
       fHitsCollection->insert( hit_d );
-      //  hit_d->Print();
-      //  getchar();
+
+      //      if (col == 0 && row == 0 && pos.getX()>0. && pos.getY()>0.) {
+      //	hit_d->Print();
+      //G4cout << "XYZ [cm]: " << pos.getX()/10. << " " << pos.getY()/10. << " "
+      //	       << pos.getZ()/10. << G4endl;
+      //	G4cout << "copy 0 = "
+      //<< step->GetPostStepPoint()->GetTouchableHandle()->GetCopyNumber(0)
+      //	      << G4endl;
+      //	G4cout << "copy 1 = "
+      //<< step->GetPostStepPoint()->GetTouchableHandle()->GetCopyNumber(1)
+      //	     << G4endl;
+      //	G4cout << "copy 2 = "
+      //<< step->GetPostStepPoint()->GetTouchableHandle()->GetCopyNumber(2)
+      //	     << G4endl;
+      //	getchar();
+	//      }
+
     }
 
     return true;
