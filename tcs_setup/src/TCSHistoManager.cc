@@ -43,8 +43,7 @@ using namespace std;
 
 TCSHistoManager::TCSHistoManager() : fKinFile(0), fRootFile(0),
 				     fBeamTree(0), fTargetTree(0),
-				     fCaloTree(0),
-				     //	     fHodoXTree(0), fHodoYTree(0),
+				     fCaloTree(0), fHodoTree(0),
 				     fTrackerTree(0)
 {
   fKinFileName ="tcs_gen.kin_data";
@@ -65,8 +64,7 @@ TCSHistoManager::TCSHistoManager() : fKinFile(0), fRootFile(0),
 ////TCSHistoManager::TCSHistoManager(char *kname, char *rname) :
 TCSHistoManager::TCSHistoManager(string kname, string rname) :
   fKinFile(0), fRootFile(0), fBeamTree(0), fTargetTree(0), fCaloTree(0),
-  //  fHodoXTree(0), fHodoYTree(0),
-  fTrackerTree(0)
+  fHodoTree(0), fTrackerTree(0)
 {
   fKinFileName = kname;  
   fRootFileName= rname;  
@@ -151,19 +149,15 @@ void TCSHistoManager::book()
  fCaloTree->Branch("edepcont", &(fCaloHitCont.Edep));
  fCaloTree->Branch("npecont", &(fCaloHitCont.Npe));
  fCaloTree->Branch("pidcont", &(fCaloHitCont.PID));
- /*
- fHodoXTree = new TTree("hodox", "TCS X hodoscopes' per event hit collections");
- fHodoXTree->Branch("detcont", &(fHodoXHitCont.Det));
- fHodoXTree->Branch("chancont", &(fHodoXHitCont.Chan));
- fHodoXTree->Branch("edepcont", &(fHodoXHitCont.Edep));
- fHodoXTree->Branch("pidcont", &(fHodoXHitCont.PID));
 
- fHodoYTree = new TTree("hodoy", "TCS Y hodoscopes' per event hit collections");
- fHodoYTree->Branch("detcont", &(fHodoYHitCont.Det));
- fHodoYTree->Branch("chancont", &(fHodoYHitCont.Chan));
- fHodoYTree->Branch("edepcont", &(fHodoYHitCont.Edep));
- fHodoYTree->Branch("pidcont", &(fHodoYHitCont.PID));
- */
+ fHodoTree = new TTree("hodo", "TCS Hodoscopes' per event hit collections");
+ fHodoTree->Branch("detcont", &(fHodoHitCont.Det));
+ fHodoTree->Branch("colcont", &(fHodoHitCont.Col));
+ fHodoTree->Branch("rowcont", &(fHodoHitCont.Row));
+ fHodoTree->Branch("edepcont", &(fHodoHitCont.Edep));
+ // fHodoTree->Branch("npecont", &(fHodoHitCont.Npe));
+ fHodoTree->Branch("pidcont", &(fHodoHitCont.PID));
+
  fTrackerTree = new TTree("tracker", "TCS trackers' per event hit collections");
  fTrackerTree->Branch("xcont", &(fTrackerHitCont.X));
  fTrackerTree->Branch("ycont", &(fTrackerHitCont.Y));
@@ -219,8 +213,7 @@ void TCSHistoManager::autosave() {
   fBeamTree->AutoSave();
   fTargetTree->AutoSave();
   fCaloTree->AutoSave(); // save tree to file
-  //  fHodoXTree->AutoSave();
-  //  fHodoYTree->AutoSave();
+  fHodoTree->AutoSave();
   fTrackerTree->AutoSave();
   fKinTree->AutoSave();
   fRootFile->SaveSelf();  // save file directory containing this tree
@@ -275,17 +268,11 @@ void TCSHistoManager::FillTrees()
     fCaloTree->Fill();
   }
 
-  //  if (fHodoXTree) {
+  if (fHodoTree) {
     //G4cout <<"Filling Tree right now! fHitList size = " << fHitList.size()
     //<< "\n";
-  //    fHodoXTree->Fill();
-  //  }
-
-  //  if (fHodoYTree) {
-    //G4cout <<"Filling Tree right now! fHitList size = " << fHitList.size()
-    //<< "\n";
-  //    fHodoYTree->Fill();
-  //  }
+    fHodoTree->Fill();
+  }
 
   if (fTrackerTree) {
     //G4cout <<"Filling Tree right now! fHitList size = " << fHitList.size()
@@ -295,6 +282,7 @@ void TCSHistoManager::FillTrees()
 
   fKinFile >> fKinVar.Q2 >> fKinVar.t >> fKinVar.s >> fKinVar.xi >> fKinVar.tau
 	   >> fKinVar.eta >> fKinVar.phi_cm >> fKinVar.the_cm
+    //	   >> fKinVar.psf >> fKinVar.flux_factor >> fKinVar.crs_BH
 	   >> fKinVar.psf >> fKinVar.FlagSing >> fKinVar.crs_BH
 	   >> fKinVar.Eg;
 
@@ -556,6 +544,48 @@ void TCSHistoManager::AddHit(double x, double y, double edep, double length,
 
   //G4cout << "          TCSHistoManager::AddHit: hit pushed back" << G4endl;
 }
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void TCSHistoManager::AddHodoHit(int det, uint col,uint row, double edep,
+				 int pid) {
+
+  bool found = false;
+
+  vector<uint>::iterator ic = fHodoHitCont.Col.begin();
+  vector<uint>::iterator ir = fHodoHitCont.Row.begin();
+  vector<double>::iterator ie = fHodoHitCont.Edep.begin();
+  vector<int>::iterator ip = fHodoHitCont.PID.begin();
+
+  for (vector<int>::iterator id=fHodoHitCont.Det.begin();
+       id != fHodoHitCont.Det.end(); id++) {
+
+    if (*id == det && *ic == col && *ir == row && *ip == pid) {
+      //      cout << "AddHit: *ie = " << *ie << "  edep = " << edep << endl;
+      *ie += edep;
+      //      cout << "AddHit: *ie = " << *ie << endl;
+      //      getchar();
+      found = true;
+      break;
+    }
+
+    ic++; ir++; ie++; ip++;
+  }
+
+  if (!found) {
+    fHodoHitCont.Det.push_back(det);
+    fHodoHitCont.Col.push_back(col);
+    fHodoHitCont.Row.push_back(row);
+    fHodoHitCont.Edep.push_back(edep);
+    //    fHodoHitCont.Npe.push_back(0);
+    fHodoHitCont.PID.push_back(pid);
+    //cout << "Pushed back cal hit " << det << " " << col << " " << row << " "
+    //<< edep << endl;
+  }
+
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void TCSHistoManager::PrintStatistic()
 {

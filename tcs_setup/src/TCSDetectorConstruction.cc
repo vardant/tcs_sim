@@ -30,8 +30,7 @@
 #include "TCSTargetSD.hh"
 #include "TCSCalorimeterSD.hh"
 #include "TCSCalorimeterPMTSD.hh"
-//#include "TCSHodoXSD.hh"
-//#include "TCSHodoYSD.hh"
+#include "TCSHodoscopeSD.hh"
 #include "TCSTrackerSD.hh"
 #include "G4SDManager.hh"
 
@@ -266,17 +265,13 @@ void TCSDetectorConstruction::ConstructSDandField()
     SetSensitiveDetector("Cathode_log", caloPMTSD, true);
 
     // Hodoscope SD
-    /*
-    TCSHodoXSD* hodoxSD = new TCSHodoXSD("HodoscopeXSD", "HodoXHitsCollection");
-    G4SDManager::GetSDMpointer()->AddNewDetector(hodoxSD);
-    SetSensitiveDetector("HXBar", hodoxSD, true);
-    SetSensitiveDetector("hodoXWorld", hodoxSD, true);
 
-    TCSHodoYSD* hodoySD = new TCSHodoYSD("HodoscopeYSD", "HodoYHitsCollection");
-    G4SDManager::GetSDMpointer()->AddNewDetector(hodoySD);
-    SetSensitiveDetector("HYBar", hodoySD, true);
-    SetSensitiveDetector("hodoYWorld", hodoySD, true);
-    */
+    TCSHodoscopeSD* hodoSD = new TCSHodoscopeSD("HodoscopeSD",
+						"HodoscopeHitsCollection");
+    G4SDManager::GetSDMpointer()->AddNewDetector(hodoSD);
+    SetSensitiveDetector("hodo_module_LV", hodoSD, true);
+    SetSensitiveDetector("Hodoscope_LV", hodoSD, true);
+
     // Tracker SD
 
     TCSTrackerSD* trackerSD = new TCSTrackerSD("TrackerSD",

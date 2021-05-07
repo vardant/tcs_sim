@@ -30,7 +30,7 @@
 #include "TCSHistoManager.hh"
 #include "TCSCalorimeterHit.hh"
 #include "TCSCalorimeterPMTHit.hh"
-//#include "TCSHodoHit.hh"
+#include "TCSHodoscopeHit.hh"
 #include "TCSTrackerHit.hh"
 #include "TCSTargetHit.hh"
 
@@ -52,12 +52,11 @@ TCSEventAction::TCSEventAction(TCSHistoManager *histo)
   : G4UserEventAction(), fEdep(0.), fNTar_epos(0), fNTar_eneg(0),
     fHistoManager(histo), fPrintModulo(0),
     fTargetCollID(-1), fCalorimeterCollID(-1), fCalorimeterPMTCollID(-1),
-    //    fHodoXCollID(-1), fHodoYCollID(-1),
-    fTrackerCollID(-1),
+    fHodoscopeCollID(-1), fTrackerCollID(-1),
     fEvtNo(-1)
 {
-  //  fPrintModulo = 100000;
-  fPrintModulo = 1000;
+  //  fPrintModulo = 1000;
+  fPrintModulo = 1;
 } 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -90,17 +89,11 @@ void TCSEventAction::BeginOfEventAction(const G4Event* evt)
     //G4cout << "  Calorimeter PMT collection id = " << fCalorimeterPMTCollID << G4endl;
   }
 
-  /*
-  if(fHodoXCollID<0)
+  if(fHodoscopeCollID<0)
   {
-    fHodoXCollID = SDman->GetCollectionID("HodoXHitsCollection");
+    fHodoscopeCollID = SDman->GetCollectionID("HodoscopeHitsCollection");
   }
 
-  if(fHodoYCollID<0)
-  {
-    fHodoYCollID = SDman->GetCollectionID("HodoYHitsCollection");
-  }
-  */
   if(fTrackerCollID<0)
     {
       fTrackerCollID = SDman->GetCollectionID("TrackerHitsCollection");
@@ -241,34 +234,40 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
     //    getchar();
   }
 
-  // HodoX hits.
-  /*
-  TCSHodoHitsCollection* HXC = 0;
+  // Hodoscope hits.
+
+  TCSHodoscopeHitsCollection* HC = 0;
   if(HCE) {
-    HXC = (TCSHodoHitsCollection*)(HCE->GetHC(fHodoXCollID));
-    //    G4cout << "  Found hodoscope X hit collection." << G4endl;
-
-    if(HXC) {
-      //    G4cout << "    Add HodoX hits:" << G4endl;
-      AddHodoHit(HXC, fHistoManager->fHodoXHitCont);
-    }
-
+    HC = (TCSHodoscopeHitsCollection*)(HCE->GetHC(fHodoscopeCollID));
+    //    G4cout << "  Found hodoscope hit collection." << G4endl;
   }
 
-  // HodoY hits.
+  if(HC) {
+    int n_hit = HC->entries();
+    //    G4cout << "  n_hit = " << n_hit << G4endl;
 
-  TCSHodoHitsCollection* HYC = 0;
-  if(HCE) {
-    HYC = (TCSHodoHitsCollection*)(HCE->GetHC(fHodoYCollID));
-    //    G4cout << "  Found hodoscope Y hit collection." << G4endl;
-
-    if(HYC) {
-      //    G4cout << "    Add HodoY hits:" << G4endl;
-      AddHodoHit(HYC, fHistoManager->fHodoYHitCont);
+    for(int i=0;i<n_hit;i++) {
+      G4int boundary_flag=(*HC)[i]->GetBoundaryFlag();
+      //Fill Tree if track is within the hodoscope.
+      if (boundary_flag == 0) {
+	G4ThreeVector pos=(*HC)[i]->GetPos();
+	G4int detpos = GetQuarter(pos.getX(), pos.getY());
+	G4int col =(*HC)[i]->GetCol();
+	G4int row =(*HC)[i]->GetRow();
+	G4int pid =(*HC)[i]->GetPID();
+	G4double energy=(*HC)[i]->GetEnergy();
+	fHistoManager->AddHodoHit(detpos, col, row, energy/MeV, pid);
+      }
     }
 
+    //Check hit container's consistency first.
+    if (!fHistoManager->CheckHodoHitCont())
+      cout <<"*** TCSEventAction::EndOfEventAction: "
+	   << "hodoscope hit container inconsistent! ***" << endl;
+
+    //    getchar();
   }
-  */
+
   // Tracker hits.
 
   TCSTrackerHitsCollection* TrC = 0;
@@ -318,8 +317,7 @@ void TCSEventAction::EndOfEventAction(const G4Event* event)
 
   }
 
-  ///  if (CC || HXC || HYC || TrC) {
-  if (CC || TrC) {
+  if (CC || HC || TrC) {
     fHistoManager->FillTrees();
     //    getchar();
   }

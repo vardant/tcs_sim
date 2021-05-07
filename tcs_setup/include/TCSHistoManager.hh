@@ -40,13 +40,6 @@ class TFile;
 class TTree;
 class TH1D;
 
-//struct HodoHitContainer {
-//  vector<int> Det;
-//  vector<uint> Chan;
-//  vector<double> Edep;
-//  vector<int> PID;
-//};
-
 struct TrackerHitContainer {
   vector<double> X;
   vector<double> Y;
@@ -92,6 +85,8 @@ public:
   void AddHit(double x, double y, double edep, double length,
 	      int det, int layer, int pid, int pidorig, int trackid,
 	      TrackerHitContainer &TrackerHitCont);
+  //For Hodo-s, to be changed by AddHit later on.
+  void AddHodoHit(int det, uint col, uint row, double edep, int pid);
 
   bool CheckTargetHitCont() {
     return (fTargetHitCont.Edep.size() == fTargetHitCont.PID.size());
@@ -105,12 +100,14 @@ public:
 	    ? false : true);
   }
 
-  //  bool CheckHodoHitCont(HodoHitContainer &HodoHitCont) {
-  //    uint sz = HodoHitCont.Det.size();
-  //    return (HodoHitCont.Chan.size() != sz || HodoHitCont.Edep.size() != sz
-  //	    || HodoHitCont.PID.size() != sz
-  //            ? false : true);
-  //  }
+  bool CheckHodoHitCont() {
+    uint sz = fHodoHitCont.Det.size();
+    return (fHodoHitCont.Col.size() != sz || fHodoHitCont.Row.size() != sz ||
+	    fHodoHitCont.Edep.size() != sz ||
+	    //fHodoHitCont.Npe.size() != sz ||
+	    fHodoHitCont.PID.size() != sz
+	    ? false : true);
+  }
 
   bool CheckTrackerHitCont(TrackerHitContainer &TrackerHitCont) {
     uint sz = TrackerHitCont.Det.size();
@@ -151,12 +148,14 @@ public:
     fCaloHitCont.PID.clear();
   };
 
-  //  void ResetHodo(HodoHitContainer &HodoHitCont) {
-  //    HodoHitCont.Det.clear();
-  //    HodoHitCont.Chan.clear();
-  //    HodoHitCont.Edep.clear();
-  //    HodoHitCont.PID.clear();
-  //  };
+  void ResetHodo() {
+    fHodoHitCont.Det.clear();
+    fHodoHitCont.Col.clear();
+    fHodoHitCont.Row.clear();
+    fHodoHitCont.Edep.clear();
+    //    fHodoHitCont.Npe.clear();
+    fHodoHitCont.PID.clear();
+  };
 
   void ResetTracker(TrackerHitContainer &TrackerHitCont) {
     TrackerHitCont.X.clear();
@@ -198,8 +197,7 @@ public:
     ResetBeam();
     ResetTarget();
     ResetCalo();
-    //    ResetHodo(fHodoXHitCont);
-    //    ResetHodo(fHodoYHitCont);
+    ResetHodo();
     ResetTracker(fTrackerHitCont);
     ResetKinVar();
   };
@@ -221,8 +219,7 @@ private:
   TTree*   fBeamTree;
   TTree*   fTargetTree;
   TTree*   fCaloTree;
-  //  TTree*   fHodoXTree;
-  //  TTree*   fHodoYTree;
+  TTree*   fHodoTree;
   TTree*   fTrackerTree;
   TTree*   fKinTree;
 
@@ -246,8 +243,14 @@ private:
     vector<int> PID;
   } fCaloHitCont;
 
-  //  HodoHitContainer fHodoXHitCont;
-  //  HodoHitContainer fHodoYHitCont;
+  struct HodoHitContainer {
+    vector<int> Det;
+    vector<uint> Col;
+    vector<uint> Row;
+    vector<double> Edep;
+    //    vector<int> Npe;
+    vector<int> PID;
+  } fHodoHitCont;
 
   TrackerHitContainer fTrackerHitCont;
 
