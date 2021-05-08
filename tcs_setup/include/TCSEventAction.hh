@@ -30,7 +30,7 @@
 #include "G4UserEventAction.hh"
 #include "globals.hh"
 #include "TCSHistoManager.hh"
-//#include "TCSHodoHit.hh"
+#include "TCSHodoscopeHit.hh"
 #include "TCSTrackerHit.hh"
 
 // Event action class
@@ -62,8 +62,7 @@ private:
   G4int fTargetCollID;
   G4int fCalorimeterCollID;
   G4int fCalorimeterPMTCollID;
-  //  G4int fHodoXCollID;
-  //  G4int fHodoYCollID;
+  G4int fHodoscopeCollID;
   G4int fTrackerCollID;
   G4int fEvtNo;
 
