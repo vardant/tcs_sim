@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation=
+      "/data/home/vardan.tadevosyan/geant4/GDML_3_1_6/schema/gdml.xsd">
+
+  <!-- A wedge shape absober just after the target cell, to hopefully reduce -->
+  <!-- beam background in the GEM trackers. -->
+
+ <define>
+  <constant name="PI" value="1.*pi"/>
+  <constant name="TWOPI" value="2.*pi"/>
+
+  <!-- +/-1.32 deg of "dead zone", + 2.05 cm to each side => +/-2.04 deg -->
+  <constant name="dphi" value="2.04/180.*pi"/>
+  <!-- constant name="dphi" value="4./180.*pi"/ -->
+
+  <quantity name="rin" type="length" value="16.5" unit="mm"/>
+  <quantity name="rout" type="length" value="38." unit="mm"/>
+  <quantity name="hight" type="length" value="700." unit="mm"/>
+
+  <!-- quantity name="r_bore" type="length" value="15." unit="mm"/ -->
+  <quantity name="r_bore" type="length" value="0.5" unit="mm"/>
+
+  <position name="center" x="0" y="0" z="0"/>
+  <rotation name="identity" x="0" y="0" z="0"/>
+  <rotation name="roty90" x="0" y="90" z="0" unit="deg"/>
+
+  <quantity name="wRmax" type="length" value="rout+0.1"/>
+  <quantity name="wRmin" type="length" value="0."/>
+  <quantity name="wZ" type="length" value="hight+1"/>
+
+ </define>
+
+ <materials>
+
+   <!-- material name="Tungsten" Z="74."> <D value="19.3"/> <atom value="183.84"/ -->
+   <!-- /material -->
+
+   <material name="Al" Z="13.0"> <D value="2.70"/> <atom value="26.98"/>
+   </material>
+
+   <element name="Oxygen" formula="O" Z="8."> <atom value="16.0"/>   </element>
+   <element name="Nitrogen" formula="N" Z="7."> <atom value="14.01"/>  </element>
+
+   <!-- Vacuum at 10^-6 Torr -->
+   <material name="Vaccuum">
+     <D value="1.3e-12" unit="g/cm3"/>
+     <fraction n="0.7" ref="Nitrogen"/>
+     <fraction n="0.3" ref="Oxygen"/>
+   </material>
+
+ </materials>
+
+ <solids> 
+
+  <tube name="AbsCyl" rmin="rin" rmax="rout" z="hight"
+	startphi="-dphi" deltaphi="2*dphi"/>
+
+  <tube name="BoreCyl" rmin="0." rmax="r_bore" z="2*rout+1." deltaphi="TWOPI"/>
+
+  <subtraction name="AbsSub" >
+    <first ref="AbsCyl" />
+    <second ref="BoreCyl"/>
+    <positionref ref="center" />
+    <rotationref ref="roty90" />
+  </subtraction>
+
+ </solids>
+
+ <structure>  
+
+  <volume name="AbsBody">
+   <!-- materialref ref="Tungsten"/ -->
+   <materialref ref="Al"/>
+   <solidref ref="AbsSub"/>
+   <auxiliary auxtype="Color" auxvalue="red"/>
+  </volume>
+
+ </structure>
+
+ <setup name="Default" version="1.0">
+   <world ref="AbsBody"/>
+ </setup>
+
+</gdml>

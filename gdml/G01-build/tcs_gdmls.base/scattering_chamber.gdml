@@ -164,6 +164,12 @@
      <rotationref ref="identity"/>
    </physvol>
 
+   <!-- physvol -->
+    <!-- file name="tcs_gdmls/absorber.gdml"/ -->
+    <!-- positionref ref="center"/ -->
+    <!-- rotationref ref="rotxp90"/ -->
+   <!-- /physvol -->
+   
    <physvol>
     <file name="tcs_gdmls/lheshield.gdml"/>
     <positionref ref="center"/>

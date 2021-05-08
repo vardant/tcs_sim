@@ -96,7 +96,10 @@
   <tube name="ExitCapVol" rmin="0." rmax="diam_cell/2" z="thick_exit_cap"
 	deltaphi="TWOPI"/>
 
-  <box name="TargetAssemblyBox" x="wextent" y="wextent" z="wextent"/>
+  <!-- box name="TargetAssemblyBox" x="wextent" y="wextent" z="wextent"/ -->
+  <tube name="TargetAssemblyTube" rmin="0." rmax="wextent/2" z="wextent"
+	deltaphi="TWOPI"/>
+
  </solids>
 
  <structure>  
@@ -128,7 +131,8 @@
 
   <volume name="TargetAssembly">
    <materialref ref="Vaccuum"/>
-   <solidref ref="TargetAssemblyBox"/>
+   <!-- solidref ref="TargetAssemblyBox"/ -->
+   <solidref ref="TargetAssemblyTube"/>
 
    <physvol>
      <volumeref ref="TargetMat"/>

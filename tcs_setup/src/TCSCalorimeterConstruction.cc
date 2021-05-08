@@ -248,14 +248,14 @@ void TCSCalorimeterConstruction::Construct() {
 
   double sensor_plate_Z = -zcal/2. - 1.*cm - sensor_plateThick/2.;
 
-  new G4PVPlacement(0,                                //no rotation
-		    G4ThreeVector(0.,0.,sensor_plate_Z), //at pos
-		    sensor_plateLog,                  //its logical volume
-		    "SensorPlate phys",               //its name
-		    fCalorimeter,                     //its mother  volume
-		    false,                            //no boolean operation
-		    0,                                //copy number
-		    0);                               //overlaps checking
+  ///  new G4PVPlacement(0,                                //no rotation
+  ///		    G4ThreeVector(0.,0.,sensor_plate_Z), //at pos
+  ///		    sensor_plateLog,                  //its logical volume
+  ///		    "SensorPlate phys",               //its name
+  ///		    fCalorimeter,                     //its mother  volume
+  ///		    false,                            //no boolean operation
+  ///		    0,                                //copy number
+  ///		    0);                               //overlaps checking
 
   //  G4Colour yellow(0.5, 0.5, 0.);
   //  G4VisAttributes*PEVisAttributes= new G4VisAttributes(yellow);
@@ -289,14 +289,14 @@ void TCSCalorimeterConstruction::Construct() {
   const double deltaZ = 2.5*mm;
   const double front_frame_Z = -zcal/2. - deltaZ + front_frame_dZ/2.;
 
-  new G4PVPlacement(0,                                //no rotation
-		    G4ThreeVector(0.,0.,front_frame_Z), //at pos
-		    front_frameLog,                   //its logical volume
-		    "FrontFrame phys",                //its name
-		    fCalorimeter,                     //its mother  volume
-		    false,                            //no boolean operation
-		    0,                                //copy number
-		    0);                               //overlaps checking
+  ///  new G4PVPlacement(0,                                //no rotation
+  ///		    G4ThreeVector(0.,0.,front_frame_Z), //at pos
+  ///		    front_frameLog,                   //its logical volume
+  ///		    "FrontFrame phys",                //its name
+  ///		    fCalorimeter,                     //its mother  volume
+  ///		    false,                            //no boolean operation
+  ///		    0,                                //copy number
+  ///		    0);                               //overlaps checking
 
   // Cooling plates. -----------------------------------------------------------
 
@@ -316,14 +316,14 @@ void TCSCalorimeterConstruction::Construct() {
 
   double cool_plate_Z = front_frame_Z + front_frame_dZ/2. + cool_plate_dZ/2.;
 
-  new G4PVPlacement(0,                                //no rotation
-		    G4ThreeVector(0.,0.,cool_plate_Z), //at pos
-		    cool_plateLog,                    //its logical volume
-		    "CoolingPlates phys",             //its name
-		    fCalorimeter,                     //its mother  volume
-		    false,                            //no boolean operation
-		    0,                                //copy number
-		    0);                               //overlaps checking
+  ///  new G4PVPlacement(0,                                //no rotation
+  ///		    G4ThreeVector(0.,0.,cool_plate_Z), //at pos
+  ///		    cool_plateLog,                    //its logical volume
+  ///		    "CoolingPlates phys",             //its name
+  ///		    fCalorimeter,                     //its mother  volume
+  ///		    false,                            //no boolean operation
+  ///		    0,                                //copy number
+  ///		    0);                               //overlaps checking
 
   G4Colour brown(0.7, 0.4, 0.1);
   G4VisAttributes*copperVisAttributes= new G4VisAttributes(brown);
@@ -333,14 +333,14 @@ void TCSCalorimeterConstruction::Construct() {
 
   double rear_frame_Z = cool_plate_Z + cool_plate_dZ/2. + front_frame_dZ/2.;
 
-  new G4PVPlacement(0,                                //no rotation
-		    G4ThreeVector(0.,0.,rear_frame_Z), //at pos
-		    front_frameLog,                   //its logical volume
-		    "RearFrame phys",                //its name
-		    fCalorimeter,                     //its mother  volume
-		    false,                            //no boolean operation
-		    0,                                //copy number
-		    0);                               //overlaps checking
+  ///  new G4PVPlacement(0,                                //no rotation
+  ///		    G4ThreeVector(0.,0.,rear_frame_Z), //at pos
+  ///		    front_frameLog,                   //its logical volume
+  ///		    "RearFrame phys",                //its name
+  ///		    fCalorimeter,                     //its mother  volume
+  ///		    false,                            //no boolean operation
+  ///		    0,                                //copy number
+  ///		    0);                               //overlaps checking
 
   // Case. ---------------------------------------------------------------------
 
@@ -349,17 +349,17 @@ void TCSCalorimeterConstruction::Construct() {
 
   G4Box* caseBox = new G4Box("caseBox", xcase/2, ycase/2, zcase/2);
 
-  //  const double caseThick = 1.*mm;
+  const double caseThick = 1.*mm;
   //  const double caseThick = 10.*mm;   //10 or 15 mm (from Carlos)
-  const double caseThick = 5.*mm;
+  //  const double caseThick = 5.*mm;
 
   G4Box* caseVoid = new G4Box("caseVoid", xcase/2-caseThick, ycase/2-caseThick,
 			      zcase/2-caseThick);
   G4SubtractionSolid* caseSolid =
     new G4SubtractionSolid("caseSolid", caseBox, caseVoid);
 
-  //  G4LogicalVolume* caseLog = new G4LogicalVolume(caseSolid, Al, "case_log",
-  G4LogicalVolume* caseLog = new G4LogicalVolume(caseSolid, PVC, "case_log",
+  ///  G4LogicalVolume* caseLog = new G4LogicalVolume(caseSolid, PVC, "case_log",
+  G4LogicalVolume* caseLog = new G4LogicalVolume(caseSolid, Al, "case_log",
 						 0, 0, 0);
 
   new G4PVPlacement(0,                                //no rotation
