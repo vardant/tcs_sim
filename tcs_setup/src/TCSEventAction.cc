@@ -366,7 +366,7 @@ void TCSEventAction::AddTrackerHit(TCSTrackerHitsCollection* HC,
 				   TrackerHitContainer& TrackerHitCont)
 {
       int n_hit = HC->entries();
-      //      G4cout << "      HC n_hit = " << n_hit << G4endl;
+      //G4cout << "TCSEventAction::AddTrackerHit: HC n_hit = " << n_hit<<G4endl;
 
       for(int i=0;i<n_hit;i++) {
 	G4double x     = (*HC)[i]->GetX();
@@ -380,6 +380,7 @@ void TCSEventAction::AddTrackerHit(TCSTrackerHitsCollection* HC,
 	G4int    trackid = (*HC)[i]->GetTrackID();
 	fHistoManager->AddHit(x, y, edep/keV, length/mm, det, layer,
 			      pid, pidorig, trackid, TrackerHitCont);
+//	G4cout << "x = " << x << "  y = " << y << G4endl;
       }
 
       //Check hit container's consistency first.

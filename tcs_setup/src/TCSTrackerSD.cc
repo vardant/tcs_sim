@@ -150,6 +150,19 @@ G4bool TCSTrackerSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 
     /*
     G4cout << "TCSTrackerSD::ProcessHits: vol. name = " << vname << G4endl;
+    G4cout << "  pid = " << PID << "  origpid = " << origPID << G4endl;
+    G4cout << "  locprePos   = " << locprePos.getX() << " " 
+	                         << locprePos.getY() << " "
+	                         << locprePos.getZ() << " " << G4endl;
+    G4cout << "  locpostPos  = " << locpostPos.getX() << " " 
+	                         << locpostPos.getY() << " "
+	                         << locpostPos.getZ() << " " << G4endl;
+    G4cout << "  Edep total  = " << totedep << G4endl;
+    G4cout << "  Edep nonion = " << nonionedep << G4endl;
+    G4cout << "  length      = " << length << G4endl;
+    */
+    /*
+    G4cout << "TCSTrackerSD::ProcessHits: vol. name = " << vname << G4endl;
     G4cout << "  pid = " << pid << "  P = " << P << G4endl;
     G4cout << "  prestepPos   = " << prestepPos.getX() << " " 
 	                          << prestepPos.getY() << " "

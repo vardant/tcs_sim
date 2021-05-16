@@ -512,11 +512,14 @@ void TCSHistoManager::AddHit(double x, double y, double edep, double length,
       double y_old = TrackerHitCont.Y.at(i);
       double edep_new = edep_old + edep;
       double length_new = length_old + length;
-      double x_new = (x_old*edep_old + x*edep)/edep_new;
-      double y_new = (y_old*edep_old + y*edep)/edep_new;
 
-      TrackerHitCont.X.at(i) = x_new;
-      TrackerHitCont.Y.at(i) = y_new;
+      if (edep_new > 0.) {
+	double x_new = (x_old*edep_old + x*edep)/edep_new;
+	double y_new = (y_old*edep_old + y*edep)/edep_new;
+	TrackerHitCont.X.at(i) = x_new;
+	TrackerHitCont.Y.at(i) = y_new;
+      }
+
       TrackerHitCont.Edep.at(i) = edep_new;
       TrackerHitCont.Length.at(i) = length_new;
       TrackerHitCont.Nstep.at(i)++;
