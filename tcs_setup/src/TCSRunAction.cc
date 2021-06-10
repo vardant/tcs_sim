@@ -42,8 +42,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 TCSRunAction::TCSRunAction(TCSHistoManager* histo)
-  : G4UserRunAction(), fHistoManager(histo), fAutoSeed(true)
-//  : G4UserRunAction(), fHistoManager(histo), fAutoSeed(false)
+  : G4UserRunAction(), fHistoManager(histo), fAutoSeed(false)
+//  : G4UserRunAction(), fHistoManager(histo), fAutoSeed(true)
 
 { 
   // add new units for dose
@@ -81,20 +81,27 @@ G4Run* TCSRunAction::GenerateRun()
 
 void TCSRunAction::BeginOfRunAction(const G4Run*)
 { 
+
+  long seeds[2] = {0, 0};;
   if (fAutoSeed) {
     // automatic (time-based) random seeds for each run
-    G4cout << "*******************" << G4endl;
-    G4cout << "*** AUTOSEED ON ***" << G4endl;
-    G4cout << "*******************" << G4endl;
-    long seeds[2];
+    G4cout << "*************************************" << G4endl;
+    G4cout << "*** AUTOSEED ON: Time-based seeds ***" << G4endl;
+    G4cout << "*************************************" << G4endl;
     time_t systime = time(NULL);
     seeds[0] = (long) systime;
     seeds[1] = (long) (systime*G4UniformRand());
-    G4Random::setTheSeeds(seeds);
-    G4Random::showEngineStatus();
   } else {
-    G4Random::showEngineStatus();
+    G4cout << "******************************************" << G4endl;
+    G4cout << "*** AUTOSEED OFF: Seeds from data file ***" << G4endl;
+    G4cout << "******************************************" << G4endl;
+    ifstream ifs("random_seeds.dat");
+    ifs >> seeds[0] >> seeds[1];
+    ifs.close();
   }
+
+  G4Random::setTheSeeds(seeds);
+  G4Random::showEngineStatus();
 
   //histograms
   fHistoManager->book(); 
