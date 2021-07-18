@@ -119,9 +119,16 @@ int main(int argc,char** argv)
 
   // Choose the Random engine
   G4Random::setTheEngine(new CLHEP::RanecuEngine);
-  G4int myseed = 1234;
+
+  //Initialize Random engine.
+  //  G4int myseed = 1234;
+  G4int myseed = 0;
+  ifstream ifs("random_seeds.dat");
+  ifs >> myseed;
+  ifs.close();
   G4Random::setTheSeed(myseed);
- 
+  G4cout << "===> Random Engine initialized with seed (index) " << myseed << " <===" << G4endl;
+
   // Construct the default run manager
 
   ////#ifdef G4MULTITHREADED
