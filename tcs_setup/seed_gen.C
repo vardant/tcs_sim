@@ -12,7 +12,7 @@ int main ()
   /* initialize random seed: */
   srand (time(NULL));
 
-  cout << rand() << " " << rand() << endl;
+  cout << rand() << " " << rand() << " " << rand() << endl;
 
   return 0;
 }
