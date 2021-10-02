@@ -159,6 +159,13 @@ G4VPhysicalVolume* TCSDetectorConstruction::Construct()
   for (int quarter=0; quarter<Calo.NQuarter; quarter++)
     PositionTracker(Tracker3_log, quarter, 3);
 
+  G4LogicalVolume* Tracker4_log = GetGDMLVolume(
+		   "tcs_gdmls/pointer_referenced/tracker4_ref.gdml",
+		   "TrackerAssembly0x1951ec0");
+		   //		   "tracker3World0x17605c0");
+  for (int quarter=0; quarter<Calo.NQuarter; quarter++)
+    PositionTracker(Tracker4_log, quarter, 4);
+
   //Scattering chamber.
 
   fParser.ReadModule("tcs_gdmls/scattering_chamber.gdml");
@@ -179,6 +186,13 @@ G4VPhysicalVolume* TCSDetectorConstruction::Construct()
 
   // Setup sensitive detector!
   ConstructSDandField();
+
+  /// Limit tracking steps in rapid canging magnetic field close to target.
+  //fParser.GetVolume("TargetMat")->SetUserLimits(new G4UserLimits(1.*mm));
+  //fParser.GetVolume("TargetAssembly")->SetUserLimits(new G4UserLimits(1.*mm));
+  //fParser.GetVolume("MagPoleAssembly")->SetUserLimits(new G4UserLimits(1.*mm));
+  //fParser.GetVolume("LN2ShieldAssembly")->SetUserLimits(new G4UserLimits(1.*mm));
+  //chamber_log->SetUserLimits(new G4UserLimits(1.*mm));
 
   //always return the physical World
   return physWorld;
@@ -206,23 +220,27 @@ void TCSDetectorConstruction::ConstructField()
     fEquation = new G4Mag_UsualEqRhs (fField);
 
     fStepper = new G4ClassicalRK4 (fEquation);    //Default choice.
-    //    fStepper = new G4SimpleHeum (fEquation);    //300 ev/min
     //    fStepper = new G4ImplicitEuler (fEquation);    //300 ev/min
     //    fStepper = new G4ExplicitEuler (fEquation);    //<300 ev/min
     //    fStepper = new G4SimpleRunge (fEquation);    //300 ev/min
+    //    fStepper = new G4DormandPrinceRK56 (fEquation);  //can't link
 
     //Mag. field
     //    fStepper = new G4HelixImplicitEuler (fEquation);    //does not work
     //    fStepper = new G4HelixExplicitEuler (fEquation);    //slow
     //    fStepper = new G4HelixSimpleRunge (fEquation);    //does not work
     //    fStepper = new G4NystromRK4 (fEquation);    //slow
+    //    fStepper = new G4SimpleHeum (fEquation);    //300 ev/min
 
+    ///    fChordFinder = new G4ChordFinder(fField,1e-5*m,fStepper);
     fChordFinder = new G4ChordFinder(fField,1e-4*m,fStepper);
     globalFieldMgr->SetChordFinder(fChordFinder);
     globalFieldMgr->SetDetectorField(fField);
     globalFieldMgr->GetChordFinder()->SetDeltaChord(1e-4*m);
     globalFieldMgr->SetDeltaIntersection(1e-4*m);
     globalFieldMgr->SetDeltaOneStep(1e-4*m);
+    //    globalFieldMgr->SetEpsilonMax(1e-4);  not present in 10.4
+    //    globalFieldMgr->SetEpsilonMin(1e-5);
 
     G4cout << "Magnetic field has been constructed " << 
       "in TCSDetectorConstruction::ConstructField()" << G4endl;
@@ -280,7 +298,8 @@ void TCSDetectorConstruction::ConstructSDandField()
     //    SetSensitiveDetector("Drift", trackerSD, true);
     SetSensitiveDetector("Drift0xe15800", trackerSD, true);   //tracker 1
     SetSensitiveDetector("Drift0x1994830", trackerSD, true);  //tracker 2
-    SetSensitiveDetector("Drift0x16e4830", trackerSD, true);  //tracker 1
+    SetSensitiveDetector("Drift0x16e4830", trackerSD, true);  //tracker 3
+    SetSensitiveDetector("Drift0x19512f0", trackerSD, true);  //tracker 4
     //    SetSensitiveDetector("tracker1World0xe915c0", trackerSD, true);
     //    SetSensitiveDetector("tracker2World0x1a105c0", trackerSD, true);
     //    SetSensitiveDetector("tracker3World0x17605c0", trackerSD, true);
@@ -359,11 +378,13 @@ void TCSDetectorConstruction::PositionCalorimeter(
   G4RotationMatrix rotm;
   rotm.rotateY(phi);
   rotm.rotateX(theta_tilt);
-  rotm.rotateZ(0.);
+  ///  rotm.rotateZ(0.);
 
-  G4ThreeVector position=G4ThreeVector(sin(phi)*cos(theta_pos), sin(theta_pos),
-				       cos(phi)*cos(theta_pos));
-  position *= Calo.Distance;
+  ///G4ThreeVector position=G4ThreeVector(sin(phi)*cos(theta_pos), sin(theta_pos),
+  ///				       cos(phi)*cos(theta_pos));
+  ///  position *= Calo.Distance;
+  G4ThreeVector position(0., 0., Calo.Distance);
+  position *= rotm;
 
   G4Transform3D transform = G4Transform3D(rotm, position);
 
@@ -414,11 +435,13 @@ void TCSDetectorConstruction::PositionHodoscope(
   G4RotationMatrix rotm;
   rotm.rotateY(phi);
   rotm.rotateX(theta_tilt);
-  rotm.rotateZ(0.);
+  ///  rotm.rotateZ(0.);
 
-  G4ThreeVector position=G4ThreeVector(sin(phi)*cos(theta_pos), sin(theta_pos),
-				       cos(phi)*cos(theta_pos));
-  position *= Hodo.Distance;
+  ///G4ThreeVector position=G4ThreeVector(sin(phi)*cos(theta_pos), sin(theta_pos),
+  ///				       cos(phi)*cos(theta_pos));
+  ///  position *= Hodo.Distance;
+  G4ThreeVector position(0., 0., Hodo.Distance);
+  position *= rotm;
 
   G4Transform3D transform = G4Transform3D(rotm, position);
 
@@ -482,11 +505,13 @@ void TCSDetectorConstruction::PositionTracker(G4LogicalVolume* Tracker_log,
   G4RotationMatrix rotm;
   rotm.rotateY(phi);
   rotm.rotateX(theta_tilt);
-  rotm.rotateZ(0.);
+  ///  rotm.rotateZ(0.);
 
-  G4ThreeVector position=G4ThreeVector(sin(phi)*cos(theta_pos), sin(theta_pos),
-				       cos(phi)*cos(theta_pos));
-  position *= Tracker.Distance[layer-1];
+  //G4ThreeVector position=G4ThreeVector(sin(phi)*cos(theta_pos), sin(theta_pos),
+  //				       cos(phi)*cos(theta_pos));
+  //  position *= Tracker.Distance[layer-1];
+  G4ThreeVector position(0., 0., Tracker.Distance[layer-1]);
+  position *= rotm;
 
   G4Transform3D transform = G4Transform3D(rotm, position);
 

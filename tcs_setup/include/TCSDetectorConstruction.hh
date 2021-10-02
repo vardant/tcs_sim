@@ -117,7 +117,7 @@ private:
     const double PositionAngle = 13.835*degree;
     const double TiltAngle     = 13.835*degree;
     const double RotationAngle = 10.034*degree;
-    const double Distance[3] {120*cm, 130*cm, 140*cm};
+    const double Distance[4] {120*cm, 130*cm, 140*cm, 52*cm};
   } Tracker;
 
   void PositionCalorimeter(G4LogicalVolume* Calorimeter_log, int quarter);
