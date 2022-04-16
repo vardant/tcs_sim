@@ -261,10 +261,10 @@ double TCSPrimaryGeneratorAction::GetBremEnergy(double Ee, double Eg_min,
   // within the range from Eg_min -- Eg_max.
 
   // Acceptance-rejection (von Neumann) method.
-  // Sample y from f(y)=1/y*(y/3-4/3*y+y^2).
-  // Take g(y)=4/3*1/y, such that g(y)>=f(y);
+  // Sample y from f(y)=1/y*(1-y+3/4*y^2).
+  // Take h(y)=1/y, such that h(y)>=f(y);
   // a) sample y from normalized 1/y.
-  // b) accept y if u <f(y)/(4/3*1/y), u from uniform random distribution.
+  // b) accept y if u <f(y)/h(y), u from uniform random distribution.
   // Return y*Ee.
 
   double y_min = Eg_min/Ee;
